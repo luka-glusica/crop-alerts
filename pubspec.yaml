@@ -16,7 +16,6 @@ dependencies:
     sdk: flutter
   flutter_riverpod: ^3.4.2
   flutter_svg: ^2.3.0
-  google_fonts: ^8.2.1
   intl: any
   path_provider: ^2.1.5
   phosphor_flutter: ^2.1.0
@@ -31,3 +30,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/fonts/OFL.txt
+
+  fonts:
+    # Inter is bundled rather than fetched at runtime so the app renders
+    # correctly on a first launch with no network. Licensed under the SIL Open
+    # Font License 1.1 (see assets/fonts/OFL.txt).
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Variable.ttf
