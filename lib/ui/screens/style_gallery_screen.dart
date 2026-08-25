@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:phosphor_icons/phosphor_icons.dart';
 
 import '../../core/theme/theme.dart';
+import '../icons/app_icons.dart';
+import '../widgets/crop_artwork.dart';
+import '../widgets/crop_avatar.dart';
 
 /// A debug-only catalogue of every design token.
 ///
@@ -22,6 +27,8 @@ class StyleGalleryScreen extends StatelessWidget {
           AppSpacing.s16,
         ),
         children: const [
+          _Section(title: 'Logo and crops', child: _Artwork()),
+          _Section(title: 'Icons', child: _Icons()),
           _Section(title: 'Colour ramps', child: _ColorRamps()),
           _Section(title: 'Risk states', child: _RiskStates()),
           _Section(title: 'Type scale', child: _TypeScale()),
@@ -53,6 +60,109 @@ class _Section extends StatelessWidget {
           child,
         ],
       ),
+    );
+  }
+}
+
+class _Artwork extends StatelessWidget {
+  const _Artwork();
+
+  @override
+  Widget build(BuildContext context) {
+    // A crop with SVG artwork, a crop with an emoji, and an unknown crop that
+    // falls back — so all three paths are visible side by side.
+    const cropIds = [
+      'paradajz',
+      'krompir',
+      'krastavac',
+      'kupus',
+      'luk',
+      'zelena-salata',
+      'praziluk',
+      'nepoznato',
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SvgPicture.asset('assets/logo.svg', width: 96, height: 96),
+        const SizedBox(height: AppSpacing.s4),
+        Wrap(
+          spacing: AppSpacing.s3,
+          runSpacing: AppSpacing.s3,
+          children: [
+            for (final id in cropIds)
+              Column(
+                children: [
+                  CropAvatar(cropId: id, semanticLabel: id),
+                  const SizedBox(height: AppSpacing.s1),
+                  SizedBox(
+                    width: 56,
+                    child: Text(
+                      id,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.s3),
+        Text(
+          '${CropArtwork.knownCropIds.length} crops have artwork; '
+          'unknown ids fall back to a seedling.',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+      ],
+    );
+  }
+}
+
+class _Icons extends StatelessWidget {
+  const _Icons();
+
+  @override
+  Widget build(BuildContext context) {
+    const icons = <String, PhosphorIconData>{
+      'temperature': AppIcons.temperature,
+      'humidity': AppIcons.humidity,
+      'precipitation': AppIcons.precipitation,
+      'crop': AppIcons.crop,
+      'fungalDisease': AppIcons.fungalDisease,
+      'pest': AppIcons.pest,
+      'prevention': AppIcons.prevention,
+      'response': AppIcons.response,
+      'season': AppIcons.season,
+      'location': AppIcons.location,
+      'refresh': AppIcons.refresh,
+      'notifications': AppIcons.notifications,
+      'settings': AppIcons.settings,
+      'offline': AppIcons.offline,
+    };
+    final palette = context.palette;
+
+    return Wrap(
+      spacing: AppSpacing.s4,
+      runSpacing: AppSpacing.s3,
+      children: [
+        for (final entry in icons.entries)
+          SizedBox(
+            width: 72,
+            child: Column(
+              children: [
+                Icon(entry.value, size: 28, color: palette.brand),
+                const SizedBox(height: AppSpacing.s1),
+                Text(
+                  entry.key,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }
