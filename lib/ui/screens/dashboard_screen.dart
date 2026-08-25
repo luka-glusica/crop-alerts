@@ -13,6 +13,7 @@ import '../widgets/app_card.dart';
 import '../widgets/crop_risk_card.dart';
 import '../widgets/metric_tile.dart';
 import '../widgets/risk_badge.dart';
+import 'crop_detail_screen.dart';
 import 'locations_screen.dart';
 
 /// The app's home: what the weather is about to do to the active plot's crops.
@@ -146,7 +147,11 @@ class _DashboardBody extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.s3),
         for (final assessment in dashboard.growing) ...[
-          CropRiskCard(assessment: assessment, formats: formats),
+          CropRiskCard(
+            assessment: assessment,
+            formats: formats,
+            onTap: () => _openCrop(context, assessment),
+          ),
           const SizedBox(height: AppSpacing.s2),
         ],
 
@@ -176,6 +181,14 @@ class _DashboardBody extends StatelessWidget {
   }
 
   static String _oneDecimal(double value) => value.toStringAsFixed(1);
+
+  static void _openCrop(BuildContext context, CropAssessment assessment) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => CropDetailScreen(assessment: assessment),
+      ),
+    );
+  }
 }
 
 /// Two metric tiles side by side, matched in height by their content.
@@ -300,7 +313,16 @@ class _DormantSection extends StatelessWidget {
         ),
         children: [
           for (final assessment in dormant) ...[
-            CropRiskCard(assessment: assessment, formats: formats),
+            CropRiskCard(
+              assessment: assessment,
+              formats: formats,
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (context) =>
+                      CropDetailScreen(assessment: assessment),
+                ),
+              ),
+            ),
             const SizedBox(height: AppSpacing.s2),
           ],
         ],

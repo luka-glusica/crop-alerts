@@ -212,5 +212,85 @@
     }
   },
   "undo": "Vrati",
-  "@undo": {}
+  "@undo": {},
+  "metricMinTemperature": "najniža temperatura",
+  "@metricMinTemperature": {},
+  "metricMaxTemperature": "najviša temperatura",
+  "@metricMaxTemperature": {},
+  "metricAverageTemperature": "prosečna temperatura",
+  "@metricAverageTemperature": {},
+  "metricMinHumidity": "najniža vlažnost",
+  "@metricMinHumidity": {},
+  "metricMaxHumidity": "najviša vlažnost",
+  "@metricMaxHumidity": {},
+  "metricAverageHumidity": "prosečna vlažnost",
+  "@metricAverageHumidity": {},
+  "metricPrecipitation": "padavine",
+  "@metricPrecipitation": {},
+  "observationThreshold": "{metric} {observed} {comparison} {threshold}",
+  "@observationThreshold": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      },
+      "observed": {
+        "type": "String"
+      },
+      "comparison": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
+  "observationBand": "{metric} {observed}, u opsegu {min} – {max}",
+  "@observationBand": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      },
+      "observed": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "observationOverDays": "{metric} {observed} {days, plural, one{za {days} dan} other{za {days} dana}} {comparison} {threshold}",
+  "@observationOverDays": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      },
+      "observed": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      },
+      "comparison": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
+  "outOfSeasonNotice": "Ovaj usev je van sezone, pa se pravila ne primenjuju.",
+  "@outOfSeasonNotice": {},
+  "allThreats": "Sve pretnje",
+  "@allThreats": {},
+  "ratingPrompt": "Da li je ovaj savet pomogao?",
+  "@ratingPrompt": {},
+  "ratingHelped": "Jeste",
+  "@ratingHelped": {},
+  "ratingDidNotHelp": "Nije",
+  "@ratingDidNotHelp": {},
+  "selectDay": "Izaberite dan",
+  "@selectDay": {}
 }

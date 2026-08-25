@@ -141,5 +141,72 @@
       }
     }
   },
-  "undo": "Undo"
+  "undo": "Undo",
+  "metricMinTemperature": "minimum temperature",
+  "metricMaxTemperature": "maximum temperature",
+  "metricAverageTemperature": "average temperature",
+  "metricMinHumidity": "minimum humidity",
+  "metricMaxHumidity": "maximum humidity",
+  "metricAverageHumidity": "average humidity",
+  "metricPrecipitation": "rainfall",
+  "observationThreshold": "{metric} {observed} {comparison} {threshold}",
+  "@observationThreshold": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      },
+      "observed": {
+        "type": "String"
+      },
+      "comparison": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
+  "observationBand": "{metric} {observed}, within {min} – {max}",
+  "@observationBand": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      },
+      "observed": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "observationOverDays": "{metric} {observed} {days, plural, one{over {days} day} other{over {days} days}} {comparison} {threshold}",
+  "@observationOverDays": {
+    "placeholders": {
+      "metric": {
+        "type": "String"
+      },
+      "observed": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      },
+      "comparison": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
+  "outOfSeasonNotice": "This crop is out of season, so its rules do not apply.",
+  "allThreats": "All threats",
+  "ratingPrompt": "Did this advice help?",
+  "ratingHelped": "Yes",
+  "ratingDidNotHelp": "No",
+  "selectDay": "Choose a day"
 }
