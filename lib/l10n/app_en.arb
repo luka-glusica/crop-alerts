@@ -1,76 +1,89 @@
 {
   "@@locale": "en",
-
   "appTitle": "Crop Alerts",
   "appEyebrow": "Crop risk forecast",
   "appTagline": "Watches the weather and warns you when your crops are at risk of disease.",
-
   "riskHigh": "High risk",
   "riskModerate": "Moderate risk",
   "riskLow": "Low risk",
   "riskOutOfSeason": "Out of season",
-
   "conditionsNow": "Current conditions",
   "temperatureNow": "Temperature now",
   "temperatureRange24h": "Min/max (24h)",
   "humidityNow": "Humidity",
   "precipitation12h": "Rainfall (12h)",
-
   "degreesCelsius": "{value}°C",
   "@degreesCelsius": {
     "placeholders": {
-      "value": { "type": "String" }
+      "value": {
+        "type": "String"
+      }
     }
   },
   "percent": "{value}%",
   "@percent": {
     "placeholders": {
-      "value": { "type": "String" }
+      "value": {
+        "type": "String"
+      }
     }
   },
   "millimetres": "{value} mm",
   "@millimetres": {
     "placeholders": {
-      "value": { "type": "String" }
+      "value": {
+        "type": "String"
+      }
     }
   },
   "temperatureRangeValue": "{min} – {max}°C",
   "@temperatureRangeValue": {
     "placeholders": {
-      "min": { "type": "String" },
-      "max": { "type": "String" }
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
     }
   },
-
   "today": "Today",
   "tomorrow": "Tomorrow",
   "lastUpdated": "Last updated: {timestamp}",
   "@lastUpdated": {
     "placeholders": {
-      "timestamp": { "type": "String" }
+      "timestamp": {
+        "type": "String"
+      }
     }
   },
   "growingSeason": "Season: {from} – {to}",
   "@growingSeason": {
     "placeholders": {
-      "from": { "type": "String" },
-      "to": { "type": "String" }
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
     }
   },
-
   "cropsAtRisk": "{count, plural, =0{No crops at risk} one{{count} crop at risk} other{{count} crops at risk}}",
   "@cropsAtRisk": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "dormantCrops": "{count, plural, one{{count} crop out of season} other{{count} crops out of season}}",
   "@dormantCrops": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "threats": "Threats",
   "threatFungalDisease": "Fungal diseases",
   "threatPest": "Pests",
@@ -79,7 +92,6 @@
   "response": "What to do",
   "whyThisRisk": "Why",
   "noRiskToday": "No raised risk for this day.",
-
   "locations": "Plots",
   "addLocation": "Add plot",
   "editLocation": "Edit plot",
@@ -89,13 +101,14 @@
   "deleteLocationConfirm": "Delete the plot “{name}”?",
   "@deleteLocationConfirm": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "nameRequired": "Enter a name for the plot.",
   "invalidLatitude": "Latitude must be between -90 and 90.",
   "invalidLongitude": "Longitude must be between -180 and 180.",
-
   "settings": "Settings",
   "language": "Language",
   "languageSystem": "Match device",
@@ -107,7 +120,6 @@
   "developerOptions": "Developer options",
   "featureFlags": "Features",
   "resetFeatureFlags": "Restore defaults",
-
   "refresh": "Refresh forecast",
   "retry": "Try again",
   "save": "Save",
@@ -116,5 +128,18 @@
   "loading": "Loading the latest forecast…",
   "offline": "Showing saved data — no network connection.",
   "errorForecastUnavailable": "Could not fetch the weather forecast.",
-  "attributionMet": "Data: Norwegian Meteorological Institute (MET Norway)"
+  "attributionMet": "Data: Norwegian Meteorological Institute (MET Norway)",
+  "activePlot": "Active plot",
+  "coordinates": "Coordinates",
+  "noPlots": "You have no plots yet.",
+  "noPlotsHint": "Add a plot to see its risk forecast.",
+  "plotDeleted": "Plot “{name}” deleted.",
+  "@plotDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "undo": "Undo"
 }

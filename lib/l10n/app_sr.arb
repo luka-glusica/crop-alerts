@@ -1,6 +1,5 @@
 {
   "@@locale": "sr",
-
   "appTitle": "Poljoprivredni Paničar",
   "@appTitle": {
     "description": "Application name, shown in the header and notifications"
@@ -13,7 +12,6 @@
   "@appTagline": {
     "description": "One-sentence description of what the app does"
   },
-
   "riskHigh": "Visok rizik",
   "@riskHigh": {},
   "riskModerate": "Umeren rizik",
@@ -24,7 +22,6 @@
   "@riskOutOfSeason": {
     "description": "Shown for a crop whose growing season has not started or has ended"
   },
-
   "conditionsNow": "Trenutni uslovi",
   "@conditionsNow": {},
   "temperatureNow": "Trenutna temperatura",
@@ -35,33 +32,41 @@
   "@humidityNow": {},
   "precipitation12h": "Padavine (12č)",
   "@precipitation12h": {},
-
   "degreesCelsius": "{value}°C",
   "@degreesCelsius": {
     "placeholders": {
-      "value": { "type": "String" }
+      "value": {
+        "type": "String"
+      }
     }
   },
   "percent": "{value}%",
   "@percent": {
     "placeholders": {
-      "value": { "type": "String" }
+      "value": {
+        "type": "String"
+      }
     }
   },
   "millimetres": "{value} mm",
   "@millimetres": {
     "placeholders": {
-      "value": { "type": "String" }
+      "value": {
+        "type": "String"
+      }
     }
   },
   "temperatureRangeValue": "{min} – {max}°C",
   "@temperatureRangeValue": {
     "placeholders": {
-      "min": { "type": "String" },
-      "max": { "type": "String" }
+      "min": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
     }
   },
-
   "today": "Danas",
   "@today": {},
   "tomorrow": "Sutra",
@@ -69,31 +74,39 @@
   "lastUpdated": "Poslednje ažuriranje: {timestamp}",
   "@lastUpdated": {
     "placeholders": {
-      "timestamp": { "type": "String" }
+      "timestamp": {
+        "type": "String"
+      }
     }
   },
   "growingSeason": "Sezona: {from} – {to}",
   "@growingSeason": {
     "description": "Growing season as a month range, e.g. Sezona: mart – oktobar",
     "placeholders": {
-      "from": { "type": "String" },
-      "to": { "type": "String" }
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
     }
   },
-
   "cropsAtRisk": "{count, plural, =0{Nijedan usev nije ugrožen} one{{count} usev je ugrožen} few{{count} useva su ugrožena} other{{count} useva je ugroženo}}",
   "@cropsAtRisk": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "dormantCrops": "{count, plural, one{{count} usev van sezone} few{{count} useva van sezone} other{{count} useva van sezone}}",
   "@dormantCrops": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "threats": "Pretnje",
   "@threats": {},
   "threatFungalDisease": "Gljivične bolesti",
@@ -114,7 +127,6 @@
   },
   "noRiskToday": "Nema povećanog rizika za ovaj dan.",
   "@noRiskToday": {},
-
   "locations": "Parcele",
   "@locations": {},
   "addLocation": "Dodaj parcelu",
@@ -130,7 +142,9 @@
   "deleteLocationConfirm": "Obrisati parcelu „{name}“?",
   "@deleteLocationConfirm": {
     "placeholders": {
-      "name": { "type": "String" }
+      "name": {
+        "type": "String"
+      }
     }
   },
   "nameRequired": "Unesite naziv parcele.",
@@ -139,7 +153,6 @@
   "@invalidLatitude": {},
   "invalidLongitude": "Geografska dužina mora biti između -180 i 180.",
   "@invalidLongitude": {},
-
   "settings": "Podešavanja",
   "@settings": {},
   "language": "Jezik",
@@ -162,7 +175,6 @@
   "@featureFlags": {},
   "resetFeatureFlags": "Vrati podrazumevano",
   "@resetFeatureFlags": {},
-
   "refresh": "Osveži prognozu",
   "@refresh": {},
   "retry": "Pokušaj ponovo",
@@ -182,5 +194,23 @@
   "attributionMet": "Podaci: Meteorološki institut Norveške (MET Norway)",
   "@attributionMet": {
     "description": "Attribution required by the MET Norway API terms of service"
-  }
+  },
+  "activePlot": "Aktivna parcela",
+  "@activePlot": {},
+  "coordinates": "Koordinate",
+  "@coordinates": {},
+  "noPlots": "Nemate nijednu parcelu.",
+  "@noPlots": {},
+  "noPlotsHint": "Dodajte parcelu da biste videli prognozu rizika za nju.",
+  "@noPlotsHint": {},
+  "plotDeleted": "Parcela „{name}“ je obrisana.",
+  "@plotDeleted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "undo": "Vrati",
+  "@undo": {}
 }

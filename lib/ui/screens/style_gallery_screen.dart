@@ -10,6 +10,7 @@ import '../../l10n/generated/app_localizations.dart';
 import '../icons/app_icons.dart';
 import '../widgets/crop_artwork.dart';
 import '../widgets/crop_avatar.dart';
+import 'locations_screen.dart';
 
 /// A debug-only catalogue of every design token.
 ///
@@ -22,7 +23,20 @@ class StyleGalleryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Design tokens')),
+      appBar: AppBar(
+        title: const Text('Design tokens'),
+        actions: [
+          IconButton(
+            icon: const Icon(AppIcons.location),
+            tooltip: 'Plots',
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => const LocationsScreen(),
+              ),
+            ),
+          ),
+        ],
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(
           AppSpacing.s4,

@@ -2,6 +2,8 @@ import 'package:crop_alerts/app.dart';
 import 'package:crop_alerts/core/flags/flags.dart';
 import 'package:crop_alerts/core/l10n/locale_controller.dart';
 import 'package:crop_alerts/core/l10n/locale_store.dart';
+import 'package:crop_alerts/features/locations/data/prefs_location_store.dart';
+import 'package:crop_alerts/features/locations/locations_controller.dart';
 import 'package:crop_alerts/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +15,7 @@ void main() {
       overrides: [
         featureFlagStoreProvider.overrideWithValue(InMemoryFeatureFlagStore()),
         localeStoreProvider.overrideWithValue(InMemoryLocaleStore(savedLocale)),
+        locationStoreProvider.overrideWithValue(InMemoryLocationStore()),
       ],
       child: const CropAlertsApp(),
     );
