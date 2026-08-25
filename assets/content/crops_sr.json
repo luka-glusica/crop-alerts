@@ -1,0 +1,902 @@
+{
+  "version": 1,
+  "locale": "sr",
+  "crops": [
+    {
+      "id": "paradajz",
+      "name": "Paradajz",
+      "season": {
+        "fromMonth": 5,
+        "toMonth": 10
+      },
+      "threats": [
+        {
+          "id": "plamenjaca",
+          "type": "fungalDisease",
+          "name": "Plamenjača",
+          "description": "Gljivično oboljenje koje se širi po umerenim temperaturama i dugotrajnoj vlazi na listu; daje tamne pege sa svetlim rubom, a na plodovima tvrdu smeđu trulež.",
+          "prevention": [
+            "Zalivanje isključivo u koren, nikada preko lista.",
+            "Zakidanje zaperaka i donjeg lišća radi provetravanja.",
+            "Razmak sadnje dovoljan da se list brzo osuši posle kiše.",
+            "Plodored od najmanje tri godine."
+          ],
+          "response": [
+            "Mehaničko uklanjanje obolelog lišća i iznošenje iz bašte.",
+            "Prskanje dozvoljenim bakarnim preparatom ili čajem od rastavića.",
+            "Prekid orošavanja i pojačano provetravanje.",
+            "Berba zdravih plodova pre nego što zaraza napreduje."
+          ],
+          "rules": [
+            {
+              "id": "paradajz.plamenjaca.uslovi-za-infekciju",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 15,
+                    "max": 25
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 60
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "paradajz.plamenjaca.padavine",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "crna-pegavost",
+          "type": "fungalDisease",
+          "name": "Crna pegavost",
+          "description": "Koncentrične tamne pege na starijem lišću koje se šire naviše; pogoduje joj toplo vreme sa smenom vlaženja i sušenja lista.",
+          "prevention": [
+            "Malčiranje tla, da kišne kapi ne prskaju zemlju na donje lišće.",
+            "Uravnotežena ishrana azotom.",
+            "Uklanjanje i uništavanje biljnih ostataka posle berbe."
+          ],
+          "response": [
+            "Uklanjanje najstarijih zaraženih listova.",
+            "Tretman dozvoljenim bakarnim preparatom.",
+            "Zalivanje ujutru, da list prenoći suv."
+          ],
+          "rules": [
+            {
+              "id": "paradajz.crna-pegavost.uslovi-za-infekciju",
+              "threatId": "crna-pegavost",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 24,
+                    "max": 29
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 55
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "paradajzov-moljac",
+          "type": "pest",
+          "name": "Paradajzov moljac",
+          "description": "Larve buše mine u listu i ulaze u plod; generacije se smenjuju sve brže kako temperatura raste.",
+          "prevention": [
+            "Feromonske klopke za praćenje leta.",
+            "Uklanjanje i uništavanje napadnutih plodova i listova.",
+            "Mreže protiv insekata na otvorima plastenika."
+          ],
+          "response": [
+            "Gusto postavljanje feromonskih klopki radi masovnog izlovljavanja.",
+            "Preparati na bazi Bacillus thuringiensis dok su larve mlade.",
+            "Uklanjanje miniranih listova pre nego što larve pređu na plod."
+          ],
+          "rules": [
+            {
+              "id": "paradajz.paradajzov-moljac.toplo",
+              "threatId": "paradajzov-moljac",
+              "condition": {
+                "type": "metricBand",
+                "metric": "averageTemperature",
+                "min": 20,
+                "max": 32
+              }
+            },
+            {
+              "id": "paradajz.paradajzov-moljac.toplotni-talas",
+              "threatId": "paradajzov-moljac",
+              "condition": {
+                "type": "consecutiveDays",
+                "days": 3,
+                "condition": {
+                  "type": "metricThreshold",
+                  "metric": "maxTemperature",
+                  "comparator": "greaterThan",
+                  "value": 30
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "trulez-vrha-ploda",
+          "type": "other",
+          "name": "Truljenje vrha ploda",
+          "description": "Fiziološki poremećaj, a ne bolest: po vrućini i neredovnom zalivanju biljka ne stigne da prenese kalcijum do ploda, pa vrh ploda potamni i propadne. Ne prenosi se sa biljke na biljku.",
+          "prevention": [
+            "Ravnomerno zalivanje, bez naglih sušnih prekida.",
+            "Malčiranje radi zadržavanja vlage u zemljištu.",
+            "Izbegavanje viška azotnih đubriva."
+          ],
+          "response": [
+            "Uspostavljanje redovnog ritma zalivanja manjim količinama.",
+            "Hitno malčiranje radi smanjenja isparavanja.",
+            "Uklanjanje zahvaćenih plodova da biljka ne troši snagu na njih."
+          ],
+          "rules": [
+            {
+              "id": "paradajz.trulez-vrha-ploda.vrucina-i-susa",
+              "threatId": "trulez-vrha-ploda",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 30
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 5,
+                    "comparator": "atMost",
+                    "value": 5
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "krompir",
+      "name": "Krompir",
+      "season": {
+        "fromMonth": 3,
+        "toMonth": 9
+      },
+      "threats": [
+        {
+          "id": "plamenjaca",
+          "type": "fungalDisease",
+          "name": "Plamenjača krompira",
+          "description": "Najopasnija bolest krompira; po vlažnom vremenu za nekoliko dana može uništiti celu cimu, a spore sa lista dospevaju do krtola.",
+          "prevention": [
+            "Sertifikovano, zdravo seme.",
+            "Visoko zagrtanje, da spore sa lista ne dopru do krtola.",
+            "Plodored i uništavanje samoniklih biljaka.",
+            "Preventivni bakarni preparati pred najavljeni vlažan period."
+          ],
+          "response": [
+            "Prskanje dozvoljenim bakarnim preparatima.",
+            "Tretman čajem od rastavića.",
+            "Uklanjanje nadzemne cime pri jakoj zarazi, dve nedelje pre vađenja.",
+            "Vađenje krtola po suvom vremenu."
+          ],
+          "rules": [
+            {
+              "id": "krompir.plamenjaca.uslovi-za-infekciju",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 15,
+                    "max": 21
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 65
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "krompir.plamenjaca.padavine",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 3,
+                "comparator": "atLeast",
+                "value": 15
+              }
+            }
+          ]
+        },
+        {
+          "id": "crna-pegavost",
+          "type": "fungalDisease",
+          "name": "Crna pegavost",
+          "description": "Suva pegavost lista sa koncentričnim krugovima; javlja se po toplijem vremenu i na oslabljenim biljkama pred kraj vegetacije.",
+          "prevention": [
+            "Uravnotežena ishrana, jer oslabljene biljke prve obolevaju.",
+            "Malčiranje tla ispod biljaka.",
+            "Uklanjanje biljnih ostataka posle vađenja."
+          ],
+          "response": [
+            "Uklanjanje najstarijih zaraženih listova.",
+            "Tretman dozvoljenim bakarnim preparatom.",
+            "Prihrana radi jačanja biljke."
+          ],
+          "rules": [
+            {
+              "id": "krompir.crna-pegavost.uslovi-za-infekciju",
+              "threatId": "crna-pegavost",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 24,
+                    "max": 29
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 55
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "zlatica",
+          "type": "pest",
+          "name": "Krompirova zlatica",
+          "description": "Odrasle jedinke i larve gole list do nervature; po toplom i suvom vremenu razvoj se ubrzava i generacije se preklapaju.",
+          "prevention": [
+            "Plodored, sa parcelom što dalje od prošlogodišnje.",
+            "Ranija sadnja radi izbegavanja najjačeg napada.",
+            "Redovan pregled naličja listova i uništavanje legala jaja."
+          ],
+          "response": [
+            "Ručno sakupljanje odraslih jedinki i legala jaja.",
+            "Preparati na bazi Bacillus thuringiensis var. tenebrionis dok su larve mlade.",
+            "Uklanjanje jako oštećene cime."
+          ],
+          "rules": [
+            {
+              "id": "krompir.zlatica.toplo-i-suvo",
+              "threatId": "zlatica",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 25
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 3,
+                    "comparator": "atMost",
+                    "value": 3
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "pucanje-krtola",
+          "type": "other",
+          "name": "Pucanje i deformacije krtola",
+          "description": "Obilan pljusak posle sušnog perioda tera krtolu u nagli rast, pa ona puca ili razvija izraštaje. Napukle krtole ne podnose skladištenje.",
+          "prevention": [
+            "Ravnomerno zalivanje tokom formiranja krtola.",
+            "Malčiranje i zagrtanje radi stabilnije vlage u zemljištu."
+          ],
+          "response": [
+            "Postepeno vraćanje zalivanja umesto jednog velikog obroka.",
+            "Vađenje po suvom vremenu i odvajanje napuklih krtola pri skladištenju."
+          ],
+          "rules": [
+            {
+              "id": "krompir.pucanje-krtola.pljusak-posle-suse",
+              "threatId": "pucanje-krtola",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 30
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "krastavac",
+      "name": "Krastavac",
+      "season": {
+        "fromMonth": 5,
+        "toMonth": 9
+      },
+      "threats": [
+        {
+          "id": "plamenjaca",
+          "type": "fungalDisease",
+          "name": "Plamenjača krastavca",
+          "description": "Uglaste žute pege ograničene nervima lista, sa sivkastom prevlakom na naličju; po vlažnom vremenu usev može propasti za nedelju dana.",
+          "prevention": [
+            "Uzgoj na špaliru, radi bržeg sušenja lista.",
+            "Izbegavanje kvašenja lišća pri zalivanju.",
+            "Dovoljan razmak između biljaka."
+          ],
+          "response": [
+            "Prekid orošavanja i prelazak na zalivanje u koren.",
+            "Tretman dozvoljenim bakarnim preparatom.",
+            "Uklanjanje prvih zaraženih listova i iznošenje iz bašte."
+          ],
+          "rules": [
+            {
+              "id": "krastavac.plamenjaca.uslovi-za-infekciju",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 20,
+                    "max": 27
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 65
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "krastavac.plamenjaca.padavine",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "pepelnica",
+          "type": "fungalDisease",
+          "name": "Pepelnica",
+          "description": "Beličasta prevlaka nalik brašnu na licu lista. Za razliku od plamenjače, traži toplo vreme i vlažan vazduh, ali suv list — zato se javlja i kad kiše nema.",
+          "prevention": [
+            "Razmak sadnje i uklanjanje donjih listova radi protoka vazduha.",
+            "Izbegavanje viška azota.",
+            "Izbor tolerantnih sorti."
+          ],
+          "response": [
+            "Prskanje rastvorom sode bikarbone sa nekoliko kapi biljnog ulja.",
+            "Primena dozvoljenog sumpornog preparata, po oblačnom vremenu i ne na vrućini.",
+            "Kidanje najzahvaćenijih donjih listova."
+          ],
+          "rules": [
+            {
+              "id": "krastavac.pepelnica.toplo-uz-suv-list",
+              "threatId": "pepelnica",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 20,
+                    "max": 27
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 3,
+                    "comparator": "atMost",
+                    "value": 1
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "paucinar",
+          "type": "pest",
+          "name": "Obični paučinar",
+          "description": "Sitna grinja na naličju lista; po vrućem i suvom vremenu množi se eksplozivno, list postaje tačkast, sivkast i na kraju se suši.",
+          "prevention": [
+            "Redovan pregled naličja listova, jer se napad primeti tek kad je odmakao.",
+            "Održavanje vlažnosti vazduha oko biljaka u vrhuncu vrućina.",
+            "Uklanjanje korova koji su domaćini grinje."
+          ],
+          "response": [
+            "Jako orošavanje naličja lista vodom, čime se populacija razbija.",
+            "Preparati na bazi biljnih ulja ili kalijumovog sapuna.",
+            "Uklanjanje i uništavanje najjače napadnutih listova."
+          ],
+          "rules": [
+            {
+              "id": "krastavac.paucinar.vrucina-i-suv-vazduh",
+              "threatId": "paucinar",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 27
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "lessThan",
+                    "value": 40
+                  }
+                ]
+              }
+            },
+            {
+              "id": "krastavac.paucinar.susa",
+              "threatId": "paucinar",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 5,
+                "comparator": "atMost",
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "gorcina-ploda",
+          "type": "other",
+          "name": "Gorčina ploda",
+          "description": "Pri vrućini i nedostatku vode biljka stvara kukurbitacine i plod postaje gorak. Nije bolest, ne prenosi se i ne leči se prskanjem.",
+          "prevention": [
+            "Redovno zalivanje bez sušnih prekida.",
+            "Malčiranje i senčenje u najtoplijim danima."
+          ],
+          "response": [
+            "Uspostavljanje redovnog zalivanja.",
+            "Češća berba, dok su plodovi mlađi i manji."
+          ],
+          "rules": [
+            {
+              "id": "krastavac.gorcina-ploda.vrucina-i-susa",
+              "threatId": "gorcina-ploda",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 30
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 4,
+                    "comparator": "atMost",
+                    "value": 2
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kupus",
+      "name": "Kupus",
+      "season": {
+        "fromMonth": 4,
+        "toMonth": 11
+      },
+      "threats": [
+        {
+          "id": "plamenjaca",
+          "type": "fungalDisease",
+          "name": "Plamenjača kupusa",
+          "description": "Žućkaste pege na licu lista sa belom prevlakom na naličju; najopasnija je na rasadu i mladim biljkama po hladnijem vlažnom vremenu.",
+          "prevention": [
+            "Ne saditi na parcelama gde su prethodne godine bile druge krstašice.",
+            "Razmak sadnje koji omogućava provetravanje.",
+            "Zalivanje ujutru, da list prenoći suv."
+          ],
+          "response": [
+            "Tretman čajem od kamilice ili rastavića.",
+            "Posipanje drvenim pepelom oko biljaka.",
+            "Sakupljanje i uništavanje zaraženih listova izvan bašte."
+          ],
+          "rules": [
+            {
+              "id": "kupus.plamenjaca.uslovi-za-infekciju",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 15,
+                    "max": 20
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 60
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "kupus.plamenjaca.padavine",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "crna-trulez",
+          "type": "other",
+          "name": "Crna trulež",
+          "description": "Bakteriozno oboljenje, ne gljivično — zato bakarni preparati protiv njega slabo pomažu. Daje žute klinaste pege sa poglednutim tamnim nervima, po toplom i kišovitom vremenu.",
+          "prevention": [
+            "Zdrav, sertifikovan rasad iz proverenog izvora.",
+            "Plodored od najmanje četiri godine bez krstašica.",
+            "Ne raditi u usevu dok su biljke mokre."
+          ],
+          "response": [
+            "Vađenje i uništavanje obolelih biljaka izvan bašte.",
+            "Prekid svih radova u mokrom usevu, jer se bakterija prenosi rukama i alatom.",
+            "Poboljšanje drenaže i prestanak zalivanja preko lista."
+          ],
+          "rules": [
+            {
+              "id": "kupus.crna-trulez.toplo-i-kisovito",
+              "threatId": "crna-trulez",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 25,
+                    "max": 30
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 3,
+                    "comparator": "atLeast",
+                    "value": 15
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "kupusar",
+          "type": "pest",
+          "name": "Kupusar",
+          "description": "Gusenice belog leptira izgrizaju listove do nervature i ulaze u glavicu. Leptir najviše leti po toplom i suvom vremenu.",
+          "prevention": [
+            "Mreže protiv insekata preko useva od sadnje.",
+            "Redovan pregled naličja listova i uklanjanje legala jaja.",
+            "Sadnja mirisnih biljaka koje odbijaju leptira."
+          ],
+          "response": [
+            "Ručno sakupljanje gusenica i legala jaja.",
+            "Preparati na bazi Bacillus thuringiensis dok su gusenice mlade.",
+            "Uklanjanje najjače izgrizanih listova."
+          ],
+          "rules": [
+            {
+              "id": "kupus.kupusar.toplo",
+              "threatId": "kupusar",
+              "condition": {
+                "type": "metricBand",
+                "metric": "averageTemperature",
+                "min": 18,
+                "max": 28
+              }
+            },
+            {
+              "id": "kupus.kupusar.suvo",
+              "threatId": "kupusar",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 3,
+                "comparator": "atMost",
+                "value": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "pucanje-glavica",
+          "type": "other",
+          "name": "Pucanje glavica",
+          "description": "Obilna kiša posle sušnog perioda naglo puni glavicu vodom i ona puca; kroz pukotinu odmah ulazi trulež.",
+          "prevention": [
+            "Ravnomerno zalivanje pred zrenje.",
+            "Blagovremena berba zrelih glavica."
+          ],
+          "response": [
+            "Hitna berba zrelih glavica pred najavljenu kišu.",
+            "Blago potkidanje korena kod prezrelih glavica, da uspore usvajanje vode."
+          ],
+          "rules": [
+            {
+              "id": "kupus.pucanje-glavica.pljusak-posle-suse",
+              "threatId": "pucanje-glavica",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 25
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "luk",
+      "name": "Luk (crni)",
+      "season": {
+        "fromMonth": 3,
+        "toMonth": 8
+      },
+      "threats": [
+        {
+          "id": "plamenjaca",
+          "type": "fungalDisease",
+          "name": "Plamenjača luka",
+          "description": "Bledozelene izdužene pege sa ljubičastom prevlakom po vlažnom jutru; list se prelama i lukovica ostaje sitna.",
+          "prevention": [
+            "Preventivni bakarni preparati u vlažnim periodima.",
+            "Izbegavanje viška azota, koji daje mekan i osetljiv list.",
+            "Plodored i uklanjanje samoniklog luka."
+          ],
+          "response": [
+            "Hitna primena dozvoljenih bakarnih preparata.",
+            "Prskanje čajem od rastavića.",
+            "Plitka obrada tla radi razbijanja pokorice i bržeg sušenja."
+          ],
+          "rules": [
+            {
+              "id": "luk.plamenjaca.uslovi-za-infekciju",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 15,
+                    "max": 20
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 60
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "luk.plamenjaca.padavine",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 3,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "purpurna-pegavost",
+          "type": "fungalDisease",
+          "name": "Purpurna pegavost",
+          "description": "Ovalne pege sa purpurnim centrom na starijem lišću; javlja se u toplijem delu sezone, često posle oštećenja od plamenjače ili tripsa.",
+          "prevention": [
+            "Uklanjanje starijeg oštećenog lišća.",
+            "Plodored i duboko zaoravanje ostataka.",
+            "Suzbijanje tripsa, čije rane otvaraju put gljivi."
+          ],
+          "response": [
+            "Tretman dozvoljenim bakarnim preparatom.",
+            "Uklanjanje jako zahvaćenog lišća.",
+            "Prekid zalivanja preko lista."
+          ],
+          "rules": [
+            {
+              "id": "luk.purpurna-pegavost.uslovi-za-infekciju",
+              "threatId": "purpurna-pegavost",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 22,
+                    "max": 30
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 55
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "lukova-muva",
+          "type": "pest",
+          "name": "Lukova muva",
+          "description": "Larve buše lukovicu, biljka žuti i vene, a lukovica trune. Prvi let je u proleće, pri umerenim temperaturama i vlažnom zemljištu.",
+          "prevention": [
+            "Mreže protiv insekata odmah posle setve.",
+            "Plodored i udaljenost od prošlogodišnje parcele.",
+            "Izbegavanje svežeg stajnjaka, koji privlači muvu."
+          ],
+          "response": [
+            "Vađenje i uništavanje napadnutih biljaka zajedno sa larvama.",
+            "Posipanje drvenim pepelom ili kamenim brašnom oko biljaka.",
+            "Zalivanje rastvorom entomopatogenih nematoda."
+          ],
+          "rules": [
+            {
+              "id": "luk.lukova-muva.uslovi-za-let",
+              "threatId": "lukova-muva",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 12,
+                    "max": 22
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxHumidity",
+                    "comparator": "greaterThan",
+                    "value": 80
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "trulez-od-prevlazenosti",
+          "type": "other",
+          "name": "Trulež usled prevlaženosti",
+          "description": "Dugotrajno zadržavanje vode oko lukovice izaziva trulež i sprečava sazrevanje. Problem je u zemljištu i drenaži, ne u patogenu.",
+          "prevention": [
+            "Sadnja na izdignute gredice na težim zemljištima.",
+            "Prekid zalivanja pred kraj vegetacije."
+          ],
+          "response": [
+            "Hitno odvođenje viška vode plitkim kanalićima.",
+            "Potpuni prekid zalivanja.",
+            "Vađenje luka čim vreme dozvoli i sušenje u tankom sloju, na promaji."
+          ],
+          "rules": [
+            {
+              "id": "luk.trulez-od-prevlazenosti.dugotrajne-padavine",
+              "threatId": "trulez-od-prevlazenosti",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 5,
+                "comparator": "atLeast",
+                "value": 40
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
