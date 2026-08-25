@@ -235,5 +235,9 @@
   },
   "notificationChannelName": "Risk alerts",
   "notificationChannelDescription": "Warns when the weather favours a disease or a pest.",
-  "refreshNow": "Refresh now"
+  "refreshNow": "Refresh now",
+  "about": "About",
+  "notificationsDenied": "Notifications are switched off in the device settings.",
+  "notificationsExplainer": "The check runs every six hours and only speaks up when something crosses the level you pick.",
+  "featureFlagsExplainer": "Work in progress. Change these only if you know what they do."
 }

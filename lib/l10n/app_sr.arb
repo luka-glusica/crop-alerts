@@ -322,5 +322,13 @@
   "notificationChannelDescription": "Obaveštava kada vremenski uslovi pogoduju bolestima ili štetočinama.",
   "@notificationChannelDescription": {},
   "refreshNow": "Osveži odmah",
-  "@refreshNow": {}
+  "@refreshNow": {},
+  "about": "O aplikaciji",
+  "@about": {},
+  "notificationsDenied": "Obaveštenja su isključena u podešavanjima uređaja.",
+  "@notificationsDenied": {},
+  "notificationsExplainer": "Provera se pokreće na svakih šest sati i javlja samo kada nešto pređe izabrani nivo.",
+  "@notificationsExplainer": {},
+  "featureFlagsExplainer": "Funkcionalnosti u pripremi. Menjajte samo ako znate šta radite.",
+  "@featureFlagsExplainer": {}
 }

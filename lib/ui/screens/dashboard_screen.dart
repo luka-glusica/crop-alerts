@@ -17,6 +17,7 @@ import '../widgets/metric_tile.dart';
 import '../widgets/risk_badge.dart';
 import 'crop_detail_screen.dart';
 import 'locations_screen.dart';
+import 'settings_screen.dart';
 
 /// The app's home: what the weather is about to do to the active plot's crops.
 class DashboardScreen extends ConsumerWidget {
@@ -61,6 +62,15 @@ class DashboardScreen extends ConsumerWidget {
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (context) => const LocationsScreen(),
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(AppIcons.settings),
+            tooltip: l10n.settings,
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (context) => const SettingsScreen(),
               ),
             ),
           ),
