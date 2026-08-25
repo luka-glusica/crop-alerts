@@ -47,6 +47,21 @@
 			</array>
 		</dict>
 	</dict>
+	<!-- Background refresh for the six-hourly forecast check. iOS treats the
+	     interval as a hint and decides when, or whether, to run it. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>processing</string>
+	</array>
+	<!-- iOS registers the BGTaskScheduler task under the uniqueName the Dart
+	     side passes to registerPeriodicTask, so this must match
+	     BackgroundRefresh.uniqueName exactly. An identifier that is not listed
+	     here is rejected at registration and the task simply never runs. -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>crop-alerts.refresh-forecast.periodic</string>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

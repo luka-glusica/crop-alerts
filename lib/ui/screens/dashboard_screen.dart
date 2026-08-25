@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/l10n/date_formats.dart';
 import '../../core/theme/theme.dart';
+import '../../features/alerts/background_refresh.dart';
 import '../../features/crops/domain/crop_assessment.dart';
 import '../../features/dashboard/dashboard.dart';
 import '../../features/weather/domain/weather_failure.dart';
@@ -39,6 +41,20 @@ class DashboardScreen extends ConsumerWidget {
           ],
         ),
         actions: [
+          // Waiting six hours to find out whether the background job works is
+          // not a workable development loop.
+          if (kDebugMode)
+            IconButton(
+              icon: const Icon(AppIcons.notifications),
+              tooltip: 'Run background check now',
+              onPressed: () async {
+                final outcome = await BackgroundRefresh.runOnce();
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Background run: ${outcome.name}')),
+                );
+              },
+            ),
           IconButton(
             icon: const Icon(AppIcons.location),
             tooltip: l10n.locations,

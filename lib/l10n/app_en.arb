@@ -208,5 +208,32 @@
   "ratingPrompt": "Did this advice help?",
   "ratingHelped": "Yes",
   "ratingDidNotHelp": "No",
-  "selectDay": "Choose a day"
+  "selectDay": "Choose a day",
+  "alertHighRisk": "high risk: {count}",
+  "@alertHighRisk": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "alertModerateRisk": "moderate risk: {count}",
+  "@alertModerateRisk": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "alertCrops": "crops: {names}",
+  "@alertCrops": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationChannelName": "Risk alerts",
+  "notificationChannelDescription": "Warns when the weather favours a disease or a pest.",
+  "refreshNow": "Refresh now"
 }

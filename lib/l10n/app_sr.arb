@@ -292,5 +292,35 @@
   "ratingDidNotHelp": "Nije",
   "@ratingDidNotHelp": {},
   "selectDay": "Izaberite dan",
-  "@selectDay": {}
+  "@selectDay": {},
+  "alertHighRisk": "visok rizik: {count}",
+  "@alertHighRisk": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "alertModerateRisk": "umeren rizik: {count}",
+  "@alertModerateRisk": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "alertCrops": "usevi: {names}",
+  "@alertCrops": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationChannelName": "Upozorenja o riziku",
+  "@notificationChannelName": {},
+  "notificationChannelDescription": "Obaveštava kada vremenski uslovi pogoduju bolestima ili štetočinama.",
+  "@notificationChannelDescription": {},
+  "refreshNow": "Osveži odmah",
+  "@refreshNow": {}
 }
