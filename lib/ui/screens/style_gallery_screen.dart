@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:phosphor_icons/phosphor_icons.dart';
 
+import '../../core/l10n/date_formats.dart';
+import '../../core/l10n/locale_controller.dart';
 import '../../core/theme/theme.dart';
+import '../../l10n/generated/app_localizations.dart';
 import '../icons/app_icons.dart';
 import '../widgets/crop_artwork.dart';
 import '../widgets/crop_avatar.dart';
@@ -27,6 +31,7 @@ class StyleGalleryScreen extends StatelessWidget {
           AppSpacing.s16,
         ),
         children: const [
+          _Section(title: 'Language', child: _Language()),
           _Section(title: 'Logo and crops', child: _Artwork()),
           _Section(title: 'Icons', child: _Icons()),
           _Section(title: 'Colour ramps', child: _ColorRamps()),
@@ -58,6 +63,94 @@ class _Section extends StatelessWidget {
           Text(title.toUpperCase(), style: Theme.of(context).textTheme.labelSmall),
           const SizedBox(height: AppSpacing.s3),
           child,
+        ],
+      ),
+    );
+  }
+}
+
+class _Language extends ConsumerWidget {
+  const _Language();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final selected = ref.watch(localeProvider);
+    final formats = ForecastDateFormats.of(
+      Localizations.localeOf(context),
+      l10n,
+    );
+    final now = DateTime.now();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SegmentedButton<String>(
+          segments: [
+            ButtonSegment(value: 'system', label: Text(l10n.languageSystem)),
+            ButtonSegment(value: 'sr', label: Text(l10n.languageSerbian)),
+            ButtonSegment(value: 'en', label: Text(l10n.languageEnglish)),
+          ],
+          selected: {
+            switch (selected?.languageCode) {
+              'sr' => 'sr',
+              'en' => 'en',
+              _ => 'system',
+            },
+          },
+          onSelectionChanged: (values) {
+            ref.read(localeProvider.notifier).setLocale(
+                  switch (values.first) {
+                    'sr' => LocaleController.serbianLatin,
+                    'en' => LocaleController.english,
+                    _ => null,
+                  },
+                );
+          },
+        ),
+        const SizedBox(height: AppSpacing.s4),
+        _Line(label: 'appTitle', value: l10n.appTitle),
+        _Line(label: 'appTagline', value: l10n.appTagline),
+        _Line(label: 'cropsAtRisk(0)', value: l10n.cropsAtRisk(0)),
+        _Line(label: 'cropsAtRisk(1)', value: l10n.cropsAtRisk(1)),
+        _Line(label: 'cropsAtRisk(3)', value: l10n.cropsAtRisk(3)),
+        _Line(label: 'cropsAtRisk(7)', value: l10n.cropsAtRisk(7)),
+        _Line(
+          label: 'growingSeason',
+          value: l10n.growingSeason(formats.monthName(3), formats.monthName(10)),
+        ),
+        _Line(label: 'dayLabel(today)', value: formats.dayLabel(now)),
+        _Line(
+          label: 'dayLabel(+3d)',
+          value: formats.dayLabel(now.add(const Duration(days: 3))),
+        ),
+        _Line(label: 'timestamp', value: formats.timestamp(now)),
+        _Line(label: 'attributionMet', value: l10n.attributionMet),
+      ],
+    );
+  }
+}
+
+class _Line extends StatelessWidget {
+  const _Line({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.s1),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 128,
+            child: Text(label, style: Theme.of(context).textTheme.labelMedium),
+          ),
+          Expanded(
+            child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
+          ),
         ],
       ),
     );

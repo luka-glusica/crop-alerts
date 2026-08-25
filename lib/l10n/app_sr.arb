@@ -1,0 +1,186 @@
+{
+  "@@locale": "sr",
+
+  "appTitle": "Poljoprivredni Paničar",
+  "@appTitle": {
+    "description": "Application name, shown in the header and notifications"
+  },
+  "appEyebrow": "Prognoza rizika za useve",
+  "@appEyebrow": {
+    "description": "Small uppercase label above the app title"
+  },
+  "appTagline": "Prati vremenske uslove i upozorava kada vašim usevima prete bolesti.",
+  "@appTagline": {
+    "description": "One-sentence description of what the app does"
+  },
+
+  "riskHigh": "Visok rizik",
+  "@riskHigh": {},
+  "riskModerate": "Umeren rizik",
+  "@riskModerate": {},
+  "riskLow": "Nizak rizik",
+  "@riskLow": {},
+  "riskOutOfSeason": "Van sezone",
+  "@riskOutOfSeason": {
+    "description": "Shown for a crop whose growing season has not started or has ended"
+  },
+
+  "conditionsNow": "Trenutni uslovi",
+  "@conditionsNow": {},
+  "temperatureNow": "Trenutna temperatura",
+  "@temperatureNow": {},
+  "temperatureRange24h": "Min/max (24č)",
+  "@temperatureRange24h": {},
+  "humidityNow": "Vlažnost vazduha",
+  "@humidityNow": {},
+  "precipitation12h": "Padavine (12č)",
+  "@precipitation12h": {},
+
+  "degreesCelsius": "{value}°C",
+  "@degreesCelsius": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+  "percent": "{value}%",
+  "@percent": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+  "millimetres": "{value} mm",
+  "@millimetres": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+  "temperatureRangeValue": "{min} – {max}°C",
+  "@temperatureRangeValue": {
+    "placeholders": {
+      "min": { "type": "String" },
+      "max": { "type": "String" }
+    }
+  },
+
+  "today": "Danas",
+  "@today": {},
+  "tomorrow": "Sutra",
+  "@tomorrow": {},
+  "lastUpdated": "Poslednje ažuriranje: {timestamp}",
+  "@lastUpdated": {
+    "placeholders": {
+      "timestamp": { "type": "String" }
+    }
+  },
+  "growingSeason": "Sezona: {from} – {to}",
+  "@growingSeason": {
+    "description": "Growing season as a month range, e.g. Sezona: mart – oktobar",
+    "placeholders": {
+      "from": { "type": "String" },
+      "to": { "type": "String" }
+    }
+  },
+
+  "cropsAtRisk": "{count, plural, =0{Nijedan usev nije ugrožen} one{{count} usev je ugrožen} few{{count} useva su ugrožena} other{{count} useva je ugroženo}}",
+  "@cropsAtRisk": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "dormantCrops": "{count, plural, one{{count} usev van sezone} few{{count} useva van sezone} other{{count} useva van sezone}}",
+  "@dormantCrops": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "threats": "Pretnje",
+  "@threats": {},
+  "threatFungalDisease": "Gljivične bolesti",
+  "@threatFungalDisease": {},
+  "threatPest": "Štetočine",
+  "@threatPest": {},
+  "threatOther": "Ostali problemi",
+  "@threatOther": {},
+  "prevention": "Prevencija",
+  "@prevention": {},
+  "response": "Mere",
+  "@response": {
+    "description": "Heading for what to do once conditions are already favourable for a threat"
+  },
+  "whyThisRisk": "Zašto",
+  "@whyThisRisk": {
+    "description": "Heading above the weather conditions that triggered a rule"
+  },
+  "noRiskToday": "Nema povećanog rizika za ovaj dan.",
+  "@noRiskToday": {},
+
+  "locations": "Parcele",
+  "@locations": {},
+  "addLocation": "Dodaj parcelu",
+  "@addLocation": {},
+  "editLocation": "Izmeni parcelu",
+  "@editLocation": {},
+  "locationName": "Naziv",
+  "@locationName": {},
+  "latitude": "Geografska širina",
+  "@latitude": {},
+  "longitude": "Geografska dužina",
+  "@longitude": {},
+  "deleteLocationConfirm": "Obrisati parcelu „{name}“?",
+  "@deleteLocationConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "nameRequired": "Unesite naziv parcele.",
+  "@nameRequired": {},
+  "invalidLatitude": "Geografska širina mora biti između -90 i 90.",
+  "@invalidLatitude": {},
+  "invalidLongitude": "Geografska dužina mora biti između -180 i 180.",
+  "@invalidLongitude": {},
+
+  "settings": "Podešavanja",
+  "@settings": {},
+  "language": "Jezik",
+  "@language": {},
+  "languageSystem": "Kao na uređaju",
+  "@languageSystem": {},
+  "languageSerbian": "Srpski",
+  "@languageSerbian": {},
+  "languageEnglish": "Engleski",
+  "@languageEnglish": {},
+  "notifications": "Obaveštenja",
+  "@notifications": {},
+  "notifyHighRisk": "Obavesti me o visokom riziku",
+  "@notifyHighRisk": {},
+  "notifyModerateRisk": "Obavesti me o umerenom riziku",
+  "@notifyModerateRisk": {},
+  "developerOptions": "Razvojne opcije",
+  "@developerOptions": {},
+  "featureFlags": "Funkcionalnosti",
+  "@featureFlags": {},
+  "resetFeatureFlags": "Vrati podrazumevano",
+  "@resetFeatureFlags": {},
+
+  "refresh": "Osveži prognozu",
+  "@refresh": {},
+  "retry": "Pokušaj ponovo",
+  "@retry": {},
+  "save": "Sačuvaj",
+  "@save": {},
+  "cancel": "Otkaži",
+  "@cancel": {},
+  "delete": "Obriši",
+  "@delete": {},
+  "loading": "Učitavanje najnovije prognoze…",
+  "@loading": {},
+  "offline": "Prikazani su sačuvani podaci — nema veze sa mrežom.",
+  "@offline": {},
+  "errorForecastUnavailable": "Nije moguće preuzeti vremensku prognozu.",
+  "@errorForecastUnavailable": {},
+  "attributionMet": "Podaci: Meteorološki institut Norveške (MET Norway)",
+  "@attributionMet": {
+    "description": "Attribution required by the MET Norway API terms of service"
+  }
+}

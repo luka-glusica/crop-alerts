@@ -1,0 +1,120 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Crop Alerts",
+  "appEyebrow": "Crop risk forecast",
+  "appTagline": "Watches the weather and warns you when your crops are at risk of disease.",
+
+  "riskHigh": "High risk",
+  "riskModerate": "Moderate risk",
+  "riskLow": "Low risk",
+  "riskOutOfSeason": "Out of season",
+
+  "conditionsNow": "Current conditions",
+  "temperatureNow": "Temperature now",
+  "temperatureRange24h": "Min/max (24h)",
+  "humidityNow": "Humidity",
+  "precipitation12h": "Rainfall (12h)",
+
+  "degreesCelsius": "{value}°C",
+  "@degreesCelsius": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+  "percent": "{value}%",
+  "@percent": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+  "millimetres": "{value} mm",
+  "@millimetres": {
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+  "temperatureRangeValue": "{min} – {max}°C",
+  "@temperatureRangeValue": {
+    "placeholders": {
+      "min": { "type": "String" },
+      "max": { "type": "String" }
+    }
+  },
+
+  "today": "Today",
+  "tomorrow": "Tomorrow",
+  "lastUpdated": "Last updated: {timestamp}",
+  "@lastUpdated": {
+    "placeholders": {
+      "timestamp": { "type": "String" }
+    }
+  },
+  "growingSeason": "Season: {from} – {to}",
+  "@growingSeason": {
+    "placeholders": {
+      "from": { "type": "String" },
+      "to": { "type": "String" }
+    }
+  },
+
+  "cropsAtRisk": "{count, plural, =0{No crops at risk} one{{count} crop at risk} other{{count} crops at risk}}",
+  "@cropsAtRisk": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "dormantCrops": "{count, plural, one{{count} crop out of season} other{{count} crops out of season}}",
+  "@dormantCrops": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "threats": "Threats",
+  "threatFungalDisease": "Fungal diseases",
+  "threatPest": "Pests",
+  "threatOther": "Other problems",
+  "prevention": "Prevention",
+  "response": "What to do",
+  "whyThisRisk": "Why",
+  "noRiskToday": "No raised risk for this day.",
+
+  "locations": "Plots",
+  "addLocation": "Add plot",
+  "editLocation": "Edit plot",
+  "locationName": "Name",
+  "latitude": "Latitude",
+  "longitude": "Longitude",
+  "deleteLocationConfirm": "Delete the plot “{name}”?",
+  "@deleteLocationConfirm": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "nameRequired": "Enter a name for the plot.",
+  "invalidLatitude": "Latitude must be between -90 and 90.",
+  "invalidLongitude": "Longitude must be between -180 and 180.",
+
+  "settings": "Settings",
+  "language": "Language",
+  "languageSystem": "Match device",
+  "languageSerbian": "Serbian",
+  "languageEnglish": "English",
+  "notifications": "Notifications",
+  "notifyHighRisk": "Notify me about high risk",
+  "notifyModerateRisk": "Notify me about moderate risk",
+  "developerOptions": "Developer options",
+  "featureFlags": "Features",
+  "resetFeatureFlags": "Restore defaults",
+
+  "refresh": "Refresh forecast",
+  "retry": "Try again",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "loading": "Loading the latest forecast…",
+  "offline": "Showing saved data — no network connection.",
+  "errorForecastUnavailable": "Could not fetch the weather forecast.",
+  "attributionMet": "Data: Norwegian Meteorological Institute (MET Norway)"
+}
