@@ -39,7 +39,7 @@ void main() {
       overrides: [
         locationStoreProvider.overrideWithValue(store),
         locationIdGeneratorProvider.overrideWithValue(() => 'id-${++counter}'),
-        mapTileProviderProvider.overrideWithValue(_StubTileProvider()),
+        mapTileProviderProvider.overrideWithValue(_StubTileProvider.new),
       ],
       child: MaterialApp(
         locale: LocaleController.serbianLatin,

@@ -34,6 +34,10 @@ class _LocationMapScreenState extends ConsumerState<LocationMapScreen> {
   final MapController _mapController = MapController();
   late final TextEditingController _name;
 
+  /// Owned by this screen for as long as it is open. [TileLayer] disposes it,
+  /// so it must not be shared with anything that outlives the screen.
+  late final TileProvider _tileProvider;
+
   /// The chosen point. `null` on a fresh add until the grower taps the map or
   /// locates themselves; pre-filled with the saved point on edit, so the
   /// drawer starts open.
@@ -50,6 +54,7 @@ class _LocationMapScreenState extends ConsumerState<LocationMapScreen> {
     super.initState();
     _name = TextEditingController(text: widget.existing?.name ?? '');
     _selected = widget.existing?.coordinates;
+    _tileProvider = ref.read(mapTileProviderProvider)();
   }
 
   @override
@@ -126,58 +131,29 @@ class _LocationMapScreenState extends ConsumerState<LocationMapScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final palette = context.palette;
-    final center = _initialCenter;
     final selected = _selected;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.pickLocation)),
       body: Stack(
         children: [
-          FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              initialCenter: LatLng(center.latitude, center.longitude),
-              initialZoom: 15,
-              // Below the tile layer's own zoom range (0..19) it renders
-              // nothing at all, so the camera must never reach that — without
-              // a floor, zooming out with two fingers goes past 0 and the map
-              // turns blank.
-              minZoom: 3,
-              maxZoom: 19,
-              // A tilted map makes it harder to tell where a tap will land.
-              interactionOptions: const InteractionOptions(
-                flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
-              ),
-              onTap: (_, point) => _selectPoint(point),
-            ),
-            children: [
-              TileLayer(
-                urlTemplate: _tileUrlTemplate,
-                userAgentPackageName: 'com.cropalert.app',
-                maxNativeZoom: 17,
-                tileProvider: ref.watch(mapTileProviderProvider),
-              ),
-              if (selected != null)
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      point: LatLng(selected.latitude, selected.longitude),
-                      // The pin's tip, not its center, marks the coordinate.
-                      alignment: Alignment.topCenter,
-                      width: 40,
-                      height: 40,
-                      child: Icon(
-                        AppIcons.location,
-                        size: 40,
-                        color: palette.brand,
-                      ),
-                    ),
-                  ],
-                ),
-              RichAttributionWidget(
-                attributions: [TextSourceAttribution(l10n.attributionEsri)],
-              ),
-            ],
+          // FlutterMap takes its camera size straight from the incoming
+          // constraints. Unbounded ones make the tile range infinite and
+          // TileLayer throws "Infinity or NaN toInt", so fall back to the
+          // viewport rather than passing infinity through.
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final viewport = MediaQuery.sizeOf(context);
+              return SizedBox(
+                width: constraints.hasBoundedWidth
+                    ? constraints.maxWidth
+                    : viewport.width,
+                height: constraints.hasBoundedHeight
+                    ? constraints.maxHeight
+                    : viewport.height,
+                child: _buildMap(l10n, palette, selected),
+              );
+            },
           ),
           if (selected == null)
             Positioned(
@@ -227,6 +203,67 @@ class _LocationMapScreenState extends ConsumerState<LocationMapScreen> {
             ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMap(
+    AppLocalizations l10n,
+    AppPalette palette,
+    Coordinates? selected,
+  ) {
+    final center = _initialCenter;
+
+    return FlutterMap(
+      mapController: _mapController,
+      options: MapOptions(
+        initialCenter: LatLng(center.latitude, center.longitude),
+        initialZoom: 15,
+        // Below the tile layer's own zoom range (0..19) it renders nothing at
+        // all, so the camera must never reach that — without a floor, zooming
+        // out with two fingers goes past 0 and the map turns blank.
+        minZoom: 3,
+        maxZoom: 19,
+        // A tilted map makes it harder to tell where a tap will land.
+
+        interactionOptions: const InteractionOptions(
+          flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+        ),
+        onTap: (_, point) => _selectPoint(point),
+      ),
+      children: [
+        TileLayer(
+          urlTemplate: _tileUrlTemplate,
+          userAgentPackageName: 'com.cropalert.app',
+          maxNativeZoom: 17,
+          tileProvider: _tileProvider,
+          // Panning and zooming aborts the requests for tiles that scrolled
+          // out of view, and an aborted request counts as a load error. The
+          // default strategy never evicts an errored tile, so those tiles
+          // stayed blank for good once the grower moved the map. Evicting them
+          // lets them be requested again when they come back into view.
+          evictErrorTileStrategy: EvictErrorTileStrategy.notVisibleRespectMargin,
+          // Load a wider ring than is strictly visible and hold onto tiles for
+          // longer, so panning shows imagery rather than the background.
+          panBuffer: 2,
+          keepBuffer: 4,
+        ),
+        if (selected != null)
+          MarkerLayer(
+            markers: [
+              Marker(
+                point: LatLng(selected.latitude, selected.longitude),
+                // The pin's tip, not its center, marks the coordinate.
+                alignment: Alignment.topCenter,
+                width: 40,
+                height: 40,
+                child: Icon(AppIcons.location, size: 40, color: palette.brand),
+              ),
+            ],
+          ),
+        RichAttributionWidget(
+          attributions: [TextSourceAttribution(l10n.attributionEsri)],
+        ),
+      ],
     );
   }
 }

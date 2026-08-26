@@ -58,7 +58,7 @@ void main() {
     return ProviderScope(
       overrides: [
         locationStoreProvider.overrideWithValue(InMemoryLocationStore()),
-        mapTileProviderProvider.overrideWithValue(_StubTileProvider()),
+        mapTileProviderProvider.overrideWithValue(_StubTileProvider.new),
         deviceLocationServiceProvider.overrideWithValue(locationService),
       ],
       child: MaterialApp(

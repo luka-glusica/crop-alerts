@@ -37,13 +37,18 @@ final deviceLocationServiceProvider = Provider<DeviceLocationService>(
   (ref) => GeolocatorDeviceLocation(),
 );
 
-/// Fetches the map screen's satellite tiles.
+/// Builds the tile provider fetching the map screen's satellite tiles.
 ///
 /// Unlike the store providers above, this has a working default: there is
 /// nothing to prepare in `main()`, only a stub to swap in for widget tests,
 /// which have no network.
-final mapTileProviderProvider = Provider<TileProvider>(
-  (ref) => NetworkTileProvider(),
+///
+/// A factory rather than a single instance because [TileLayer] disposes the
+/// provider it is given, and [NetworkTileProvider.dispose] closes its HTTP
+/// client. Sharing one instance meant the first time the map screen closed it
+/// left a dead client behind, and every later visit loaded no tiles at all.
+final mapTileProviderProvider = Provider<TileProvider Function()>(
+  (ref) => NetworkTileProvider.new,
 );
 
 /// Adds, edits, reorders and deletes plots, persisting every change.
