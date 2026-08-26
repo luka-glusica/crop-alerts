@@ -5,6 +5,7 @@ import 'package:crop_alerts/features/crops/data/crop_catalog_codec.dart';
 import 'package:crop_alerts/features/crops/data/local_crop_repository.dart';
 import 'package:crop_alerts/features/crops/domain/crop.dart';
 import 'package:crop_alerts/features/crops/domain/threat.dart';
+import 'package:crop_alerts/features/rules/domain/condition.dart';
 import 'package:crop_alerts/features/rules/domain/rule.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:yaml/yaml.dart';
@@ -35,10 +36,14 @@ void main() {
       expect(en, isNotEmpty);
     });
 
-    test('holds the five seed crops', () {
+    test('holds the shipped crops, in catalogue order', () {
       expect(
         sr.map((c) => c.id).toList(),
-        ['paradajz', 'krompir', 'krastavac', 'kupus', 'luk'],
+        [
+          'paradajz', 'krompir', 'krastavac', 'kupus', 'luk', //
+          'paprika', 'patlidzan', 'sargarepa', 'blitva', 'zelena-salata',
+          'boranija', 'tikvica', 'praziluk', 'prokelj-kelj', 'cvekla',
+        ],
       );
     });
 
@@ -110,6 +115,46 @@ void main() {
             sr[i].threats[j].response.length,
             reason: '${sr[i].id}/${sr[i].threats[j].id} response',
           );
+        }
+      }
+    });
+
+    test('Latin names are identical, because Latin is not translated', () {
+      // The inverse of the check below: scientificName is emitted once and
+      // written to both files, so a difference here means someone hand-edited
+      // a catalogue instead of regenerating it.
+      for (var i = 0; i < sr.length; i++) {
+        for (var j = 0; j < sr[i].threats.length; j++) {
+          expect(
+            en[i].threats[j].scientificName,
+            sr[i].threats[j].scientificName,
+            reason: '${sr[i].id}/${sr[i].threats[j].id} scientific name',
+          );
+        }
+      }
+    });
+
+    test('a caution in one language is a caution in the other', () {
+      // A warning that exists only in Serbian is a warning an English-speaking
+      // grower never sees.
+      for (var i = 0; i < sr.length; i++) {
+        for (var j = 0; j < sr[i].threats.length; j++) {
+          final srThreat = sr[i].threats[j];
+          final enThreat = en[i].threats[j];
+
+          expect(
+            enThreat.caution == null,
+            srThreat.caution == null,
+            reason: '${sr[i].id}/${srThreat.id} caution exists in only one '
+                'language',
+          );
+          if (srThreat.caution != null) {
+            expect(
+              enThreat.caution,
+              isNot(srThreat.caution),
+              reason: '${sr[i].id}/${srThreat.id} caution was not translated',
+            );
+          }
         }
       }
     });
@@ -203,6 +248,33 @@ void main() {
       }
     });
 
+    test('no rule is decided by the calendar alone', () {
+      // A MonthRange reports no observation, so a rule made only of them would
+      // flag a crop with nothing to show the grower — and the UI renders that
+      // list as the entire justification. Every rule needs at least one leaf
+      // that measured something.
+      bool hasWeatherLeaf(Condition condition) => switch (condition) {
+            MonthRange() => false,
+            AllOf(:final conditions) ||
+            AnyOf(:final conditions) =>
+              conditions.any(hasWeatherLeaf),
+            Not(:final condition) ||
+            ConsecutiveDays(:final condition) =>
+              hasWeatherLeaf(condition),
+            _ => true,
+          };
+
+      for (final crop in sr) {
+        for (final rule in crop.rules) {
+          expect(
+            hasWeatherLeaf(rule.condition),
+            isTrue,
+            reason: '${rule.id} matches on the calendar and nothing else',
+          );
+        }
+      }
+    });
+
     test('rule ids are unique across the whole catalogue', () {
       final ids = <String>[];
       for (final crop in sr) {
@@ -229,7 +301,7 @@ void main() {
         'paradajz', 'krastavac', 'grasak', 'boranija', 'tikvica', 'lubenica',
         'luk', 'praziluk', 'beli-luk', 'zelena-salata', 'kupus',
         'prokelj-kelj', 'pasulj', 'krompir', 'batat', 'sargarepa', 'spanac',
-        'blitva', //
+        'blitva', 'paprika', 'patlidzan', 'cvekla', //
       };
 
       for (final crop in sr) {

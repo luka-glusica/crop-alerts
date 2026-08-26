@@ -121,6 +121,10 @@
   "@response": {
     "description": "Heading for what to do once conditions are already favourable for a threat"
   },
+  "caution": "Oprez",
+  "@caution": {
+    "description": "Heading above a warning about the treatment itself, e.g. that sulphur scorches leaves in heat"
+  },
   "whyThisRisk": "Zašto",
   "@whyThisRisk": {
     "description": "Heading above the weather conditions that triggered a rule"

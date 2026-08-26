@@ -33,7 +33,9 @@ class Threat {
     required this.type,
     required this.name,
     required this.rules,
+    this.scientificName,
     this.description,
+    this.caution,
     this.prevention = const [],
     this.response = const [],
   });
@@ -46,6 +48,14 @@ class Threat {
   /// Localized display name, e.g. "Plamenjača".
   final String name;
 
+  /// The binomial, e.g. "Phytophthora infestans".
+  ///
+  /// Deliberately not localized: Latin is the same in every language, which
+  /// makes this the one piece of threat text that cannot drift between the two
+  /// catalogue files. Null for physiological problems, which have no organism
+  /// to name.
+  final String? scientificName;
+
   /// Localized explanation of what the problem is.
   final String? description;
 
@@ -55,6 +65,14 @@ class Threat {
   /// What to do once conditions already favour it.
   final List<String> response;
 
+  /// A localized warning about the advice itself.
+  ///
+  /// Organic does not mean harmless: sulphur scorches leaves above roughly
+  /// 28 °C, essential oils burn in full sun, and some traditional preparations
+  /// are outright banned as plant protection products. Advice that carries a
+  /// risk has to say so next to the advice, not in a footnote nobody reads.
+  final String? caution;
+
   /// The weather patterns that make this threat likely.
   final List<Rule> rules;
 
@@ -62,9 +80,11 @@ class Threat {
         'id': id,
         'type': type.name,
         'name': name,
+        if (scientificName != null) 'scientificName': scientificName,
         if (description != null) 'description': description,
         'prevention': prevention,
         'response': response,
+        if (caution != null) 'caution': caution,
         'rules': rules.map((r) => r.toJson()).toList(),
       };
 

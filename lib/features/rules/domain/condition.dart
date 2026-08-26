@@ -11,6 +11,10 @@ import 'weather_window.dart';
 /// serializes, which is what lets rules eventually arrive from a server —
 /// crowd-sourced or corrected — without shipping a new build.
 ///
+/// All but one leaf ask about the weather. `MonthRange` asks about the
+/// calendar, because an insect's flight period is a fact about the year rather
+/// than about the sky.
+///
 /// `evaluate` returns the observations behind a match rather than a bare bool,
 /// so the app can show a grower *why* a crop is flagged instead of only that it
 /// is.
@@ -294,6 +298,61 @@ class ConsecutiveDays extends Condition {
         'type': type,
         'days': days,
         'condition': condition.toJson(),
+      };
+}
+
+/// Whether the day falls inside a range of months.
+///
+/// Insect rules need this. "Carrot fly's first generation flies in May and
+/// June" is not a statement about temperature, and a rule that fires whenever
+/// the weather merely resembles May will warn about a pest that is still a pupa
+/// in the soil.
+///
+/// Ranges wrap the year exactly as `GrowingSeason` does, so `fromMonth: 10,
+/// toMonth: 3` covers October through March rather than nothing at all. The
+/// logic is duplicated rather than shared because `GrowingSeason` belongs to
+/// the crops feature, which already depends on this one.
+///
+/// A match reports no observations. `RuleObservation` describes a measurement
+/// against a requirement, and a month is neither; more to the point, "it is
+/// May" is not evidence a grower can weigh — the weather that came with May is.
+/// So a `MonthRange` must never be a rule's only condition, or the rule would
+/// flag a crop with nothing to show for it. Compose it inside an [AllOf]
+/// alongside the weather that matters.
+class MonthRange extends Condition {
+  const MonthRange({required this.fromMonth, required this.toMonth})
+      : assert(fromMonth >= 1 && fromMonth <= 12, 'fromMonth must be 1–12'),
+        assert(toMonth >= 1 && toMonth <= 12, 'toMonth must be 1–12');
+
+  /// First month of the range, 1–12.
+  final int fromMonth;
+
+  /// Last month of the range, inclusive, 1–12.
+  final int toMonth;
+
+  /// Whether the range runs across the turn of the year.
+  bool get wrapsYear => fromMonth > toMonth;
+
+  @override
+  String get type => 'monthRange';
+
+  @override
+  ConditionResult evaluate(WeatherWindow window) {
+    final month = window.date.month;
+    final inRange = wrapsYear
+        ? month >= fromMonth || month <= toMonth
+        : month >= fromMonth && month <= toMonth;
+
+    return inRange
+        ? const ConditionResult(matched: true)
+        : ConditionResult.noMatch;
+  }
+
+  @override
+  Map<String, dynamic> toJson() => {
+        'type': type,
+        'fromMonth': fromMonth,
+        'toMonth': toMonth,
       };
 }
 

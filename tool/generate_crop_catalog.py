@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Generates assets/content/crops_sr.json and crops_en.json from one source,
 so the two languages cannot drift structurally."""
-import json, collections
+import json, collections, os
 
 def band(lo, hi):
     """Infection window: the leaf passed through this temperature at some point.
@@ -33,7 +33,19 @@ def temp_below(v):
     return {"type": "metricThreshold", "metric": "minTemperature", "comparator": "lessThan", "value": v}
 
 def dry_air(v):
+    """The air got dry at some point in the day. Use a genuinely low value."""
     return {"type": "metricThreshold", "metric": "minHumidity", "comparator": "lessThan", "value": v}
+
+def dry_day(v):
+    """The day as a whole was dry.
+
+    The mirror of the humid_max trap. A daily *minimum* humidity below 65% is
+    true on essentially every summer afternoon -- in the captured Belgrade
+    forecast it holds on all ten days -- so a rule keyed to it is keyed to
+    nothing. Sustained dryness has to be read off the average.
+    """
+    return {"type": "metricThreshold", "metric": "averageHumidity",
+            "comparator": "lessThan", "value": v}
 
 def rain_at_least(days, mm):
     return {"type": "sumOverDays", "metric": "precipitation", "days": days,
@@ -42,6 +54,17 @@ def rain_at_least(days, mm):
 def rain_at_most(days, mm):
     return {"type": "sumOverDays", "metric": "precipitation", "days": days,
             "comparator": "atMost", "value": mm}
+
+def month_range(lo, hi):
+    """The calendar gate. Wraps the year, so (10, 3) is October-March.
+
+    For insects whose generations are pinned to the season rather than to the
+    thermometer: carrot fly's first flight is May-June, and a warm March does
+    not bring it forward. Never use alone -- a month on its own matches with no
+    observation to show the grower, so always compose inside all_of() with the
+    weather that actually matters.
+    """
+    return {"type": "monthRange", "fromMonth": lo, "toMonth": hi}
 
 def all_of(*c):
     return {"type": "allOf", "conditions": list(c)}
@@ -53,14 +76,58 @@ def rule(crop, threat, name, condition=None, weight=1):
         r["weight"] = weight
     return r
 
+# ------------------------------------------------------------------ cautions
+# Organic does not mean harmless. These are shared because the warning is a
+# property of the substance, not of the crop it is sprayed on -- and a safety
+# message that drifts between two threats is worse than one written once.
+
+COPPER = {
+    "sr": "Bakar se ne razgrađuje — trajno se nakuplja u zemljištu i šteti "
+          "kišnim glistama i zemljišnom mikroflori. U organskoj proizvodnji "
+          "dozvoljeno je najviše 4 kg bakra po hektaru godišnje. Koristite ga "
+          "kao poslednju meru, a ne preventivno po rasporedu.",
+    "en": "Copper does not break down — it accumulates permanently in the soil "
+          "and harms earthworms and soil life. Organic production allows at "
+          "most 4 kg of copper per hectare per year. Treat it as a last "
+          "resort, never as a scheduled preventive.",
+}
+
+SULPHUR = {
+    "sr": "Sumpor spaljuje list iznad približno 28 °C i ne sme se mešati sa "
+          "uljnim preparatima, niti primenjivati u razmaku manjem od dve "
+          "nedelje od njih. Prskajte po oblačnom danu.",
+    "en": "Sulphur scorches foliage above roughly 28 °C and must never be "
+          "mixed with oil preparations, nor applied within a fortnight of one. "
+          "Spray on a cloudy day.",
+}
+
+OILS = {
+    "sr": "Uljni i sapunski preparati deluju tako što zapušavaju disajne "
+          "otvore insekata, ali na suncu spaljuju list. Prskajte uveče i prvo "
+          "isprobajte na nekoliko listova, jer sorte različito reaguju.",
+    "en": "Oil and soap preparations work by blocking the insects' breathing "
+          "pores, but they scorch leaves in sun. Spray in the evening, and "
+          "test on a few leaves first — varieties differ in how they react.",
+}
+
 CROPS = []
 
 def crop(cid, season, names, threats):
     CROPS.append({"id": cid, "season": season, "names": names, "threats": threats})
 
-def threat(tid, ttype, names, descriptions, prevention, response, rules):
-    return {"id": tid, "type": ttype, "names": names, "descriptions": descriptions,
-            "prevention": prevention, "response": response, "rules": rules}
+def threat(tid, ttype, names, descriptions, prevention, response, rules,
+           scientific=None, cautions=None):
+    """A threat. `scientific` is a Latin binomial, emitted identically to both
+    languages -- it is the one field that cannot drift. `cautions` is a
+    {"sr": ..., "en": ...} warning about the advice itself, for treatments that
+    can damage the crop or are restricted."""
+    t = {"id": tid, "type": ttype, "names": names, "descriptions": descriptions,
+         "prevention": prevention, "response": response, "rules": rules}
+    if scientific:
+        t["scientific"] = scientific
+    if cautions:
+        t["cautions"] = cautions
+    return t
 
 # ---------------------------------------------------------------- paradajz
 crop("paradajz", (5, 10), {"sr": "Paradajz", "en": "Tomato"}, [
@@ -86,7 +153,8 @@ crop("paradajz", (5, 10), {"sr": "Paradajz", "en": "Tomato"}, [
                 "Pick healthy fruit before the infection advances."]},
         [rule("paradajz", "plamenjaca", "uslovi-za-infekciju",
               all_of(band(15, 25), humid_min(60)), weight=2),
-         rule("paradajz", "plamenjaca", "padavine", rain_at_least(2, 10))]),
+         rule("paradajz", "plamenjaca", "padavine", rain_at_least(2, 10))],
+        scientific="Phytophthora infestans", cautions=COPPER),
 
     threat("crna-pegavost", "fungalDisease",
         {"sr": "Crna pegavost", "en": "Early blight"},
@@ -105,7 +173,8 @@ crop("paradajz", (5, 10), {"sr": "Paradajz", "en": "Tomato"}, [
                 "Treat with an approved copper preparation.",
                 "Water in the morning so leaves go into the night dry."]},
         [rule("paradajz", "crna-pegavost", "uslovi-za-infekciju",
-              all_of(band(24, 29), humid_min(55)), weight=2)]),
+              all_of(band(24, 29), humid_min(55)), weight=2)],
+        scientific="Alternaria solani", cautions=COPPER),
 
     threat("paradajzov-moljac", "pest",
         {"sr": "Paradajzov moljac", "en": "Tomato leafminer"},
@@ -125,7 +194,8 @@ crop("paradajz", (5, 10), {"sr": "Paradajz", "en": "Tomato"}, [
                 "Strip mined leaves before the larvae move into the fruit."]},
         [rule("paradajz", "paradajzov-moljac", "toplo", avg_band(20, 32)),
          rule("paradajz", "paradajzov-moljac", "toplotni-talas",
-              consecutive(3, temp_above(30)))]),
+              consecutive(3, temp_above(30)))],
+        scientific="Tuta absoluta"),
 
     threat("trulez-vrha-ploda", "other",
         {"sr": "Truljenje vrha ploda", "en": "Blossom-end rot"},
@@ -143,8 +213,11 @@ crop("paradajz", (5, 10), {"sr": "Paradajz", "en": "Tomato"}, [
          "en": ["Return to a steady rhythm of smaller, regular waterings.",
                 "Mulch straight away to cut evaporation.",
                 "Pick off affected fruit so the plant stops spending on it."]},
+        # Heat alone is not the mechanism. The plant stops moving calcium when
+        # transpiration stalls, which needs hot *and* dry air, not just hot.
         [rule("paradajz", "trulez-vrha-ploda", "vrucina-i-susa",
-              all_of(temp_above(30), rain_at_most(5, 5)), weight=2)]),
+              all_of(temp_above(30), dry_day(65), rain_at_most(5, 5)),
+              weight=2)]),
 ])
 
 # ---------------------------------------------------------------- krompir
@@ -171,7 +244,8 @@ crop("krompir", (3, 9), {"sr": "Krompir", "en": "Potato"}, [
                 "Lift the tubers in dry weather."]},
         [rule("krompir", "plamenjaca", "uslovi-za-infekciju",
               all_of(band(15, 21), humid_min(65)), weight=2),
-         rule("krompir", "plamenjaca", "padavine", rain_at_least(3, 15))]),
+         rule("krompir", "plamenjaca", "padavine", rain_at_least(3, 15))],
+        scientific="Phytophthora infestans", cautions=COPPER),
 
     threat("crna-pegavost", "fungalDisease",
         {"sr": "Crna pegavost", "en": "Early blight"},
@@ -190,7 +264,8 @@ crop("krompir", (3, 9), {"sr": "Krompir", "en": "Potato"}, [
                 "Treat with an approved copper preparation.",
                 "Feed the crop to strengthen it."]},
         [rule("krompir", "crna-pegavost", "uslovi-za-infekciju",
-              all_of(band(24, 29), humid_min(55)), weight=2)]),
+              all_of(band(24, 29), humid_min(55)), weight=2)],
+        scientific="Alternaria solani", cautions=COPPER),
 
     threat("zlatica", "pest",
         {"sr": "Krompirova zlatica", "en": "Colorado potato beetle"},
@@ -209,7 +284,8 @@ crop("krompir", (3, 9), {"sr": "Krompir", "en": "Potato"}, [
                 "Use Bacillus thuringiensis var. tenebrionis while larvae are young.",
                 "Remove badly stripped haulm."]},
         [rule("krompir", "zlatica", "toplo-i-suvo",
-              all_of(temp_above(25), rain_at_most(3, 3)), weight=2)]),
+              all_of(temp_above(25), rain_at_most(3, 3)), weight=2)],
+        scientific="Leptinotarsa decemlineata"),
 
     threat("pucanje-krtola", "other",
         {"sr": "Pucanje i deformacije krtola", "en": "Tuber cracking"},
@@ -247,7 +323,8 @@ crop("krastavac", (5, 9), {"sr": "Krastavac", "en": "Cucumber"}, [
                 "Remove the first infected leaves and take them out of the garden."]},
         [rule("krastavac", "plamenjaca", "uslovi-za-infekciju",
               all_of(band(20, 27), humid_min(65)), weight=2),
-         rule("krastavac", "plamenjaca", "padavine", rain_at_least(2, 10))]),
+         rule("krastavac", "plamenjaca", "padavine", rain_at_least(2, 10))],
+        scientific="Pseudoperonospora cubensis", cautions=COPPER),
 
     threat("pepelnica", "fungalDisease",
         {"sr": "Pepelnica", "en": "Powdery mildew"},
@@ -266,7 +343,8 @@ crop("krastavac", (5, 9), {"sr": "Krastavac", "en": "Cucumber"}, [
                 "Apply an approved sulphur preparation on a cloudy day, never in heat.",
                 "Pull off the worst-affected lower leaves."]},
         [rule("krastavac", "pepelnica", "toplo-uz-suv-list",
-              all_of(band(20, 27), rain_at_most(3, 1)), weight=2)]),
+              all_of(band(20, 27), rain_at_most(3, 1)), weight=2)],
+        scientific="Podosphaera xanthii", cautions=SULPHUR),
 
     threat("paucinar", "pest",
         {"sr": "Obični paučinar", "en": "Two-spotted spider mite"},
@@ -286,7 +364,8 @@ crop("krastavac", (5, 9), {"sr": "Krastavac", "en": "Cucumber"}, [
                 "Remove and destroy the worst-affected leaves."]},
         [rule("krastavac", "paucinar", "vrucina-i-suv-vazduh",
               all_of(temp_above(27), dry_air(40))),
-         rule("krastavac", "paucinar", "susa", rain_at_most(5, 1))]),
+         rule("krastavac", "paucinar", "susa", rain_at_most(5, 1))],
+        scientific="Tetranychus urticae", cautions=OILS),
 
     threat("gorcina-ploda", "other",
         {"sr": "Gorčina ploda", "en": "Fruit bitterness"},
@@ -324,7 +403,8 @@ crop("kupus", (4, 11), {"sr": "Kupus", "en": "Cabbage"}, [
                 "Collect infected leaves and destroy them away from the garden."]},
         [rule("kupus", "plamenjaca", "uslovi-za-infekciju",
               all_of(band(15, 20), humid_min(60)), weight=2),
-         rule("kupus", "plamenjaca", "padavine", rain_at_least(2, 10))]),
+         rule("kupus", "plamenjaca", "padavine", rain_at_least(2, 10))],
+        scientific="Hyaloperonospora brassicae", cautions=COPPER),
 
     threat("crna-trulez", "other",
         {"sr": "Crna trulež", "en": "Black rot"},
@@ -343,7 +423,8 @@ crop("kupus", (4, 11), {"sr": "Kupus", "en": "Cabbage"}, [
                 "Stop all work in a wet crop — hands and tools carry the bacterium.",
                 "Improve drainage and stop watering over the leaves."]},
         [rule("kupus", "crna-trulez", "toplo-i-kisovito",
-              all_of(avg_band(25, 30), rain_at_least(3, 15)), weight=2)]),
+              all_of(avg_band(25, 30), rain_at_least(3, 15)), weight=2)],
+        scientific="Xanthomonas campestris pv. campestris"),
 
     threat("kupusar", "pest",
         {"sr": "Kupusar", "en": "Large white butterfly"},
@@ -362,7 +443,38 @@ crop("kupus", (4, 11), {"sr": "Kupus", "en": "Cabbage"}, [
                 "Use Bacillus thuringiensis while the caterpillars are young.",
                 "Remove the worst-chewed leaves."]},
         [rule("kupus", "kupusar", "toplo", avg_band(18, 28)),
-         rule("kupus", "kupusar", "suvo", rain_at_most(3, 2))]),
+         rule("kupus", "kupusar", "suvo", rain_at_most(3, 2))],
+        scientific="Pieris brassicae"),
+
+    threat("kupusna-muva", "pest",
+        {"sr": "Kupusna muva", "en": "Cabbage root fly"},
+        {"sr": "Larve buše vrat i koren, pa biljka zaostaje u rastu, list dobija modrozelenu boju i vene po suncu iako je zemljište vlažno. Prva generacija poleće u proleće, čim se tlo zagreje, i najopasnija je za mlade biljke.",
+         "en": "Larvae bore into the neck and root, so the plant stalls, the leaves turn blue-green and wilt in sun even though the soil is moist. The first generation flies in spring as soon as the ground warms, and is the dangerous one for young plants."},
+        {"sr": ["Okovratnici od kartona ili filca oko vrata biljke odmah po sadnji.",
+                "Mreže protiv insekata preko gredice tokom leta muve.",
+                "Plodored, sa parcelom udaljenom od prošlogodišnjih krstašica.",
+                "Malčiranje, koje otežava muvi da dođe do zemlje uz stablo."],
+         "en": ["Cardboard or felt collars around the stem right after planting.",
+                "Insect netting over the bed through the flight period.",
+                "Rotate, keeping the plot away from last year's brassicas.",
+                "Mulch, which makes it harder for the fly to reach the soil at the stem."]},
+        {"sr": ["Vađenje i uništavanje napadnutih biljaka zajedno sa larvama.",
+                "Zagrtanje biljaka, da iznad oštećenja razviju novo korenje.",
+                "Zalivanje rastvorom entomopatogenih nematoda u koren.",
+                "Prihrana, da biljka nadoknadi izgubljeni koren."],
+         "en": ["Pull and destroy attacked plants together with the larvae.",
+                "Earth up the plants so they can root again above the damage.",
+                "Drench the root zone with entomopathogenic nematodes.",
+                "Feed the crop so it can replace the lost root."]},
+        # Two generations worth warning about, and they are different problems.
+        # The spring one kills transplants outright; the summer ones mostly
+        # spoil the harvest, so it carries less weight.
+        [rule("kupus", "kupusna-muva", "prvi-let",
+              all_of(month_range(4, 5), consecutive(3, avg_band(12, 25))),
+              weight=2),
+         rule("kupus", "kupusna-muva", "kasnije-generacije",
+              all_of(month_range(6, 8), avg_band(16, 26)))],
+        scientific="Delia radicum"),
 
     threat("pucanje-glavica", "other",
         {"sr": "Pucanje glavica", "en": "Head splitting"},
@@ -400,7 +512,8 @@ crop("luk", (3, 8), {"sr": "Luk (crni)", "en": "Onion"}, [
                 "Break the soil crust shallowly so the ground dries faster."]},
         [rule("luk", "plamenjaca", "uslovi-za-infekciju",
               all_of(band(15, 20), humid_min(60)), weight=2),
-         rule("luk", "plamenjaca", "padavine", rain_at_least(3, 10))]),
+         rule("luk", "plamenjaca", "padavine", rain_at_least(3, 10))],
+        scientific="Peronospora destructor", cautions=COPPER),
 
     threat("purpurna-pegavost", "fungalDisease",
         {"sr": "Purpurna pegavost", "en": "Purple blotch"},
@@ -419,7 +532,8 @@ crop("luk", (3, 8), {"sr": "Luk (crni)", "en": "Onion"}, [
                 "Strip badly affected leaves.",
                 "Stop watering over the foliage."]},
         [rule("luk", "purpurna-pegavost", "uslovi-za-infekciju",
-              all_of(avg_band(22, 30), humid_min(55)), weight=2)]),
+              all_of(avg_band(22, 30), humid_min(55)), weight=2)],
+        scientific="Alternaria porri", cautions=COPPER),
 
     threat("lukova-muva", "pest",
         {"sr": "Lukova muva", "en": "Onion fly"},
@@ -437,8 +551,13 @@ crop("luk", (3, 8), {"sr": "Luk (crni)", "en": "Onion"}, [
          "en": ["Pull and destroy attacked plants together with the larvae.",
                 "Dust wood ash or rock flour around the plants.",
                 "Drench with entomopathogenic nematodes."]},
+        # Gated to spring. The damaging first flight is April-June; without the
+        # gate any mild, humid autumn day matched this too, and by then the
+        # bulb is lifted or lifting.
         [rule("luk", "lukova-muva", "uslovi-za-let",
-              all_of(avg_band(12, 22), humid_max(80)), weight=2)]),
+              all_of(month_range(4, 6), avg_band(12, 22), humid_max(80)),
+              weight=2)],
+        scientific="Delia antiqua"),
 
     threat("trulez-od-prevlazenosti", "other",
         {"sr": "Trulež usled prevlaženosti", "en": "Waterlogging rot"},
@@ -458,6 +577,771 @@ crop("luk", (3, 8), {"sr": "Luk (crni)", "en": "Onion"}, [
               rain_at_least(5, 40), weight=2)]),
 ])
 
+# ---------------------------------------------------------------- paprika
+crop("paprika", (5, 10), {"sr": "Paprika", "en": "Pepper"}, [
+    threat("pepelnica", "fungalDisease",
+        {"sr": "Pepelnica paprike", "en": "Pepper powdery mildew"},
+        {"sr": "Za razliku od većine pepelnica, ova se prvo vidi kao žute pege na licu lista, dok je beličasta prevlaka na naličju. List opada odozdo naviše i plod ostaje nezaštićen na suncu, pa strada od ožegotina.",
+         "en": "Unlike most powdery mildews this one shows first as yellow blotches on the upper leaf, with the white bloom underneath. Leaves drop from the bottom up, leaving the fruit unshaded and prone to sunscald."},
+        {"sr": ["Razmak sadnje koji omogućava protok vazduha kroz red.",
+                "Izbegavanje viška azota, koji daje mekan i osetljiv list.",
+                "Redovan pregled naličja donjih listova, gde se prvo javlja."],
+         "en": ["Space plants so air can move down the row.",
+                "Avoid excess nitrogen, which gives soft susceptible leaves.",
+                "Check the undersides of the lower leaves, where it starts."]},
+        {"sr": ["Prskanje rastvorom sode bikarbone sa nekoliko kapi biljnog ulja.",
+                "Primena dozvoljenog sumpornog preparata, po oblačnom danu.",
+                "Uklanjanje najzahvaćenijih donjih listova.",
+                "Senčenje plodova koji su ostali izloženi nakon opadanja lišća."],
+         "en": ["Spray a baking soda solution with a few drops of vegetable oil.",
+                "Apply an approved sulphur preparation on a cloudy day.",
+                "Strip the worst-affected lower leaves.",
+                "Shade fruit left exposed once the leaves have dropped."]},
+        [rule("paprika", "pepelnica", "toplo-uz-suv-list",
+              all_of(band(20, 30), rain_at_most(3, 1)), weight=2)],
+        scientific="Leveillula taurica", cautions=SULPHUR),
+
+    threat("kukuruzna-sovica", "pest",
+        {"sr": "Kukuruzna sovica", "en": "Cotton bollworm"},
+        {"sr": "Noćni leptir čije se gusenice ubušuju pravo u plod i hrane se iznutra. Rupa koju naprave pušta trulež, pa se plod ne može spasti. Ima tri generacije godišnje, a druga, sredinom leta, pravi najveću štetu.",
+         "en": "A night-flying moth whose caterpillars bore straight into the fruit and feed inside. The hole they leave lets rot in, so the fruit cannot be saved. There are three generations a year, and the second, in midsummer, does the most damage."},
+        {"sr": ["Feromonske klopke za praćenje leta, postavljene pre nego što počne.",
+                "Mreže preko rasadnika, jer prva generacija napada mlade biljke.",
+                "Pregled listova na svakih 3 do 5 dana od početka jula, dok su jaja još beličasta.",
+                "Uklanjanje i uništavanje napadnutih plodova, sa gusenicom u njima."],
+         "en": ["Pheromone traps to track the flight, set before it starts.",
+                "Netting over seedbeds, since the first generation goes for young plants.",
+                "Inspect leaves every three to five days from early July, while the eggs are still pale.",
+                "Remove and destroy attacked fruit with the caterpillar still inside."]},
+        {"sr": ["Preparati na bazi Bacillus thuringiensis dok su gusenice mlade i još na listu.",
+                "Ručno uklanjanje gusenica pri večernjem pregledu.",
+                "Jak mlaz vode po celoj biljci, kojim se spiraju jaja i tek ispiljene gusenice.",
+                "Berba zdravih plodova pre nego što dozru do napada."],
+         "en": ["Bacillus thuringiensis while the caterpillars are young and still on the leaf.",
+                "Hand-pick caterpillars during an evening inspection.",
+                "Hose the whole plant hard to wash off eggs and newly hatched larvae.",
+                "Pick sound fruit before it ripens into the attack."]},
+        # Once a caterpillar is inside the fruit nothing reaches it, so the
+        # useful warning is the flight, not the damage.
+        [rule("paprika", "kukuruzna-sovica", "druga-generacija",
+              all_of(month_range(7, 8), avg_band(20, 30)), weight=2),
+         rule("paprika", "kukuruzna-sovica", "prvi-let",
+              all_of(month_range(6, 6), avg_band(18, 28)))],
+        scientific="Helicoverpa armigera"),
+
+    threat("bakterioza", "other",
+        {"sr": "Bakteriozna pegavost", "en": "Bacterial spot"},
+        {"sr": "Bakterijsko oboljenje, ne gljivično — zato bakarni preparati protiv njega slabo pomažu. Daje tamne masne pege koje se suše i ispadaju, list opada, a biljka zaostaje u rastu. Dolazi semenom ili kupljenim rasadom i zadržava se na semenu i po godinu i po dana.",
+         "en": "A bacterial disease, not a fungal one, which is why copper does little against it. It gives dark greasy spots that dry and fall out, the leaves drop, and the plant stalls. It arrives on seed or bought transplants, and survives on seed for well over a year."},
+        {"sr": ["Sopstveni rasad iz semena poznatog porekla.",
+                "Tretman semena toplom vodom pre setve.",
+                "Plodored od najmanje tri godine bez paprike i paradajza.",
+                "Ne raditi u usevu dok su biljke mokre, jer se bakterija prenosi rukama i alatom."],
+         "en": ["Raise your own transplants from seed of known origin.",
+                "Hot-water treat the seed before sowing.",
+                "Rotate at least three years without peppers or tomatoes.",
+                "Never work in the crop while the plants are wet — hands and tools carry it."]},
+        {"sr": ["Vađenje i uništavanje najjače zahvaćenih biljaka izvan bašte.",
+                "Prekid zalivanja preko lista i prelazak na koren.",
+                "Prekid svih radova u mokrom usevu.",
+                "Prihrana, da preostale biljke izdrže do kraja sezone."],
+         "en": ["Pull and destroy the worst plants away from the garden.",
+                "Stop watering over the leaves and switch to the root.",
+                "Stop all work in a wet crop.",
+                "Feed the crop so the remaining plants hold out to the end of the season."]},
+        # Splash is the mechanism: warm summer rain moves it between plants.
+        [rule("paprika", "bakterioza", "topla-kisa",
+              all_of(month_range(6, 8), avg_band(24, 32), rain_at_least(2, 8)),
+              weight=2)],
+        scientific="Xanthomonas euvesicatoria"),
+
+    threat("trulez-vrha-ploda", "other",
+        {"sr": "Truljenje vrha ploda", "en": "Blossom-end rot"},
+        {"sr": "Fiziološki poremećaj, a ne bolest: po vrućini i suvom vazduhu biljka ne stigne da prenese kalcijum do ploda, pa vrh ploda potamni i uvuče se. Ne prenosi se sa biljke na biljku i ne leči se prskanjem po listu.",
+         "en": "A physiological disorder rather than a disease: in heat and dry air the plant cannot move calcium out to the fruit, so its tip darkens and sinks in. It does not spread from plant to plant, and no foliar spray will fix it."},
+        {"sr": ["Ravnomerno zalivanje, bez naglih sušnih prekida.",
+                "Malčiranje radi zadržavanja vlage u zemljištu.",
+                "Izbegavanje viška azota, koji tera biljku u list na račun ploda."],
+         "en": ["Water evenly, without sudden dry spells.",
+                "Mulch to hold moisture in the soil.",
+                "Avoid excess nitrogen, which pushes the plant into leaf at the fruit's expense."]},
+        {"sr": ["Uspostavljanje redovnog ritma zalivanja manjim količinama.",
+                "Hitno malčiranje radi smanjenja isparavanja.",
+                "Senčenje u najtoplijem delu dana.",
+                "Uklanjanje zahvaćenih plodova, da biljka ne troši snagu na njih."],
+         "en": ["Return to a steady rhythm of smaller, regular waterings.",
+                "Mulch straight away to cut evaporation.",
+                "Shade the plants through the hottest part of the day.",
+                "Pick off affected fruit so the plant stops spending on it."]},
+        [rule("paprika", "trulez-vrha-ploda", "vrucina-i-suv-vazduh",
+              all_of(temp_above(30), dry_day(65), rain_at_most(5, 5)),
+              weight=2)]),
+])
+
+# ---------------------------------------------------------------- patlidzan
+crop("patlidzan", (5, 10), {"sr": "Patlidžan", "en": "Aubergine"}, [
+    threat("crna-pegavost", "fungalDisease",
+        {"sr": "Crna pegavost", "en": "Early blight"},
+        {"sr": "Koncentrične tamne pege na starijem lišću koje se šire naviše; pogoduje joj toplo vreme sa smenom vlaženja i sušenja lista. Ogoljena biljka daje sitne plodove sklone ožegotinama.",
+         "en": "Dark concentric spots on older leaves that spread upward, favoured by warm weather where the leaf repeatedly wets and dries. A stripped plant gives small fruit prone to sunscald."},
+        {"sr": ["Malčiranje tla, da kišne kapi ne prskaju zemlju na donje lišće.",
+                "Uravnotežena ishrana azotom.",
+                "Razmak sadnje dovoljan da se list brzo osuši posle kiše.",
+                "Uklanjanje biljnih ostataka posle berbe."],
+         "en": ["Mulch the soil so rain cannot splash it onto the lower leaves.",
+                "Keep nitrogen feeding balanced.",
+                "Space plants far enough apart that leaves dry quickly after rain.",
+                "Clear plant debris after harvest."]},
+        {"sr": ["Uklanjanje najstarijih zaraženih listova.",
+                "Tretman dozvoljenim bakarnim preparatom.",
+                "Zalivanje ujutru, da list prenoći suv.",
+                "Prihrana radi jačanja biljke."],
+         "en": ["Strip the oldest infected leaves.",
+                "Treat with an approved copper preparation.",
+                "Water in the morning so leaves go into the night dry.",
+                "Feed the crop to strengthen it."]},
+        [rule("patlidzan", "crna-pegavost", "uslovi-za-infekciju",
+              all_of(band(24, 29), humid_min(55)), weight=2)],
+        scientific="Alternaria solani", cautions=COPPER),
+
+    threat("paucinar", "pest",
+        {"sr": "Obični paučinar", "en": "Two-spotted spider mite"},
+        {"sr": "Sitna grinja na naličju lista, koja patlidžan napada teže nego većinu drugih kultura. Po vrućem i suvom vremenu množi se eksplozivno: list postaje tačkast, sivkast, pa se suši, a između listova se vidi fina paučina.",
+         "en": "A tiny mite on the leaf underside, which hits aubergine harder than most crops. In hot dry weather it multiplies explosively — the leaf goes stippled, then grey, then dies, with fine webbing strung between the leaves."},
+        {"sr": ["Redovan pregled naličja listova, jer se napad primeti tek kad je odmakao.",
+                "Održavanje vlažnosti vazduha oko biljaka u vrhuncu vrućina.",
+                "Uklanjanje korova koji su domaćini grinje.",
+                "Izbegavanje prašnjavih staza uz gredicu, koje pogoduju grinji."],
+         "en": ["Check leaf undersides regularly — an attack is usually noticed late.",
+                "Keep humidity up around the plants during the hottest spells.",
+                "Clear weeds that host the mite.",
+                "Avoid dusty paths beside the bed, which suit the mite."]},
+        {"sr": ["Jako orošavanje naličja lista vodom, čime se populacija razbija.",
+                "Preparati na bazi biljnih ulja ili kalijumovog sapuna.",
+                "Uklanjanje i uništavanje najjače napadnutih listova.",
+                "Ponavljanje tretmana na 5 do 7 dana, jer jaja preživljavaju prvo prskanje."],
+         "en": ["Hose the leaf undersides hard with water to break up the population.",
+                "Use plant-oil or potassium-soap preparations.",
+                "Remove and destroy the worst-affected leaves.",
+                "Repeat every five to seven days — the eggs survive the first spray."]},
+        [rule("patlidzan", "paucinar", "vrucina-i-suv-vazduh",
+              all_of(temp_above(27), dry_air(40))),
+         rule("patlidzan", "paucinar", "susa", rain_at_most(5, 1))],
+        scientific="Tetranychus urticae", cautions=OILS),
+
+    threat("trulez-vrha-ploda", "other",
+        {"sr": "Truljenje vrha ploda", "en": "Blossom-end rot"},
+        {"sr": "Fiziološki poremećaj: po vrućini i suvom vazduhu kalcijum ne stigne do vrha ploda, pa on potamni i uvuče se. Kod patlidžana se često javi na prvim, najkrupnijim plodovima, dok je korenov sistem još mlad.",
+         "en": "A physiological disorder: in heat and dry air calcium never reaches the tip of the fruit, which darkens and sinks in. On aubergine it usually strikes the first, largest fruit, while the root system is still young."},
+        {"sr": ["Ravnomerno zalivanje, bez naglih sušnih prekida.",
+                "Malčiranje radi zadržavanja vlage u zemljištu.",
+                "Presadnja u toplo zemljište, jer biljka iz hladnog tla sporo razvija koren."],
+         "en": ["Water evenly, without sudden dry spells.",
+                "Mulch to hold moisture in the soil.",
+                "Transplant into warm soil — a plant set in cold ground roots slowly."]},
+        {"sr": ["Uspostavljanje redovnog ritma zalivanja manjim količinama.",
+                "Hitno malčiranje radi smanjenja isparavanja.",
+                "Uklanjanje zahvaćenih plodova, čime se sledeći plodovi spasavaju."],
+         "en": ["Return to a steady rhythm of smaller, regular waterings.",
+                "Mulch straight away to cut evaporation.",
+                "Pick off affected fruit, which saves the ones coming after it."]},
+        [rule("patlidzan", "trulez-vrha-ploda", "vrucina-i-suv-vazduh",
+              all_of(temp_above(30), dry_day(65), rain_at_most(5, 5)),
+              weight=2)]),
+])
+
+# ---------------------------------------------------------------- sargarepa
+crop("sargarepa", (3, 10), {"sr": "Šargarepa", "en": "Carrot"}, [
+    threat("pegavost-lista", "fungalDisease",
+        {"sr": "Pegavost lista", "en": "Leaf blight"},
+        {"sr": "Tamne pege sa žutim rubom na starijem lišću, koje se spajaju dok se cela rozeta ne osuši. Bez lista koren prestaje da raste, a osušena rozeta se kida pri vađenju, pa koren ostaje u zemlji.",
+         "en": "Dark spots with a yellow margin on the older leaves, merging until the whole top dries off. Without leaves the root stops growing, and a dead top snaps when you pull, leaving the root in the ground."},
+        {"sr": ["Plodored od najmanje četiri godine bez štitarki.",
+                "Prorede na vreme, da vazduh prolazi kroz red.",
+                "Zalivanje u koren, ujutru, da list prenoći suv.",
+                "Uklanjanje biljnih ostataka posle vađenja."],
+         "en": ["A rotation of at least four years without umbellifers.",
+                "Thin on time so air passes down the row.",
+                "Water at the root in the morning, so leaves go into the night dry.",
+                "Clear plant debris after lifting."]},
+        {"sr": ["Uklanjanje najstarijeg zaraženog lišća.",
+                "Tretman čajem od rastavića radi jačanja lista.",
+                "Prekid zalivanja preko lista.",
+                "Vađenje korena čim dostigne upotrebnu veličinu, ako se rozeta suši."],
+         "en": ["Strip the oldest infected leaves.",
+                "Treat with horsetail tea to toughen the foliage.",
+                "Stop watering over the leaves.",
+                "Lift the roots as soon as they are usable if the tops are dying back."]},
+        [rule("sargarepa", "pegavost-lista", "uslovi-za-infekciju",
+              all_of(band(20, 28), humid_min(60)), weight=2),
+         rule("sargarepa", "pegavost-lista", "padavine", rain_at_least(2, 10))],
+        scientific="Alternaria dauci"),
+
+    threat("mrkvina-muva", "pest",
+        {"sr": "Mrkvina muva", "en": "Carrot fly"},
+        {"sr": "Larve se ubušuju u koren i buše ga hodnicima punim izmeta, pa koren pogorča i ne može se koristiti. Napadnute biljke se prepoznaju po ljubičastom lišću koje kasnije požuti. Ima dve generacije: prva poleće u maju i junu, druga u julu, i ta je brojnija.",
+         "en": "The larvae tunnel into the root, filling it with frass, and the root turns bitter and unusable. Attacked plants show purple foliage that later yellows. There are two generations: the first flies in May and June, the second in July, and the second is the larger."},
+        {"sr": ["Plodored od četiri godine; celer je posebno loš predusev.",
+                "Mreže protiv insekata preko gredice tokom leta.",
+                "Malčiranje već sredinom maja, da muva ne dođe do zemlje uz koren.",
+                "Setva u više turnusa, da ceo usev ne dočeka oba leta.",
+                "Mešovita sadnja sa crnim i belim lukom."],
+         "en": ["A four-year rotation; celery is a particularly bad predecessor.",
+                "Insect netting over the bed through the flight.",
+                "Mulch from mid-May so the fly cannot reach the soil at the root.",
+                "Sow in several batches, so the whole crop does not meet both flights.",
+                "Interplant with onion and garlic."]},
+        {"sr": ["Vađenje i uništavanje napadnutih korenova zajedno sa larvama.",
+                "Proređivanje isključivo uveče, jer miris proređenog lišća privlači muvu.",
+                "Iznošenje proređenog materijala iz bašte, umesto ostavljanja na gredici.",
+                "Malčiranje borovim iglicama, čiji miris muvu odbija."],
+         "en": ["Lift and destroy attacked roots together with the larvae.",
+                "Thin in the evening only — the smell of thinnings draws the fly.",
+                "Carry thinnings out of the garden rather than leaving them on the bed.",
+                "Mulch with pine needles, whose scent puts the fly off."]},
+        # Two flights, and the grower's response differs: the first is worth
+        # netting against, the second is mostly about when to lift.
+        [rule("sargarepa", "mrkvina-muva", "prva-generacija",
+              all_of(month_range(5, 6), avg_band(15, 25)), weight=2),
+         rule("sargarepa", "mrkvina-muva", "druga-generacija",
+              all_of(month_range(7, 8), avg_band(18, 28)))],
+        scientific="Psila rosae"),
+
+    threat("pucanje-korena", "other",
+        {"sr": "Pucanje korena", "en": "Root splitting"},
+        {"sr": "Obilna kiša posle sušnog perioda tera koren u nagli rast i on puca po dužini. Kroz pukotinu odmah ulazi trulež, pa napukli koren ne podnosi skladištenje.",
+         "en": "Heavy rain after a dry spell forces the root into sudden growth and it splits lengthwise. Rot enters through the crack at once, so a split root will not store."},
+        {"sr": ["Ravnomerno zalivanje tokom debljanja korena.",
+                "Malčiranje radi stabilnije vlage u zemljištu."],
+         "en": ["Water evenly while the root is thickening.",
+                "Mulch to keep soil moisture steadier."]},
+        {"sr": ["Postepeno vraćanje zalivanja umesto jednog velikog obroka.",
+                "Vađenje zrelih korenova pred najavljenu kišu.",
+                "Odvajanje napuklih korenova pri skladištenju."],
+         "en": ["Bring watering back gradually rather than in one large dose.",
+                "Lift mature roots ahead of forecast rain.",
+                "Sort split roots out before storing."]},
+        [rule("sargarepa", "pucanje-korena", "pljusak-posle-suse",
+              rain_at_least(2, 30), weight=2)]),
+])
+
+# ---------------------------------------------------------------- blitva
+crop("blitva", (4, 11), {"sr": "Blitva", "en": "Chard"}, [
+    threat("pegavost-lista", "fungalDisease",
+        {"sr": "Pegavost lista", "en": "Leaf spot"},
+        {"sr": "Sitne okrugle pege sa svetlim centrom i tamnocrvenim rubom, koje se množe dok list ne požuti i propadne. Traži toplo vreme i vlažan list, pa se javlja u najtoplijem delu leta, posebno u gustom usevu.",
+         "en": "Small round spots with a pale centre and a dark red rim, multiplying until the leaf yellows and dies. It wants warmth and a wet leaf, so it comes in the hottest part of summer, especially in a crowded stand."},
+        {"sr": ["Razmak sadnje koji omogućava da se list brzo osuši.",
+                "Plodored, jer gljiva prezimljava na ostacima blitve i cvekle.",
+                "Zalivanje u koren umesto preko lista.",
+                "Redovna berba spoljnih listova, čime se usev proređuje."],
+         "en": ["Space plants so the leaves dry quickly.",
+                "Rotate — the fungus overwinters on chard and beet debris.",
+                "Water at the root rather than over the leaves.",
+                "Pick outer leaves regularly, which thins the stand."]},
+        {"sr": ["Uklanjanje i iznošenje zahvaćenih listova iz bašte.",
+                "Prekid zalivanja preko lista.",
+                "Tretman čajem od rastavića.",
+                "Berba zdravih unutrašnjih listova, jer biljka i dalje tera nove."],
+         "en": ["Remove affected leaves and take them out of the garden.",
+                "Stop watering over the leaves.",
+                "Treat with horsetail tea.",
+                "Keep picking sound inner leaves — the plant goes on making new ones."]},
+        [rule("blitva", "pegavost-lista", "uslovi-za-infekciju",
+              all_of(band(25, 30), humid_min(60)), weight=2),
+         rule("blitva", "pegavost-lista", "padavine", rain_at_least(2, 10))],
+        scientific="Cercospora beticola"),
+
+    threat("lisni-mineri", "pest",
+        {"sr": "Blitvin lisni miner", "en": "Beet leaf miner"},
+        {"sr": "Larve žive unutar lista i izgrizaju ga iznutra, ostavljajući providne mehuraste mine koje posmeđe. Napadnut list nije za jelo. Ima dve do tri generacije, počev od maja.",
+         "en": "The larvae live inside the leaf and eat it out from within, leaving translucent blistered mines that later brown. A mined leaf is not worth eating. There are two to three generations, starting in May."},
+        {"sr": ["Mreže protiv insekata preko gredice od nicanja.",
+                "Redovan pregled naličja listova i uklanjanje legala jaja.",
+                "Plodored, jer se lutke prezimljavaju u zemlji ispod useva.",
+                "Uklanjanje divlje lobode i štira u okolini, koji su domaćini."],
+         "en": ["Insect netting over the bed from emergence.",
+                "Check leaf undersides regularly and rub off egg clusters.",
+                "Rotate — the pupae overwinter in the soil under the crop.",
+                "Clear fat hen and pigweed nearby, which host it."]},
+        {"sr": ["Otkidanje i uništavanje listova sa minama, sa larvom u njima.",
+                "Prignječivanje mine prstima, ako je listova malo.",
+                "Berba i korišćenje zdravih listova pre nego što larve pređu na njih."],
+         "en": ["Pick off and destroy mined leaves with the larva inside.",
+                "Pinch the mine between your fingers if there are only a few.",
+                "Pick and use sound leaves before the larvae move onto them."]},
+        [rule("blitva", "lisni-mineri", "prva-generacija",
+              all_of(month_range(5, 6), avg_band(15, 25)), weight=2),
+         rule("blitva", "lisni-mineri", "kasnije-generacije",
+              all_of(month_range(7, 8), avg_band(18, 28)))],
+        scientific="Pegomya hyoscyami"),
+
+    threat("prerano-cvetanje", "other",
+        {"sr": "Prerano cvetanje", "en": "Bolting"},
+        {"sr": "Blitva je dvogodišnja biljka: hladan period na mladoj biljci je ubedi da je prezimela, pa umesto lista tera cvetno stablo. List tada postaje žilav i gorak i biljka se više ne oporavlja. Nije bolest i ne prenosi se.",
+         "en": "Chard is biennial: a cold spell on a young plant convinces it that winter has passed, so it throws a flower stalk instead of leaves. The foliage turns stringy and bitter and the plant never comes back. It is not a disease and does not spread."},
+        {"sr": ["Setva tek kada se zemljište stabilno zagreje, umesto najranije moguće.",
+                "Prekrivanje agrotekstilom kod najavljenog zahlađenja.",
+                "Izbor sorti otpornih na prerano cvetanje za rane rokove setve."],
+         "en": ["Sow once the soil is reliably warm, rather than at the earliest possible date.",
+                "Cover with fleece when a cold spell is forecast.",
+                "Choose bolt-resistant varieties for early sowings."]},
+        {"sr": ["Otkidanje cvetnog stabla čim se pojavi, čime se berba lista produžava.",
+                "Berba preostalih listova dok su još mekani.",
+                "Setva novog turnusa, jer se procvetala biljka ne vraća u list."],
+         "en": ["Snap out the flower stalk as soon as it shows, which extends the leaf harvest.",
+                "Pick the remaining leaves while they are still tender.",
+                "Sow a fresh batch — a bolted plant will not go back to leaf."]},
+        # Vernalisation, not heat: a cold snap on a young spring plant.
+        [rule("blitva", "prerano-cvetanje", "prolecno-zahladjenje",
+              all_of(month_range(4, 5), consecutive(3, temp_below(10))),
+              weight=2)]),
+])
+
+# ---------------------------------------------------------- zelena-salata
+crop("zelena-salata", (3, 10), {"sr": "Zelena salata", "en": "Lettuce"}, [
+    threat("plamenjaca", "fungalDisease",
+        {"sr": "Plamenjača salate", "en": "Lettuce downy mildew"},
+        {"sr": "Bledožute uglaste pege ograničene nervima lista, sa belom prevlakom na naličju. Traži hladno i vlažno vreme, pa je problem u proleće i jesen, a ne usred leta. Donji listovi trunu i cela rozeta može propasti.",
+         "en": "Pale yellow angular patches bounded by the leaf veins, with a white bloom underneath. It wants cool damp weather, so it is a spring and autumn problem rather than a midsummer one. The lower leaves rot and the whole head can be lost."},
+        {"sr": ["Razmak sadnje dovoljan da se list osuši do večeri.",
+                "Zalivanje ujutru i u koren, nikada preko lista predveče.",
+                "Plodored, jer spore prezimljavaju na ostacima salate.",
+                "Uklanjanje donjih listova koji naležu na zemlju."],
+         "en": ["Space plants so the leaves dry by evening.",
+                "Water in the morning at the root, never over the leaves at dusk.",
+                "Rotate — the spores overwinter on lettuce debris.",
+                "Remove lower leaves that lie on the soil."]},
+        {"sr": ["Uklanjanje zahvaćenih listova i iznošenje iz bašte.",
+                "Prekid zalivanja preko lista.",
+                "Tretman čajem od rastavića.",
+                "Berba zdravih glavica pre nego što zaraza napreduje."],
+         "en": ["Remove affected leaves and take them out of the garden.",
+                "Stop watering over the leaves.",
+                "Treat with horsetail tea.",
+                "Cut sound heads before the infection advances."]},
+        [rule("zelena-salata", "plamenjaca", "uslovi-za-infekciju",
+              all_of(band(10, 20), humid_min(65)), weight=2),
+         rule("zelena-salata", "plamenjaca", "padavine", rain_at_least(2, 8))],
+        scientific="Bremia lactucae"),
+
+    threat("puzevi", "pest",
+        {"sr": "Puževi", "en": "Slugs"},
+        {"sr": "Izlaze noću i po kiši i izgrizaju nepravilne rupe u listu, počev od spoljnih listova pri zemlji. Mlada presada može nestati preko noći. Po suvom vremenu se povlače u zemlju, pa šteta izgleda kao da je prestala.",
+         "en": "They come out at night and after rain, chewing ragged holes in the leaves, starting with the outer ones near the soil. A young transplant can vanish overnight. In dry weather they retreat into the soil, so the damage looks as if it has stopped."},
+        {"sr": ["Uklanjanje dasaka, saksija i gustog malča uz gredicu, gde se skrivaju preko dana.",
+                "Zalivanje ujutru umesto uveče, da noć dočeka suva površina.",
+                "Barijera od suvog pepela ili peska oko tek presađenih biljaka.",
+                "Jezerce ili živica u bašti, koji privlače žabe, ježeve i ptice."],
+         "en": ["Clear boards, pots and deep mulch beside the bed, where they shelter by day.",
+                "Water in the morning rather than the evening, so the surface is dry by night.",
+                "A barrier of dry ash or sand around newly planted seedlings.",
+                "A pond or hedge in the garden, which brings in frogs, hedgehogs and birds."]},
+        {"sr": ["Večernje ili ranojutarnje sakupljanje, kada su na površini.",
+                "Postavljanje dasaka kao zamki, pa sakupljanje ispod njih ujutru.",
+                "Obnavljanje pepelne barijere posle svake kiše, jer vlažan pepeo ne deluje.",
+                "Presađivanje novog turnusa, ako je gredica desetkovana."],
+         "en": ["Collect them at dusk or first light, when they are on the surface.",
+                "Lay boards as traps and gather what shelters under them each morning.",
+                "Renew the ash barrier after every rain — wet ash does nothing.",
+                "Plant a fresh batch if the bed has been stripped."]},
+        # Mild and wet, which is when they feed rather than shelter.
+        [rule("zelena-salata", "puzevi", "vlazno-i-blago",
+              all_of(avg_band(10, 22), rain_at_least(2, 8)), weight=2)]),
+
+    threat("prerano-cvetanje", "other",
+        {"sr": "Prerano cvetanje", "en": "Bolting"},
+        {"sr": "Po vrućini salata prekida rast rozete i tera cvetno stablo. List tada pušta mlečni sok, postaje gorak i žilav i više nije za jelo. Nije bolest — ne prenosi se i ne zaustavlja se prskanjem.",
+         "en": "In heat lettuce stops making a rosette and throws a flower stalk. The leaves run milky sap, turn bitter and tough, and are no longer worth eating. It is not a disease — it does not spread, and no spray stops it."},
+        {"sr": ["Setva u više turnusa, umesto cele gredice odjednom.",
+                "Senčenje mrežom u najtoplijem delu sezone.",
+                "Ravnomerno zalivanje, jer suša ubrzava cvetanje.",
+                "Setva letnjih turnusa u polusenci viših kultura."],
+         "en": ["Sow in successive batches rather than the whole bed at once.",
+                "Shade with netting through the hottest part of the season.",
+                "Water evenly — drought brings bolting on faster.",
+                "Site summer sowings in the half-shade of taller crops."]},
+        {"sr": ["Hitna berba svih glavica koje su dostigle upotrebnu veličinu.",
+                "Postavljanje senila nad preostalim biljkama.",
+                "Pojačano zalivanje, čime se cvetanje bar uspori.",
+                "Setva novog turnusa za jesenju berbu."],
+         "en": ["Cut every head that has reached a usable size, now.",
+                "Rig shade over whatever is left standing.",
+                "Water more heavily, which at least slows the bolting.",
+                "Sow a fresh batch for an autumn cut."]},
+        [rule("zelena-salata", "prerano-cvetanje", "toplotni-talas",
+              all_of(month_range(5, 9), consecutive(3, temp_above(28))),
+              weight=2)]),
+])
+
+# ---------------------------------------------------------------- boranija
+crop("boranija", (5, 9), {"sr": "Boranija", "en": "Green bean"}, [
+    threat("antraknoza", "fungalDisease",
+        {"sr": "Antraknoza", "en": "Anthracnose"},
+        {"sr": "Tamne udubljene pege sa crvenkastim rubom na mahunama, i tamne pruge duž nerava na naličju lista. Dolazi zaraženim semenom i širi se kapima kiše, pa jedna vlažna nedelja može zahvatiti celu gredicu.",
+         "en": "Dark sunken spots with a reddish rim on the pods, and dark streaks along the veins on the leaf underside. It arrives on infected seed and spreads in rain splash, so one wet week can take the whole bed."},
+        {"sr": ["Seme iz zdravog useva, jer se gljiva prenosi semenom.",
+                "Plodored od najmanje tri godine bez mahunarki.",
+                "Uzgoj na potpori, da mahune ne naležu na zemlju.",
+                "Ne raditi u usevu dok su biljke mokre."],
+         "en": ["Seed from a healthy crop — the fungus is seed-borne.",
+                "A rotation of at least three years without legumes.",
+                "Grow up supports so the pods do not lie on the soil.",
+                "Never work in the crop while the plants are wet."]},
+        {"sr": ["Uklanjanje i uništavanje zahvaćenih biljaka izvan bašte.",
+                "Prekid svih radova u mokrom usevu.",
+                "Tretman dozvoljenim bakarnim preparatom.",
+                "Berba zdravih mahuna po suvom vremenu, i to ne za seme."],
+         "en": ["Pull and destroy affected plants away from the garden.",
+                "Stop all work in a wet crop.",
+                "Treat with an approved copper preparation.",
+                "Pick sound pods in dry weather — and never save them for seed."]},
+        [rule("boranija", "antraknoza", "uslovi-za-infekciju",
+              all_of(band(13, 26), humid_min(65)), weight=2),
+         rule("boranija", "antraknoza", "padavine", rain_at_least(2, 10))],
+        scientific="Colletotrichum lindemuthianum", cautions=COPPER),
+
+    threat("crna-vas", "pest",
+        {"sr": "Crna lisna vaš", "en": "Black bean aphid"},
+        {"sr": "Guste crne kolonije na vrhovima izdanaka i na cvetnim grozdovima. Sisanjem soka zaustavljaju rast vrha i sprečavaju zametanje mahuna, a medna rosa koju luče privlači mrave i podloga je za čađavicu.",
+         "en": "Dense black colonies on the growing tips and flower trusses. Their feeding stops the tip growing and prevents pods setting, and the honeydew they excrete draws ants and grows sooty mould."},
+        {"sr": ["Mešovita sadnja sa mirisnim biljkama i cvetnim trakama koje privlače bubamare.",
+                "Izbegavanje viška azota, koji daje mekan izdanak pun soka.",
+                "Redovan pregled vrhova izdanaka od početka cvetanja.",
+                "Tolerisanje mrava koliko je moguće, ali ne uz same kolonije, jer ih mravi brane."],
+         "en": ["Interplant with aromatics and flower strips that bring in ladybirds.",
+                "Avoid excess nitrogen, which gives soft sappy shoots.",
+                "Check the shoot tips regularly from the start of flowering.",
+                "Tolerate ants where you can, but not beside the colonies — they defend them."]},
+        {"sr": ["Zakidanje najzaraženijih vrhova sa celom kolonijom.",
+                "Jak mlaz vode kojim se kolonije spiraju sa izdanaka.",
+                "Preparati na bazi kalijumovog sapuna, uveče.",
+                "Ostavljanje bubamara i osolikih muva na miru, jer kolonija nestaje za nekoliko dana."],
+         "en": ["Pinch out the worst tips with the whole colony on them.",
+                "Hose the colonies off the shoots with a hard jet of water.",
+                "Potassium-soap preparations, in the evening.",
+                "Leave ladybirds and hoverflies alone — they clear a colony in days."]},
+        [rule("boranija", "crna-vas", "toplo", all_of(month_range(5, 8), avg_band(18, 28))),
+         rule("boranija", "crna-vas", "suvo", rain_at_most(4, 2))],
+        scientific="Aphis fabae", cautions=OILS),
+
+    threat("opadanje-cvetova", "other",
+        {"sr": "Opadanje cvetova", "en": "Flower drop"},
+        {"sr": "Iznad približno 30 °C polen boranije postaje neupotrebljiv, pa se cvet ne oplodi i otpadne. Biljka ostaje zelena i zdrava, ali bez mahuna. Nije bolest i ne vidi se ništa osim praznog cvetnog grozda.",
+         "en": "Above roughly 30 °C bean pollen stops working, so the flower is never fertilised and drops. The plant stays green and healthy but sets no pods. It is not a disease, and there is nothing to see beyond an empty flower truss."},
+        {"sr": ["Setva u rokovima koji cvetanje izmeštaju iz najtoplijeg dela leta.",
+                "Malčiranje radi hlađenja zemljišta i zadržavanja vlage.",
+                "Setva u polusenci viših kultura na južnim položajima."],
+         "en": ["Time sowings so flowering misses the hottest part of summer.",
+                "Mulch to cool the soil and hold moisture.",
+                "Sow in the half-shade of taller crops on hot sites."]},
+        {"sr": ["Zalivanje uveče, čime se biljka rashladi pred noć.",
+                "Senčenje mrežom tokom toplotnog talasa.",
+                "Strpljenje: biljka nastavlja da cveta i zameće čim popusti vrućina."],
+         "en": ["Water in the evening to cool the plants before nightfall.",
+                "Shade with netting through the heatwave.",
+                "Be patient — the plant goes on flowering and will set once the heat breaks."]},
+        [rule("boranija", "opadanje-cvetova", "vrucina",
+              all_of(temp_above(30), dry_day(65)), weight=2)]),
+])
+
+# ---------------------------------------------------------------- tikvica
+crop("tikvica", (5, 9), {"sr": "Tikvica", "en": "Courgette"}, [
+    threat("pepelnica", "fungalDisease",
+        {"sr": "Pepelnica", "en": "Powdery mildew"},
+        {"sr": "Beličasta prevlaka nalik brašnu na licu lista, koja se širi dok list ne požuti i osuši se. Traži toplo vreme i vlažan vazduh, ali suv list — zato se javlja i kad kiše nema, a ogoljena biljka prestaje da zameće.",
+         "en": "A white, flour-like coating on the upper leaf surface, spreading until the leaf yellows and dies. It wants warmth and humid air but a dry leaf, so it appears even without rain — and a stripped plant stops setting fruit."},
+        {"sr": ["Razmak sadnje, jer tikvica brzo zatvori red i vazduh prestane da struji.",
+                "Uklanjanje najstarijih donjih listova tokom sezone.",
+                "Izbegavanje viška azota.",
+                "Izbor tolerantnih sorti."],
+         "en": ["Space plants — courgette closes the row fast and the air stops moving.",
+                "Take off the oldest lower leaves through the season.",
+                "Avoid excess nitrogen.",
+                "Choose tolerant varieties."]},
+        {"sr": ["Prskanje rastvorom sode bikarbone sa nekoliko kapi biljnog ulja.",
+                "Primena dozvoljenog sumpornog preparata, po oblačnom danu.",
+                "Uklanjanje najzahvaćenijih listova, uz ostavljanje mladih u sredini.",
+                "Prihrana, da biljka istera nove listove."],
+         "en": ["Spray a baking soda solution with a few drops of vegetable oil.",
+                "Apply an approved sulphur preparation on a cloudy day.",
+                "Strip the worst leaves, leaving the young ones at the centre.",
+                "Feed the plant so it can push out new leaves."]},
+        [rule("tikvica", "pepelnica", "toplo-uz-suv-list",
+              all_of(band(20, 30), rain_at_most(3, 1)), weight=2)],
+        scientific="Podosphaera xanthii", cautions=SULPHUR),
+
+    threat("paucinar", "pest",
+        {"sr": "Obični paučinar", "en": "Two-spotted spider mite"},
+        {"sr": "Sitna grinja na naličju lista; po vrućem i suvom vremenu množi se eksplozivno, list postaje tačkast, sivkast i na kraju se suši. Na velikom listu tikvice napad dugo prolazi neprimećeno.",
+         "en": "A tiny mite on the leaf underside; in hot dry weather it multiplies explosively, leaving the leaf stippled, grey and finally dead. On courgette's large leaves an attack goes unnoticed for a long time."},
+        {"sr": ["Redovan pregled naličja listova, jer se napad primeti tek kad je odmakao.",
+                "Održavanje vlažnosti vazduha oko biljaka u vrhuncu vrućina.",
+                "Uklanjanje korova koji su domaćini grinje."],
+         "en": ["Check leaf undersides regularly — an attack is usually noticed late.",
+                "Keep humidity up around the plants during the hottest spells.",
+                "Clear weeds that host the mite."]},
+        {"sr": ["Jako orošavanje naličja lista vodom, čime se populacija razbija.",
+                "Preparati na bazi biljnih ulja ili kalijumovog sapuna.",
+                "Uklanjanje i uništavanje najjače napadnutih listova.",
+                "Ponavljanje tretmana na 5 do 7 dana, jer jaja preživljavaju prvo prskanje."],
+         "en": ["Hose the leaf undersides hard with water to break up the population.",
+                "Use plant-oil or potassium-soap preparations.",
+                "Remove and destroy the worst-affected leaves.",
+                "Repeat every five to seven days — the eggs survive the first spray."]},
+        [rule("tikvica", "paucinar", "vrucina-i-suv-vazduh",
+              all_of(temp_above(27), dry_air(40))),
+         rule("tikvica", "paucinar", "susa", rain_at_most(5, 1))],
+        scientific="Tetranychus urticae", cautions=OILS),
+
+    threat("neoplodjeni-plodovi", "other",
+        {"sr": "Zakržljali plodovi", "en": "Failed fruit set"},
+        {"sr": "Plod počne da raste, pa požuti od vrha i istrune dok je još sitan. Uzrok je izostala oplodnja: iznad približno 32 °C polen tikvice propada, a po kiši i vetru bumbari i pčele ne lete. Nije bolest, iako trulež na vrhu na nju liči.",
+         "en": "The fruit starts to grow, then yellows from the tip and rots while still small. The cause is failed pollination: above roughly 32 °C courgette pollen dies, and in rain and wind the bees do not fly. It is not a disease, though the rot at the tip looks like one."},
+        {"sr": ["Cvetne trake i mirisne biljke u blizini, koje drže oprašivače u bašti.",
+                "Izbegavanje bilo kakvog prskanja u vreme otvorenog cveta.",
+                "Senčenje mrežom u najtoplijim danima, čime se polen čuva."],
+         "en": ["Flower strips and aromatics nearby, which keep pollinators in the garden.",
+                "Never spray anything while the flowers are open.",
+                "Shade with netting on the hottest days, which protects the pollen."]},
+        {"sr": ["Ručna oplodnja rano ujutru, muškim cvetom po tučku ženskog.",
+                "Uklanjanje zakržljalih plodova, da biljka ne troši snagu na njih.",
+                "Zalivanje uveče, čime se biljka rashladi pred sledeći dan."],
+         "en": ["Hand-pollinate at first light, brushing a male flower onto the female's stigma.",
+                "Pick off the failed fruit so the plant stops spending on it.",
+                "Water in the evening to cool the plant before the next day."]},
+        [rule("tikvica", "neoplodjeni-plodovi", "vrucina-u-cvetanju",
+              all_of(month_range(6, 8), temp_above(32)), weight=2)]),
+])
+
+# ---------------------------------------------------------------- praziluk
+crop("praziluk", (3, 11), {"sr": "Praziluk", "en": "Leek"}, [
+    threat("rdja", "fungalDisease",
+        {"sr": "Rđa praziluka", "en": "Leek rust"},
+        {"sr": "Narandžaste izbočene pustule poređane duž lista, koje pri dodiru ostavljaju prah na prstima. Jak napad suši list i stablo ostaje tanko. Traži blago i vlažno vreme, pa je najgora u jesen i u gustom, azotom prehranjenom usevu.",
+         "en": "Raised orange pustules in rows along the leaf, leaving a dust on your fingers when touched. A heavy attack dries the foliage and the stem stays thin. It wants mild damp weather, so it is worst in autumn and in a crowded, over-fed crop."},
+        {"sr": ["Razmak sadnje dovoljan da vazduh struji kroz red.",
+                "Izbegavanje viška azota, koji daje mekan i osetljiv list.",
+                "Plodored od najmanje tri godine bez lukova.",
+                "Uklanjanje i uništavanje ostataka posle vađenja, jer rđa na njima prezimljava."],
+         "en": ["Space plants so air moves down the row.",
+                "Avoid excess nitrogen, which gives soft susceptible leaves.",
+                "A rotation of at least three years without alliums.",
+                "Clear and destroy debris after lifting — the rust overwinters on it."]},
+        {"sr": ["Uklanjanje najzahvaćenijih listova i iznošenje iz bašte.",
+                "Prekid zalivanja preko lista.",
+                "Prihrana kalijumom, koji jača list.",
+                "Vađenje praziluka čim dostigne upotrebnu debljinu, ako je napad jak."],
+         "en": ["Strip the worst leaves and take them out of the garden.",
+                "Stop watering over the foliage.",
+                "Feed potassium, which toughens the leaf.",
+                "Lift the leeks as soon as they are usable if the attack is heavy."]},
+        [rule("praziluk", "rdja", "uslovi-za-infekciju",
+              all_of(band(10, 20), humid_min(65)), weight=2),
+         rule("praziluk", "rdja", "padavine", rain_at_least(3, 10))],
+        scientific="Puccinia allii"),
+
+    threat("lukov-moljac", "pest",
+        {"sr": "Lukov moljac", "en": "Leek moth"},
+        {"sr": "Larve se ubušuju u srce biljke i buše hodnike naniže kroz zbijene listove, pa se pri sečenju vidi izgriženo jezgro puno izmeta. Kroz ta oštećenja ulazi trulež. Ima dve generacije: prva u maju, druga u julu i avgustu.",
+         "en": "The larvae bore into the heart of the plant and tunnel downward through the packed leaves, so a cut stem shows a chewed core full of frass. Rot follows through the damage. There are two generations: the first in May, the second in July and August."},
+        {"sr": ["Mreže protiv insekata preko gredice tokom oba leta.",
+                "Plodored i udaljenost od prošlogodišnjih lukova.",
+                "Pregled srca biljke i uklanjanje larvi pri prvim hodnicima.",
+                "Uklanjanje ostataka posle vađenja, u kojima se lutke prezimljavaju."],
+         "en": ["Insect netting over the bed through both flights.",
+                "Rotate, keeping distance from last year's alliums.",
+                "Check the heart of the plant and remove larvae at the first tunnels.",
+                "Clear debris after lifting, where the pupae overwinter."]},
+        {"sr": ["Vađenje i uništavanje napadnutih biljaka zajedno sa larvama.",
+                "Uklanjanje spoljnih zahvaćenih listova, ako je srce još zdravo.",
+                "Preparati na bazi Bacillus thuringiensis dok su larve još na listu.",
+                "Prihrana, jer oštećena biljka teško nastavlja rast."],
+         "en": ["Pull and destroy attacked plants together with the larvae.",
+                "Strip the affected outer leaves if the heart is still sound.",
+                "Bacillus thuringiensis while the larvae are still on the leaf.",
+                "Feed the crop — a damaged plant struggles to carry on growing."]},
+        [rule("praziluk", "lukov-moljac", "prvi-let",
+              all_of(month_range(5, 6), avg_band(15, 25)), weight=2),
+         rule("praziluk", "lukov-moljac", "drugi-let",
+              all_of(month_range(7, 8), avg_band(18, 28)))],
+        scientific="Acrolepiopsis assectella"),
+
+    threat("trulez-od-prevlazenosti", "other",
+        {"sr": "Trulež usled prevlaženosti", "en": "Waterlogging rot"},
+        {"sr": "Praziluk se zagrće da bi stablo pobelelo, pa se u zagrnutoj zemlji lako zadrži voda. Na teškom zemljištu posle dugotrajnih kiša baza stabla omekša i istrune. Problem je u drenaži, ne u patogenu.",
+         "en": "Leeks are earthed up to blanch the stem, and earthed-up soil holds water easily. On heavy ground after long rain the base of the stem softens and rots. The problem is drainage, not a pathogen."},
+        {"sr": ["Sadnja na izdignute gredice na težim zemljištima.",
+                "Zagrtanje suvom, rastresitom zemljom umesto zbijenom.",
+                "Prekid zalivanja u kišnim periodima."],
+         "en": ["Plant on raised beds on heavy soils.",
+                "Earth up with dry, loose soil rather than packed ground.",
+                "Stop watering through wet spells."]},
+        {"sr": ["Hitno odvođenje viška vode plitkim kanalićima.",
+                "Razgrtanje zemlje sa baze stabla, da se prosuši.",
+                "Vađenje zahvaćenih biljaka, jer trulež napreduje i u skladištu."],
+         "en": ["Drain the excess away through shallow channels at once.",
+                "Pull the soil back from the base of the stem so it can dry.",
+                "Lift affected plants — the rot carries on in store."]},
+        [rule("praziluk", "trulez-od-prevlazenosti", "dugotrajne-padavine",
+              rain_at_least(5, 40), weight=2)]),
+])
+
+# ------------------------------------------------------------ prokelj-kelj
+crop("prokelj-kelj", (4, 11), {"sr": "Prokelj i kelj", "en": "Brussels sprouts and kale"}, [
+    threat("crna-pegavost-krstasica", "fungalDisease",
+        {"sr": "Crna pegavost krstašica", "en": "Brassica ring spot"},
+        {"sr": "Okrugle pege sa koncentričnim krugovima i žutim rubom, koje se najpre javljaju na starijem lišću. Na prokelju se prenose i na same ružice, koje tada nisu za upotrebu. Širi se kapima kiše i zaraženim semenom.",
+         "en": "Round spots with concentric rings and a yellow margin, showing first on the older leaves. On Brussels sprouts they carry onto the sprouts themselves, which are then unusable. It spreads in rain splash and on infected seed."},
+        {"sr": ["Plodored od najmanje tri godine bez krstašica.",
+                "Razmak sadnje dovoljan da se list osuši posle kiše.",
+                "Uklanjanje donjeg, starijeg lišća tokom sezone.",
+                "Ne raditi u usevu dok su biljke mokre."],
+         "en": ["A rotation of at least three years without brassicas.",
+                "Space plants so the leaves dry after rain.",
+                "Take off the lower, older leaves through the season.",
+                "Never work in the crop while the plants are wet."]},
+        {"sr": ["Uklanjanje zahvaćenih listova i iznošenje iz bašte.",
+                "Tretman dozvoljenim bakarnim preparatom.",
+                "Prekid zalivanja preko lista.",
+                "Berba zdravih ružica pre nego što se pege prošire na njih."],
+         "en": ["Remove affected leaves and take them out of the garden.",
+                "Treat with an approved copper preparation.",
+                "Stop watering over the leaves.",
+                "Pick sound sprouts before the spotting reaches them."]},
+        [rule("prokelj-kelj", "crna-pegavost-krstasica", "uslovi-za-infekciju",
+              all_of(band(18, 26), humid_min(60)), weight=2),
+         rule("prokelj-kelj", "crna-pegavost-krstasica", "padavine",
+              rain_at_least(2, 10))],
+        scientific="Alternaria brassicae", cautions=COPPER),
+
+    threat("kupusni-buvaci", "pest",
+        {"sr": "Kupusni buvači", "en": "Cabbage flea beetles"},
+        {"sr": "Sitni sjajni skakutavi insekti koji buše rupice u listu, pa on izgleda kao sito. Izlaze iz zemlje čim se otopli iznad približno 18 °C i najgori su po toplom i suvom vremenu. Odrasloj biljci ne smetaju mnogo, ali mladu presadu mogu potpuno zaustaviti.",
+         "en": "Small shiny jumping beetles that shot-hole the leaves until they look like a sieve. They come out of the soil once it warms past roughly 18 °C and are worst in hot dry weather. They matter little to a grown plant, but can stop a young transplant outright."},
+        {"sr": ["Mreže protiv insekata preko gredice od sadnje, dok je presada mlada.",
+                "Održavanje vlažne površine zemlje, jer suvo im pogoduje.",
+                "Malčiranje, koje otežava izlazak iz zemlje.",
+                "Setva u vreme kada presada brzo preraste najosetljiviju fazu."],
+         "en": ["Insect netting over the bed from planting, while the transplants are young.",
+                "Keep the soil surface damp — dry conditions suit them.",
+                "Mulch, which makes it harder for them to emerge.",
+                "Time sowings so the transplants grow quickly past the vulnerable stage."]},
+        {"sr": ["Redovno orošavanje useva, jer po vlazi prestaju sa ishranom.",
+                "Posipanje drvenim pepelom po listu, u tankom sloju, dok je suvo.",
+                "Prihrana, da presada brzo preraste štetu.",
+                "Postavljanje mreže i naknadno, jer napad traje dok traje suša."],
+         "en": ["Mist the crop regularly — they stop feeding in damp conditions.",
+                "Dust wood ash thinly over the leaves while it is dry.",
+                "Feed the transplants so they outgrow the damage.",
+                "Put netting on even late — the attack lasts as long as the drought."]},
+        # Warm, dry and spring: the combination that empties a seedbed.
+        [rule("prokelj-kelj", "kupusni-buvaci", "prolecni-izlazak",
+              all_of(month_range(4, 6), avg_band(18, 28), rain_at_most(3, 2)),
+              weight=2),
+         rule("prokelj-kelj", "kupusni-buvaci", "letnja-susa",
+              all_of(month_range(7, 8), avg_band(20, 30), rain_at_most(3, 2)))],
+        scientific="Phyllotreta spp."),
+
+    threat("rastresite-ruzice", "other",
+        {"sr": "Rastresite ružice", "en": "Loose sprouts"},
+        {"sr": "Ružice prokelja se ne zbiju nego ostanu otvorene, kao sitne rastresite rozete. Uzrok je toplo vreme u jesen, kada biljka nastavlja da raste umesto da se pripremi za mirovanje. Ružice su jestive, ali se brzo kvare i ne mogu se čuvati.",
+         "en": "The sprouts never firm up, staying open like small loose rosettes. The cause is warm autumn weather, when the plant carries on growing instead of settling towards dormancy. They are edible, but they spoil fast and will not keep."},
+        {"sr": ["Sadnja u roku koji zbijanje ružica ostavlja za hladniji deo jeseni.",
+                "Umerena ishrana azotom u drugoj polovini sezone.",
+                "Čvrsto nabijanje zemlje oko korena pri sadnji, jer klimava biljka daje rastresite ružice."],
+         "en": ["Time planting so the sprouts firm up in the cooler part of autumn.",
+                "Go easy on nitrogen in the second half of the season.",
+                "Firm the soil hard around the roots when planting — a wobbly plant gives loose sprouts."]},
+        {"sr": ["Zakidanje vrha biljke, čime se rast usmerava u ružice.",
+                "Berba odozdo naviše, čim ružice dostignu upotrebnu veličinu.",
+                "Prekid prihrane azotom.",
+                "Berba i korišćenje odmah, jer se rastresite ružice ne čuvaju."],
+         "en": ["Pinch out the growing tip, which sends the plant's effort into the sprouts.",
+                "Pick from the bottom up as soon as the sprouts are usable.",
+                "Stop feeding nitrogen.",
+                "Pick and use straight away — loose sprouts do not store."]},
+        [rule("prokelj-kelj", "rastresite-ruzice", "topla-jesen",
+              all_of(month_range(9, 11), avg_band(16, 26)), weight=2)]),
+])
+
+# ---------------------------------------------------------------- cvekla
+crop("cvekla", (4, 10), {"sr": "Cvekla", "en": "Beetroot"}, [
+    threat("pegavost-lista", "fungalDisease",
+        {"sr": "Pegavost lista", "en": "Leaf spot"},
+        {"sr": "Sitne okrugle pege sa svetlim centrom i tamnocrvenim rubom. Kada se izlišća, cvekla tera novu rozetu iz srca i tako troši ono što je već nakupila u korenu, pa koren ostane sitan i drvenast.",
+         "en": "Small round spots with a pale centre and a dark red rim. Once defoliated, beetroot pushes a new rosette from the crown and spends what the root has already stored, so the root stays small and woody."},
+        {"sr": ["Plodored, jer gljiva prezimljava na ostacima cvekle i blitve.",
+                "Razmak setve koji omogućava da se list brzo osuši.",
+                "Zalivanje u koren, ujutru.",
+                "Uklanjanje i iznošenje lisnih ostataka posle vađenja."],
+         "en": ["Rotate — the fungus overwinters on beet and chard debris.",
+                "Sow at a spacing that lets the leaves dry quickly.",
+                "Water at the root, in the morning.",
+                "Clear and remove the leafy debris after lifting."]},
+        {"sr": ["Uklanjanje zahvaćenih listova i iznošenje iz bašte.",
+                "Prekid zalivanja preko lista.",
+                "Tretman čajem od rastavića.",
+                "Vađenje korena ako se rozeta potpuno osušila, jer dalje neće rasti."],
+         "en": ["Remove affected leaves and take them out of the garden.",
+                "Stop watering over the leaves.",
+                "Treat with horsetail tea.",
+                "Lift the roots if the tops have died off entirely — they will not grow on."]},
+        [rule("cvekla", "pegavost-lista", "uslovi-za-infekciju",
+              all_of(band(25, 30), humid_min(60)), weight=2),
+         rule("cvekla", "pegavost-lista", "padavine", rain_at_least(2, 10))],
+        scientific="Cercospora beticola"),
+
+    threat("lisni-mineri", "pest",
+        {"sr": "Cveklin lisni miner", "en": "Beet leaf miner"},
+        {"sr": "Larve buše hodnike unutar lista i ostavljaju providne mehuraste mine koje kasnije posmeđe. Na cvekli je šteta indirektna: izgubljena lisna površina znači manji koren, jer se koren puni onim što list proizvede.",
+         "en": "The larvae tunnel inside the leaf, leaving translucent blistered mines that later brown. On beetroot the damage is indirect: lost leaf area means a smaller root, because the root fills with what the leaves make."},
+        {"sr": ["Mreže protiv insekata preko gredice od nicanja.",
+                "Redovan pregled naličja listova i uklanjanje legala jaja.",
+                "Plodored, jer se lutke prezimljavaju u zemlji ispod useva.",
+                "Uklanjanje divlje lobode i štira u okolini, koji su domaćini."],
+         "en": ["Insect netting over the bed from emergence.",
+                "Check leaf undersides regularly and rub off egg clusters.",
+                "Rotate — the pupae overwinter in the soil under the crop.",
+                "Clear fat hen and pigweed nearby, which host it."]},
+        {"sr": ["Otkidanje i uništavanje listova sa minama, sa larvom u njima.",
+                "Prignječivanje mine prstima, čime se larva ubija bez gubitka lista.",
+                "Prihrana, da biljka nadoknadi izgubljenu lisnu masu."],
+         "en": ["Pick off and destroy mined leaves with the larva inside.",
+                "Pinch the mine between your fingers, killing the larva without losing the leaf.",
+                "Feed the crop so it can replace the lost leaf area."]},
+        [rule("cvekla", "lisni-mineri", "prva-generacija",
+              all_of(month_range(5, 6), avg_band(15, 25)), weight=2),
+         rule("cvekla", "lisni-mineri", "kasnije-generacije",
+              all_of(month_range(7, 8), avg_band(18, 28)))],
+        scientific="Pegomya hyoscyami"),
+
+    threat("trulez-srca", "other",
+        {"sr": "Trulež srca", "en": "Heart rot"},
+        {"sr": "Srce rozete pocrni i istrune, a u presečenom korenu se vide tamni prstenovi i šupljine. Uzrok je nedostatak bora, koji se u dugotrajnoj suši ne može usvojiti čak i kada ga u zemljištu ima dovoljno. Nije zarazno.",
+         "en": "The heart of the rosette blackens and rots, and a cut root shows dark rings and cavities. The cause is boron shortage, which a long drought makes impossible to take up even when the soil holds enough. It is not infectious."},
+        {"sr": ["Ravnomerno zalivanje, jer se bor usvaja samo iz vlažnog zemljišta.",
+                "Malčiranje radi stabilnije vlage.",
+                "Izbegavanje prekomernog krečenja, jer visok pH vezuje bor.",
+                "Redovno unošenje komposta, koji zemljištu vraća mikroelemente."],
+         "en": ["Water evenly — boron is only taken up from moist soil.",
+                "Mulch to keep moisture steadier.",
+                "Avoid over-liming; a high pH locks boron up.",
+                "Work in compost regularly, which returns trace elements to the soil."]},
+        {"sr": ["Hitno uspostavljanje redovnog zalivanja, čime se usvajanje bora vraća.",
+                "Malčiranje radi smanjenja isparavanja.",
+                "Vađenje i odbacivanje zahvaćenih korenova, jer trulež napreduje u skladištu.",
+                "Zalivanje razblaženim rastvorom bora samo ako je nedostatak potvrđen analizom."],
+         "en": ["Restore regular watering at once, which brings boron uptake back.",
+                "Mulch to cut evaporation.",
+                "Lift and discard affected roots — the rot carries on in store.",
+                "Apply a dilute boron drench only if a soil test has confirmed the shortage."]},
+        # Sustained drought, not a hot day: uptake fails over a week, not an
+        # afternoon.
+        [rule("cvekla", "trulez-srca", "dugotrajna-susa",
+              rain_at_most(6, 3), weight=2)]),
+])
+
 # ---------------------------------------------------------------- emit
 def build(lang):
     crops = []
@@ -466,19 +1350,30 @@ def build(lang):
             "id": c["id"],
             "name": c["names"][lang],
             "season": {"fromMonth": c["season"][0], "toMonth": c["season"][1]},
-            "threats": [{
-                "id": t["id"],
-                "type": t["type"],
-                "name": t["names"][lang],
-                "description": t["descriptions"][lang],
-                "prevention": t["prevention"][lang],
-                "response": t["response"][lang],
-                "rules": t["rules"],
-            } for t in c["threats"]],
+            "threats": [emit(t, lang) for t in c["threats"]],
         })
     return {"version": 1, "locale": lang, "crops": crops}
 
-base = "/home/laban/Desktop/Personal/crop-alerts/assets/content"
+def emit(t, lang):
+    out = {
+        "id": t["id"],
+        "type": t["type"],
+        "name": t["names"][lang],
+    }
+    if "scientific" in t:
+        out["scientificName"] = t["scientific"]
+    out["description"] = t["descriptions"][lang]
+    out["prevention"] = t["prevention"][lang]
+    out["response"] = t["response"][lang]
+    if "cautions" in t:
+        out["caution"] = t["cautions"][lang]
+    out["rules"] = t["rules"]
+    return out
+
+base = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "assets", "content",
+)
 for lang in ("sr", "en"):
     with open(f"{base}/crops_{lang}.json", "w", encoding="utf-8") as f:
         json.dump(build(lang), f, ensure_ascii=False, indent=2)

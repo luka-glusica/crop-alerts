@@ -53,6 +53,10 @@ abstract final class ConditionCodec {
           days: _positiveInt(json, 'days'),
           condition: conditionFromJson(_object(json, 'condition')),
         ),
+      'monthRange' => MonthRange(
+          fromMonth: _month(json, 'fromMonth'),
+          toMonth: _month(json, 'toMonth'),
+        ),
       'allOf' => AllOf(_conditions(json)),
       'anyOf' => AnyOf(_conditions(json)),
       'not' => Not(conditionFromJson(_object(json, 'condition'))),
@@ -155,6 +159,17 @@ abstract final class ConditionCodec {
     final value = json[key];
     if (value is! num || value <= 0 || value != value.roundToDouble()) {
       throw RuleFormatException('Expected a positive whole number at "$key".');
+    }
+    return value.toInt();
+  }
+
+  static int _month(Map<String, dynamic> json, String key) {
+    final value = json[key];
+    if (value is! num ||
+        value != value.roundToDouble() ||
+        value < 1 ||
+        value > 12) {
+      throw RuleFormatException('Expected a month 1–12 at "$key".');
     }
     return value.toInt();
   }

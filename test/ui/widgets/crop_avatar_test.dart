@@ -28,8 +28,10 @@ void main() {
     });
 
     test('covers every crop the web app ships', () {
-      // The full catalogue from the web app; later commits seed five of these
-      // with rules, but the artwork should already be there for all of them.
+      // The full catalogue inherited from the web app. Artwork was there before
+      // any of these had rules, and it must stay there as the Flutter
+      // catalogue grows past it — hence containment rather than equality, so
+      // adding a crop does not mean editing this list too.
       const webAppCrops = {
         'paradajz', 'krastavac', 'grasak', 'boranija', 'tikvica', 'lubenica',
         'luk', 'praziluk', 'beli-luk', 'zelena-salata', 'kupus',
@@ -37,7 +39,7 @@ void main() {
         'blitva', //
       };
 
-      expect(CropArtwork.knownCropIds, webAppCrops);
+      expect(CropArtwork.knownCropIds, containsAll(webAppCrops));
       for (final id in webAppCrops) {
         expect(
           CropArtwork.forCrop(id),

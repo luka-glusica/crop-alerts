@@ -110,6 +110,14 @@ void main() {
       );
     });
 
+    test('monthRange', () {
+      expectRoundTrip(const MonthRange(fromMonth: 5, toMonth: 6));
+    });
+
+    test('monthRange that wraps the year', () {
+      expectRoundTrip(const MonthRange(fromMonth: 10, toMonth: 3));
+    });
+
     test('allOf, anyOf and not', () {
       expectRoundTrip(
         const AllOf([
@@ -194,6 +202,7 @@ void main() {
           days: 1,
           condition: MetricBand(metric: WeatherMetric.maxHumidity, min: 1, max: 2),
         ),
+        MonthRange(fromMonth: 1, toMonth: 2),
         AllOf([MetricBand(metric: WeatherMetric.maxHumidity, min: 1, max: 2)]),
         AnyOf([MetricBand(metric: WeatherMetric.maxHumidity, min: 1, max: 2)]),
         Not(MetricBand(metric: WeatherMetric.maxHumidity, min: 1, max: 2)),
@@ -336,6 +345,23 @@ void main() {
         'comparator': 'greaterThan',
         'value': 'quite high',
       });
+    });
+
+    test('a month outside 1–12', () {
+      // Month 0 is the classic off-by-one from a zero-indexed calendar, and it
+      // would produce a rule that never fires.
+      expectRejected({'type': 'monthRange', 'fromMonth': 0, 'toMonth': 6});
+      expectRejected({'type': 'monthRange', 'fromMonth': 5, 'toMonth': 13});
+      expectRejected({'type': 'monthRange', 'fromMonth': -1, 'toMonth': 6});
+    });
+
+    test('a fractional or non-numeric month', () {
+      expectRejected({'type': 'monthRange', 'fromMonth': 5.5, 'toMonth': 6});
+      expectRejected({'type': 'monthRange', 'fromMonth': 'maj', 'toMonth': 6});
+    });
+
+    test('a monthRange missing a bound', () {
+      expectRejected({'type': 'monthRange', 'fromMonth': 5});
     });
 
     test('a zero or fractional day span', () {

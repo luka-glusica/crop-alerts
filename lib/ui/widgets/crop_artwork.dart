@@ -43,6 +43,7 @@ abstract final class CropArtwork {
   /// Crops with hand-drawn artwork extracted from the web app.
   static const Map<String, String> _svgAssets = {
     'boranija': 'assets/crops/boranija.svg',
+    'cvekla': 'assets/crops/cvekla.svg',
     'kupus': 'assets/crops/kupus.svg',
     'praziluk': 'assets/crops/praziluk.svg',
     'prokelj-kelj': 'assets/crops/prokelj-kelj.svg',
@@ -53,6 +54,8 @@ abstract final class CropArtwork {
   /// Crops the web app represents with an emoji.
   static const Map<String, String> _emoji = {
     'paradajz': '🍅',
+    'paprika': '🫑',
+    'patlidzan': '🍆',
     'krastavac': '🥒',
     'grasak': '🫛',
     'lubenica': '🍉',

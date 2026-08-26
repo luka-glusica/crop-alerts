@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 DailyForecast day({
   int dayOfMonth = 1,
+  int month = 8,
   double minTemperature = 10,
   double maxTemperature = 20,
   double minHumidity = 40,
@@ -14,7 +15,7 @@ DailyForecast day({
   double precipitation = 0,
 }) {
   return DailyForecast(
-    date: DateTime(2026, 8, dayOfMonth),
+    date: DateTime(2026, month, dayOfMonth),
     minTemperature: minTemperature,
     maxTemperature: maxTemperature,
     minHumidity: minHumidity,
@@ -506,6 +507,112 @@ void main() {
 
       expect(twice.matches(single(day(precipitation: 3))), isTrue);
       expect(twice.matches(single(day(precipitation: 0))), isFalse);
+    });
+  });
+
+  group('MonthRange', () {
+    const springFlight = MonthRange(fromMonth: 5, toMonth: 6);
+
+    test('matches inside the range', () {
+      expect(springFlight.matches(single(day(month: 5))), isTrue);
+      expect(springFlight.matches(single(day(month: 6))), isTrue);
+    });
+
+    test('does not match outside it', () {
+      expect(springFlight.matches(single(day(month: 4))), isFalse);
+      expect(springFlight.matches(single(day(month: 7))), isFalse);
+      expect(springFlight.matches(single(day(month: 9))), isFalse);
+    });
+
+    test('a range that wraps the year covers the turn of it', () {
+      // Overwintering pests do not respect January the way a for-loop does.
+      const overwinter = MonthRange(fromMonth: 10, toMonth: 3);
+
+      expect(overwinter.wrapsYear, isTrue);
+      for (final month in [10, 11, 12, 1, 2, 3]) {
+        expect(overwinter.matches(single(day(month: month))), isTrue,
+            reason: 'month $month should be inside 10–3');
+      }
+      for (final month in [4, 5, 6, 7, 8, 9]) {
+        expect(overwinter.matches(single(day(month: month))), isFalse,
+            reason: 'month $month should be outside 10–3');
+      }
+    });
+
+    test('a single-month range matches only that month', () {
+      const july = MonthRange(fromMonth: 7, toMonth: 7);
+
+      expect(july.matches(single(day(month: 7))), isTrue);
+      expect(july.matches(single(day(month: 6))), isFalse);
+      expect(july.matches(single(day(month: 8))), isFalse);
+    });
+
+    test('reports no observation, because a month is not evidence', () {
+      // The grower is shown *why* a crop is flagged. "It is May" explains
+      // nothing on its own, so the calendar contributes no line to that list.
+      final result = springFlight.evaluate(single(day(month: 5)));
+
+      expect(result.matched, isTrue);
+      expect(result.observations, isEmpty);
+    });
+
+    test('gates a weather condition to the season it belongs in', () {
+      // The reason this condition exists: the same mild day means one thing in
+      // May, when the fly is flying, and nothing at all in September.
+      const flightWeather = AllOf([
+        MonthRange(fromMonth: 5, toMonth: 6),
+        MetricBand(
+          metric: WeatherMetric.averageTemperature,
+          min: 12,
+          max: 22,
+        ),
+      ]);
+
+      final mildDay = day(minTemperature: 12, maxTemperature: 20);
+      expect(
+        flightWeather.matches(single(day(
+          month: 5,
+          minTemperature: mildDay.minTemperature,
+          maxTemperature: mildDay.maxTemperature,
+        ))),
+        isTrue,
+      );
+      expect(
+        flightWeather.matches(single(day(
+          month: 9,
+          minTemperature: mildDay.minTemperature,
+          maxTemperature: mildDay.maxTemperature,
+        ))),
+        isFalse,
+      );
+    });
+
+    test('still explains itself through the weather it is paired with', () {
+      const flightWeather = AllOf([
+        MonthRange(fromMonth: 5, toMonth: 6),
+        MetricBand(
+          metric: WeatherMetric.averageTemperature,
+          min: 12,
+          max: 22,
+        ),
+      ]);
+
+      final result = flightWeather.evaluate(
+        single(day(month: 5, minTemperature: 12, maxTemperature: 20)),
+      );
+
+      expect(result.matched, isTrue);
+      expect(result.observations, hasLength(1));
+      expect(result.observations.single.metric,
+          WeatherMetric.averageTemperature);
+    });
+
+    test('serializes', () {
+      expect(springFlight.toJson(), {
+        'type': 'monthRange',
+        'fromMonth': 5,
+        'toMonth': 6,
+      });
     });
   });
 

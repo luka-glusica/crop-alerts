@@ -14,6 +14,7 @@
           "id": "plamenjaca",
           "type": "fungalDisease",
           "name": "Late blight",
+          "scientificName": "Phytophthora infestans",
           "description": "A fungal disease that spreads at mild temperatures when the leaf stays wet, leaving dark spots with a pale edge and a firm brown rot on the fruit.",
           "prevention": [
             "Water at the root only, never over the leaves.",
@@ -27,6 +28,7 @@
             "Stop overhead watering and improve ventilation.",
             "Pick healthy fruit before the infection advances."
           ],
+          "caution": "Copper does not break down — it accumulates permanently in the soil and harms earthworms and soil life. Organic production allows at most 4 kg of copper per hectare per year. Treat it as a last resort, never as a scheduled preventive.",
           "rules": [
             {
               "id": "paradajz.plamenjaca.uslovi-za-infekciju",
@@ -68,6 +70,7 @@
           "id": "crna-pegavost",
           "type": "fungalDisease",
           "name": "Early blight",
+          "scientificName": "Alternaria solani",
           "description": "Dark concentric spots on older leaves that spread upward, favoured by warm weather where the leaf repeatedly wets and dries.",
           "prevention": [
             "Mulch the soil so rain cannot splash it onto the lower leaves.",
@@ -79,6 +82,7 @@
             "Treat with an approved copper preparation.",
             "Water in the morning so leaves go into the night dry."
           ],
+          "caution": "Copper does not break down — it accumulates permanently in the soil and harms earthworms and soil life. Organic production allows at most 4 kg of copper per hectare per year. Treat it as a last resort, never as a scheduled preventive.",
           "rules": [
             {
               "id": "paradajz.crna-pegavost.uslovi-za-infekciju",
@@ -109,6 +113,7 @@
           "id": "paradajzov-moljac",
           "type": "pest",
           "name": "Tomato leafminer",
+          "scientificName": "Tuta absoluta",
           "description": "Larvae mine the leaves and bore into the fruit, with generations following each other faster as it gets warmer.",
           "prevention": [
             "Pheromone traps to track the flight.",
@@ -176,6 +181,12 @@
                     "value": 30
                   },
                   {
+                    "type": "metricThreshold",
+                    "metric": "averageHumidity",
+                    "comparator": "lessThan",
+                    "value": 65
+                  },
+                  {
                     "type": "sumOverDays",
                     "metric": "precipitation",
                     "days": 5,
@@ -202,6 +213,7 @@
           "id": "plamenjaca",
           "type": "fungalDisease",
           "name": "Potato late blight",
+          "scientificName": "Phytophthora infestans",
           "description": "The most damaging potato disease: in wet weather it can destroy the whole haulm within days, and spores wash from the leaves down to the tubers.",
           "prevention": [
             "Certified, healthy seed potatoes.",
@@ -215,6 +227,7 @@
             "Cut and remove the haulm in a heavy infection, two weeks before lifting.",
             "Lift the tubers in dry weather."
           ],
+          "caution": "Copper does not break down — it accumulates permanently in the soil and harms earthworms and soil life. Organic production allows at most 4 kg of copper per hectare per year. Treat it as a last resort, never as a scheduled preventive.",
           "rules": [
             {
               "id": "krompir.plamenjaca.uslovi-za-infekciju",
@@ -256,6 +269,7 @@
           "id": "crna-pegavost",
           "type": "fungalDisease",
           "name": "Early blight",
+          "scientificName": "Alternaria solani",
           "description": "Dry leaf spotting with concentric rings, appearing in warmer weather and on plants weakening towards the end of the season.",
           "prevention": [
             "Balanced feeding, since weakened plants go down first.",
@@ -267,6 +281,7 @@
             "Treat with an approved copper preparation.",
             "Feed the crop to strengthen it."
           ],
+          "caution": "Copper does not break down — it accumulates permanently in the soil and harms earthworms and soil life. Organic production allows at most 4 kg of copper per hectare per year. Treat it as a last resort, never as a scheduled preventive.",
           "rules": [
             {
               "id": "krompir.crna-pegavost.uslovi-za-infekciju",
@@ -297,6 +312,7 @@
           "id": "zlatica",
           "type": "pest",
           "name": "Colorado potato beetle",
+          "scientificName": "Leptinotarsa decemlineata",
           "description": "Adults and larvae strip the leaves to the veins; in warm dry weather development speeds up and generations overlap.",
           "prevention": [
             "Rotate, putting the plot as far as possible from last year's.",
@@ -376,6 +392,7 @@
           "id": "plamenjaca",
           "type": "fungalDisease",
           "name": "Cucumber downy mildew",
+          "scientificName": "Pseudoperonospora cubensis",
           "description": "Angular yellow patches bounded by the leaf veins, with a grey bloom underneath; in wet weather a crop can be lost within a week.",
           "prevention": [
             "Grow on a trellis so leaves dry faster.",
@@ -387,6 +404,7 @@
             "Treat with an approved copper preparation.",
             "Remove the first infected leaves and take them out of the garden."
           ],
+          "caution": "Copper does not break down — it accumulates permanently in the soil and harms earthworms and soil life. Organic production allows at most 4 kg of copper per hectare per year. Treat it as a last resort, never as a scheduled preventive.",
           "rules": [
             {
               "id": "krastavac.plamenjaca.uslovi-za-infekciju",
@@ -428,6 +446,7 @@
           "id": "pepelnica",
           "type": "fungalDisease",
           "name": "Powdery mildew",
+          "scientificName": "Podosphaera xanthii",
           "description": "A white, flour-like coating on the upper leaf surface. Unlike downy mildew it wants warmth and humid air but a dry leaf, so it appears even without rain.",
           "prevention": [
             "Space plants and strip lower leaves so air can flow.",
@@ -439,6 +458,7 @@
             "Apply an approved sulphur preparation on a cloudy day, never in heat.",
             "Pull off the worst-affected lower leaves."
           ],
+          "caution": "Sulphur scorches foliage above roughly 28 °C and must never be mixed with oil preparations, nor applied within a fortnight of one. Spray on a cloudy day.",
           "rules": [
             {
               "id": "krastavac.pepelnica.toplo-uz-suv-list",
@@ -470,6 +490,7 @@
           "id": "paucinar",
           "type": "pest",
           "name": "Two-spotted spider mite",
+          "scientificName": "Tetranychus urticae",
           "description": "A tiny mite on the leaf underside; in hot dry weather it multiplies explosively, leaving the leaf stippled, grey and finally dead.",
           "prevention": [
             "Check leaf undersides regularly — an attack is usually noticed late.",
@@ -481,6 +502,7 @@
             "Use plant-oil or potassium-soap preparations.",
             "Remove and destroy the worst-affected leaves."
           ],
+          "caution": "Oil and soap preparations work by blocking the insects' breathing pores, but they scorch leaves in sun. Spray in the evening, and test on a few leaves first — varieties differ in how they react.",
           "rules": [
             {
               "id": "krastavac.paucinar.vrucina-i-suv-vazduh",
@@ -569,6 +591,7 @@
           "id": "plamenjaca",
           "type": "fungalDisease",
           "name": "Cabbage downy mildew",
+          "scientificName": "Hyaloperonospora brassicae",
           "description": "Yellowish patches on the upper leaf with a white bloom beneath; most dangerous on seedlings and young plants in cool wet weather.",
           "prevention": [
             "Do not plant where other brassicas grew last year.",
@@ -580,6 +603,7 @@
             "Dust wood ash around the plants.",
             "Collect infected leaves and destroy them away from the garden."
           ],
+          "caution": "Copper does not break down — it accumulates permanently in the soil and harms earthworms and soil life. Organic production allows at most 4 kg of copper per hectare per year. Treat it as a last resort, never as a scheduled preventive.",
           "rules": [
             {
               "id": "kupus.plamenjaca.uslovi-za-infekciju",
@@ -621,6 +645,7 @@
           "id": "crna-trulez",
           "type": "other",
           "name": "Black rot",
+          "scientificName": "Xanthomonas campestris pv. campestris",
           "description": "A bacterial disease, not a fungal one, which is why copper does little against it. It shows as yellow V-shaped patches with blackened veins, in warm rainy weather.",
           "prevention": [
             "Healthy certified transplants from a trusted source.",
@@ -662,6 +687,7 @@
           "id": "kupusar",
           "type": "pest",
           "name": "Large white butterfly",
+          "scientificName": "Pieris brassicae",
           "description": "The caterpillars chew leaves down to the veins and bore into the head. The butterfly flies most in warm dry weather.",
           "prevention": [
             "Insect netting over the crop from planting.",
@@ -693,6 +719,72 @@
                 "days": 3,
                 "comparator": "atMost",
                 "value": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "kupusna-muva",
+          "type": "pest",
+          "name": "Cabbage root fly",
+          "scientificName": "Delia radicum",
+          "description": "Larvae bore into the neck and root, so the plant stalls, the leaves turn blue-green and wilt in sun even though the soil is moist. The first generation flies in spring as soon as the ground warms, and is the dangerous one for young plants.",
+          "prevention": [
+            "Cardboard or felt collars around the stem right after planting.",
+            "Insect netting over the bed through the flight period.",
+            "Rotate, keeping the plot away from last year's brassicas.",
+            "Mulch, which makes it harder for the fly to reach the soil at the stem."
+          ],
+          "response": [
+            "Pull and destroy attacked plants together with the larvae.",
+            "Earth up the plants so they can root again above the damage.",
+            "Drench the root zone with entomopathogenic nematodes.",
+            "Feed the crop so it can replace the lost root."
+          ],
+          "rules": [
+            {
+              "id": "kupus.kupusna-muva.prvi-let",
+              "threatId": "kupusna-muva",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 4,
+                    "toMonth": 5
+                  },
+                  {
+                    "type": "consecutiveDays",
+                    "days": 3,
+                    "condition": {
+                      "type": "metricBand",
+                      "metric": "averageTemperature",
+                      "min": 12,
+                      "max": 25
+                    }
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "kupus.kupusna-muva.kasnije-generacije",
+              "threatId": "kupusna-muva",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 6,
+                    "toMonth": 8
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 16,
+                    "max": 26
+                  }
+                ]
               }
             }
           ]
@@ -739,6 +831,7 @@
           "id": "plamenjaca",
           "type": "fungalDisease",
           "name": "Onion downy mildew",
+          "scientificName": "Peronospora destructor",
           "description": "Pale elongated patches with a violet bloom on a damp morning; the leaf folds over and the bulb stays small.",
           "prevention": [
             "Preventive copper in wet periods.",
@@ -750,6 +843,7 @@
             "Spray with horsetail tea.",
             "Break the soil crust shallowly so the ground dries faster."
           ],
+          "caution": "Copper does not break down — it accumulates permanently in the soil and harms earthworms and soil life. Organic production allows at most 4 kg of copper per hectare per year. Treat it as a last resort, never as a scheduled preventive.",
           "rules": [
             {
               "id": "luk.plamenjaca.uslovi-za-infekciju",
@@ -791,6 +885,7 @@
           "id": "purpurna-pegavost",
           "type": "fungalDisease",
           "name": "Purple blotch",
+          "scientificName": "Alternaria porri",
           "description": "Oval spots with a purple centre on older leaves, appearing in the warmer part of the season, often after damage from mildew or thrips.",
           "prevention": [
             "Remove older damaged leaves.",
@@ -802,6 +897,7 @@
             "Strip badly affected leaves.",
             "Stop watering over the foliage."
           ],
+          "caution": "Copper does not break down — it accumulates permanently in the soil and harms earthworms and soil life. Organic production allows at most 4 kg of copper per hectare per year. Treat it as a last resort, never as a scheduled preventive.",
           "rules": [
             {
               "id": "luk.purpurna-pegavost.uslovi-za-infekciju",
@@ -831,6 +927,7 @@
           "id": "lukova-muva",
           "type": "pest",
           "name": "Onion fly",
+          "scientificName": "Delia antiqua",
           "description": "Larvae bore into the bulb, the plant yellows and wilts, and the bulb rots. The first flight is in spring, at mild temperatures with damp soil.",
           "prevention": [
             "Insect netting immediately after sowing.",
@@ -849,6 +946,11 @@
               "condition": {
                 "type": "allOf",
                 "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 4,
+                    "toMonth": 6
+                  },
                   {
                     "type": "metricBand",
                     "metric": "averageTemperature",
@@ -891,6 +993,1659 @@
                 "days": 5,
                 "comparator": "atLeast",
                 "value": 40
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "paprika",
+      "name": "Pepper",
+      "season": {
+        "fromMonth": 5,
+        "toMonth": 10
+      },
+      "threats": [
+        {
+          "id": "pepelnica",
+          "type": "fungalDisease",
+          "name": "Pepper powdery mildew",
+          "scientificName": "Leveillula taurica",
+          "description": "Unlike most powdery mildews this one shows first as yellow blotches on the upper leaf, with the white bloom underneath. Leaves drop from the bottom up, leaving the fruit unshaded and prone to sunscald.",
+          "prevention": [
+            "Space plants so air can move down the row.",
+            "Avoid excess nitrogen, which gives soft susceptible leaves.",
+            "Check the undersides of the lower leaves, where it starts."
+          ],
+          "response": [
+            "Spray a baking soda solution with a few drops of vegetable oil.",
+            "Apply an approved sulphur preparation on a cloudy day.",
+            "Strip the worst-affected lower leaves.",
+            "Shade fruit left exposed once the leaves have dropped."
+          ],
+          "caution": "Sulphur scorches foliage above roughly 28 °C and must never be mixed with oil preparations, nor applied within a fortnight of one. Spray on a cloudy day.",
+          "rules": [
+            {
+              "id": "paprika.pepelnica.toplo-uz-suv-list",
+              "threatId": "pepelnica",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 20,
+                    "max": 30
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 3,
+                    "comparator": "atMost",
+                    "value": 1
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "kukuruzna-sovica",
+          "type": "pest",
+          "name": "Cotton bollworm",
+          "scientificName": "Helicoverpa armigera",
+          "description": "A night-flying moth whose caterpillars bore straight into the fruit and feed inside. The hole they leave lets rot in, so the fruit cannot be saved. There are three generations a year, and the second, in midsummer, does the most damage.",
+          "prevention": [
+            "Pheromone traps to track the flight, set before it starts.",
+            "Netting over seedbeds, since the first generation goes for young plants.",
+            "Inspect leaves every three to five days from early July, while the eggs are still pale.",
+            "Remove and destroy attacked fruit with the caterpillar still inside."
+          ],
+          "response": [
+            "Bacillus thuringiensis while the caterpillars are young and still on the leaf.",
+            "Hand-pick caterpillars during an evening inspection.",
+            "Hose the whole plant hard to wash off eggs and newly hatched larvae.",
+            "Pick sound fruit before it ripens into the attack."
+          ],
+          "rules": [
+            {
+              "id": "paprika.kukuruzna-sovica.druga-generacija",
+              "threatId": "kukuruzna-sovica",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 7,
+                    "toMonth": 8
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 20,
+                    "max": 30
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "paprika.kukuruzna-sovica.prvi-let",
+              "threatId": "kukuruzna-sovica",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 6,
+                    "toMonth": 6
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 18,
+                    "max": 28
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "bakterioza",
+          "type": "other",
+          "name": "Bacterial spot",
+          "scientificName": "Xanthomonas euvesicatoria",
+          "description": "A bacterial disease, not a fungal one, which is why copper does little against it. It gives dark greasy spots that dry and fall out, the leaves drop, and the plant stalls. It arrives on seed or bought transplants, and survives on seed for well over a year.",
+          "prevention": [
+            "Raise your own transplants from seed of known origin.",
+            "Hot-water treat the seed before sowing.",
+            "Rotate at least three years without peppers or tomatoes.",
+            "Never work in the crop while the plants are wet — hands and tools carry it."
+          ],
+          "response": [
+            "Pull and destroy the worst plants away from the garden.",
+            "Stop watering over the leaves and switch to the root.",
+            "Stop all work in a wet crop.",
+            "Feed the crop so the remaining plants hold out to the end of the season."
+          ],
+          "rules": [
+            {
+              "id": "paprika.bakterioza.topla-kisa",
+              "threatId": "bakterioza",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 6,
+                    "toMonth": 8
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 24,
+                    "max": 32
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 2,
+                    "comparator": "atLeast",
+                    "value": 8
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "trulez-vrha-ploda",
+          "type": "other",
+          "name": "Blossom-end rot",
+          "description": "A physiological disorder rather than a disease: in heat and dry air the plant cannot move calcium out to the fruit, so its tip darkens and sinks in. It does not spread from plant to plant, and no foliar spray will fix it.",
+          "prevention": [
+            "Water evenly, without sudden dry spells.",
+            "Mulch to hold moisture in the soil.",
+            "Avoid excess nitrogen, which pushes the plant into leaf at the fruit's expense."
+          ],
+          "response": [
+            "Return to a steady rhythm of smaller, regular waterings.",
+            "Mulch straight away to cut evaporation.",
+            "Shade the plants through the hottest part of the day.",
+            "Pick off affected fruit so the plant stops spending on it."
+          ],
+          "rules": [
+            {
+              "id": "paprika.trulez-vrha-ploda.vrucina-i-suv-vazduh",
+              "threatId": "trulez-vrha-ploda",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 30
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "averageHumidity",
+                    "comparator": "lessThan",
+                    "value": 65
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 5,
+                    "comparator": "atMost",
+                    "value": 5
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "patlidzan",
+      "name": "Aubergine",
+      "season": {
+        "fromMonth": 5,
+        "toMonth": 10
+      },
+      "threats": [
+        {
+          "id": "crna-pegavost",
+          "type": "fungalDisease",
+          "name": "Early blight",
+          "scientificName": "Alternaria solani",
+          "description": "Dark concentric spots on older leaves that spread upward, favoured by warm weather where the leaf repeatedly wets and dries. A stripped plant gives small fruit prone to sunscald.",
+          "prevention": [
+            "Mulch the soil so rain cannot splash it onto the lower leaves.",
+            "Keep nitrogen feeding balanced.",
+            "Space plants far enough apart that leaves dry quickly after rain.",
+            "Clear plant debris after harvest."
+          ],
+          "response": [
+            "Strip the oldest infected leaves.",
+            "Treat with an approved copper preparation.",
+            "Water in the morning so leaves go into the night dry.",
+            "Feed the crop to strengthen it."
+          ],
+          "caution": "Copper does not break down — it accumulates permanently in the soil and harms earthworms and soil life. Organic production allows at most 4 kg of copper per hectare per year. Treat it as a last resort, never as a scheduled preventive.",
+          "rules": [
+            {
+              "id": "patlidzan.crna-pegavost.uslovi-za-infekciju",
+              "threatId": "crna-pegavost",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 24,
+                    "max": 29
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 55
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "paucinar",
+          "type": "pest",
+          "name": "Two-spotted spider mite",
+          "scientificName": "Tetranychus urticae",
+          "description": "A tiny mite on the leaf underside, which hits aubergine harder than most crops. In hot dry weather it multiplies explosively — the leaf goes stippled, then grey, then dies, with fine webbing strung between the leaves.",
+          "prevention": [
+            "Check leaf undersides regularly — an attack is usually noticed late.",
+            "Keep humidity up around the plants during the hottest spells.",
+            "Clear weeds that host the mite.",
+            "Avoid dusty paths beside the bed, which suit the mite."
+          ],
+          "response": [
+            "Hose the leaf undersides hard with water to break up the population.",
+            "Use plant-oil or potassium-soap preparations.",
+            "Remove and destroy the worst-affected leaves.",
+            "Repeat every five to seven days — the eggs survive the first spray."
+          ],
+          "caution": "Oil and soap preparations work by blocking the insects' breathing pores, but they scorch leaves in sun. Spray in the evening, and test on a few leaves first — varieties differ in how they react.",
+          "rules": [
+            {
+              "id": "patlidzan.paucinar.vrucina-i-suv-vazduh",
+              "threatId": "paucinar",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 27
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "lessThan",
+                    "value": 40
+                  }
+                ]
+              }
+            },
+            {
+              "id": "patlidzan.paucinar.susa",
+              "threatId": "paucinar",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 5,
+                "comparator": "atMost",
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "trulez-vrha-ploda",
+          "type": "other",
+          "name": "Blossom-end rot",
+          "description": "A physiological disorder: in heat and dry air calcium never reaches the tip of the fruit, which darkens and sinks in. On aubergine it usually strikes the first, largest fruit, while the root system is still young.",
+          "prevention": [
+            "Water evenly, without sudden dry spells.",
+            "Mulch to hold moisture in the soil.",
+            "Transplant into warm soil — a plant set in cold ground roots slowly."
+          ],
+          "response": [
+            "Return to a steady rhythm of smaller, regular waterings.",
+            "Mulch straight away to cut evaporation.",
+            "Pick off affected fruit, which saves the ones coming after it."
+          ],
+          "rules": [
+            {
+              "id": "patlidzan.trulez-vrha-ploda.vrucina-i-suv-vazduh",
+              "threatId": "trulez-vrha-ploda",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 30
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "averageHumidity",
+                    "comparator": "lessThan",
+                    "value": 65
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 5,
+                    "comparator": "atMost",
+                    "value": 5
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sargarepa",
+      "name": "Carrot",
+      "season": {
+        "fromMonth": 3,
+        "toMonth": 10
+      },
+      "threats": [
+        {
+          "id": "pegavost-lista",
+          "type": "fungalDisease",
+          "name": "Leaf blight",
+          "scientificName": "Alternaria dauci",
+          "description": "Dark spots with a yellow margin on the older leaves, merging until the whole top dries off. Without leaves the root stops growing, and a dead top snaps when you pull, leaving the root in the ground.",
+          "prevention": [
+            "A rotation of at least four years without umbellifers.",
+            "Thin on time so air passes down the row.",
+            "Water at the root in the morning, so leaves go into the night dry.",
+            "Clear plant debris after lifting."
+          ],
+          "response": [
+            "Strip the oldest infected leaves.",
+            "Treat with horsetail tea to toughen the foliage.",
+            "Stop watering over the leaves.",
+            "Lift the roots as soon as they are usable if the tops are dying back."
+          ],
+          "rules": [
+            {
+              "id": "sargarepa.pegavost-lista.uslovi-za-infekciju",
+              "threatId": "pegavost-lista",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 20,
+                    "max": 28
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 60
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "sargarepa.pegavost-lista.padavine",
+              "threatId": "pegavost-lista",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "mrkvina-muva",
+          "type": "pest",
+          "name": "Carrot fly",
+          "scientificName": "Psila rosae",
+          "description": "The larvae tunnel into the root, filling it with frass, and the root turns bitter and unusable. Attacked plants show purple foliage that later yellows. There are two generations: the first flies in May and June, the second in July, and the second is the larger.",
+          "prevention": [
+            "A four-year rotation; celery is a particularly bad predecessor.",
+            "Insect netting over the bed through the flight.",
+            "Mulch from mid-May so the fly cannot reach the soil at the root.",
+            "Sow in several batches, so the whole crop does not meet both flights.",
+            "Interplant with onion and garlic."
+          ],
+          "response": [
+            "Lift and destroy attacked roots together with the larvae.",
+            "Thin in the evening only — the smell of thinnings draws the fly.",
+            "Carry thinnings out of the garden rather than leaving them on the bed.",
+            "Mulch with pine needles, whose scent puts the fly off."
+          ],
+          "rules": [
+            {
+              "id": "sargarepa.mrkvina-muva.prva-generacija",
+              "threatId": "mrkvina-muva",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 5,
+                    "toMonth": 6
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 15,
+                    "max": 25
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "sargarepa.mrkvina-muva.druga-generacija",
+              "threatId": "mrkvina-muva",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 7,
+                    "toMonth": 8
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 18,
+                    "max": 28
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "pucanje-korena",
+          "type": "other",
+          "name": "Root splitting",
+          "description": "Heavy rain after a dry spell forces the root into sudden growth and it splits lengthwise. Rot enters through the crack at once, so a split root will not store.",
+          "prevention": [
+            "Water evenly while the root is thickening.",
+            "Mulch to keep soil moisture steadier."
+          ],
+          "response": [
+            "Bring watering back gradually rather than in one large dose.",
+            "Lift mature roots ahead of forecast rain.",
+            "Sort split roots out before storing."
+          ],
+          "rules": [
+            {
+              "id": "sargarepa.pucanje-korena.pljusak-posle-suse",
+              "threatId": "pucanje-korena",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 30
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "blitva",
+      "name": "Chard",
+      "season": {
+        "fromMonth": 4,
+        "toMonth": 11
+      },
+      "threats": [
+        {
+          "id": "pegavost-lista",
+          "type": "fungalDisease",
+          "name": "Leaf spot",
+          "scientificName": "Cercospora beticola",
+          "description": "Small round spots with a pale centre and a dark red rim, multiplying until the leaf yellows and dies. It wants warmth and a wet leaf, so it comes in the hottest part of summer, especially in a crowded stand.",
+          "prevention": [
+            "Space plants so the leaves dry quickly.",
+            "Rotate — the fungus overwinters on chard and beet debris.",
+            "Water at the root rather than over the leaves.",
+            "Pick outer leaves regularly, which thins the stand."
+          ],
+          "response": [
+            "Remove affected leaves and take them out of the garden.",
+            "Stop watering over the leaves.",
+            "Treat with horsetail tea.",
+            "Keep picking sound inner leaves — the plant goes on making new ones."
+          ],
+          "rules": [
+            {
+              "id": "blitva.pegavost-lista.uslovi-za-infekciju",
+              "threatId": "pegavost-lista",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 25,
+                    "max": 30
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 60
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "blitva.pegavost-lista.padavine",
+              "threatId": "pegavost-lista",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "lisni-mineri",
+          "type": "pest",
+          "name": "Beet leaf miner",
+          "scientificName": "Pegomya hyoscyami",
+          "description": "The larvae live inside the leaf and eat it out from within, leaving translucent blistered mines that later brown. A mined leaf is not worth eating. There are two to three generations, starting in May.",
+          "prevention": [
+            "Insect netting over the bed from emergence.",
+            "Check leaf undersides regularly and rub off egg clusters.",
+            "Rotate — the pupae overwinter in the soil under the crop.",
+            "Clear fat hen and pigweed nearby, which host it."
+          ],
+          "response": [
+            "Pick off and destroy mined leaves with the larva inside.",
+            "Pinch the mine between your fingers if there are only a few.",
+            "Pick and use sound leaves before the larvae move onto them."
+          ],
+          "rules": [
+            {
+              "id": "blitva.lisni-mineri.prva-generacija",
+              "threatId": "lisni-mineri",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 5,
+                    "toMonth": 6
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 15,
+                    "max": 25
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "blitva.lisni-mineri.kasnije-generacije",
+              "threatId": "lisni-mineri",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 7,
+                    "toMonth": 8
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 18,
+                    "max": 28
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "prerano-cvetanje",
+          "type": "other",
+          "name": "Bolting",
+          "description": "Chard is biennial: a cold spell on a young plant convinces it that winter has passed, so it throws a flower stalk instead of leaves. The foliage turns stringy and bitter and the plant never comes back. It is not a disease and does not spread.",
+          "prevention": [
+            "Sow once the soil is reliably warm, rather than at the earliest possible date.",
+            "Cover with fleece when a cold spell is forecast.",
+            "Choose bolt-resistant varieties for early sowings."
+          ],
+          "response": [
+            "Snap out the flower stalk as soon as it shows, which extends the leaf harvest.",
+            "Pick the remaining leaves while they are still tender.",
+            "Sow a fresh batch — a bolted plant will not go back to leaf."
+          ],
+          "rules": [
+            {
+              "id": "blitva.prerano-cvetanje.prolecno-zahladjenje",
+              "threatId": "prerano-cvetanje",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 4,
+                    "toMonth": 5
+                  },
+                  {
+                    "type": "consecutiveDays",
+                    "days": 3,
+                    "condition": {
+                      "type": "metricThreshold",
+                      "metric": "minTemperature",
+                      "comparator": "lessThan",
+                      "value": 10
+                    }
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "zelena-salata",
+      "name": "Lettuce",
+      "season": {
+        "fromMonth": 3,
+        "toMonth": 10
+      },
+      "threats": [
+        {
+          "id": "plamenjaca",
+          "type": "fungalDisease",
+          "name": "Lettuce downy mildew",
+          "scientificName": "Bremia lactucae",
+          "description": "Pale yellow angular patches bounded by the leaf veins, with a white bloom underneath. It wants cool damp weather, so it is a spring and autumn problem rather than a midsummer one. The lower leaves rot and the whole head can be lost.",
+          "prevention": [
+            "Space plants so the leaves dry by evening.",
+            "Water in the morning at the root, never over the leaves at dusk.",
+            "Rotate — the spores overwinter on lettuce debris.",
+            "Remove lower leaves that lie on the soil."
+          ],
+          "response": [
+            "Remove affected leaves and take them out of the garden.",
+            "Stop watering over the leaves.",
+            "Treat with horsetail tea.",
+            "Cut sound heads before the infection advances."
+          ],
+          "rules": [
+            {
+              "id": "zelena-salata.plamenjaca.uslovi-za-infekciju",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 10,
+                    "max": 20
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 65
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "zelena-salata.plamenjaca.padavine",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 8
+              }
+            }
+          ]
+        },
+        {
+          "id": "puzevi",
+          "type": "pest",
+          "name": "Slugs",
+          "description": "They come out at night and after rain, chewing ragged holes in the leaves, starting with the outer ones near the soil. A young transplant can vanish overnight. In dry weather they retreat into the soil, so the damage looks as if it has stopped.",
+          "prevention": [
+            "Clear boards, pots and deep mulch beside the bed, where they shelter by day.",
+            "Water in the morning rather than the evening, so the surface is dry by night.",
+            "A barrier of dry ash or sand around newly planted seedlings.",
+            "A pond or hedge in the garden, which brings in frogs, hedgehogs and birds."
+          ],
+          "response": [
+            "Collect them at dusk or first light, when they are on the surface.",
+            "Lay boards as traps and gather what shelters under them each morning.",
+            "Renew the ash barrier after every rain — wet ash does nothing.",
+            "Plant a fresh batch if the bed has been stripped."
+          ],
+          "rules": [
+            {
+              "id": "zelena-salata.puzevi.vlazno-i-blago",
+              "threatId": "puzevi",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 10,
+                    "max": 22
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 2,
+                    "comparator": "atLeast",
+                    "value": 8
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "prerano-cvetanje",
+          "type": "other",
+          "name": "Bolting",
+          "description": "In heat lettuce stops making a rosette and throws a flower stalk. The leaves run milky sap, turn bitter and tough, and are no longer worth eating. It is not a disease — it does not spread, and no spray stops it.",
+          "prevention": [
+            "Sow in successive batches rather than the whole bed at once.",
+            "Shade with netting through the hottest part of the season.",
+            "Water evenly — drought brings bolting on faster.",
+            "Site summer sowings in the half-shade of taller crops."
+          ],
+          "response": [
+            "Cut every head that has reached a usable size, now.",
+            "Rig shade over whatever is left standing.",
+            "Water more heavily, which at least slows the bolting.",
+            "Sow a fresh batch for an autumn cut."
+          ],
+          "rules": [
+            {
+              "id": "zelena-salata.prerano-cvetanje.toplotni-talas",
+              "threatId": "prerano-cvetanje",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 5,
+                    "toMonth": 9
+                  },
+                  {
+                    "type": "consecutiveDays",
+                    "days": 3,
+                    "condition": {
+                      "type": "metricThreshold",
+                      "metric": "maxTemperature",
+                      "comparator": "greaterThan",
+                      "value": 28
+                    }
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "boranija",
+      "name": "Green bean",
+      "season": {
+        "fromMonth": 5,
+        "toMonth": 9
+      },
+      "threats": [
+        {
+          "id": "antraknoza",
+          "type": "fungalDisease",
+          "name": "Anthracnose",
+          "scientificName": "Colletotrichum lindemuthianum",
+          "description": "Dark sunken spots with a reddish rim on the pods, and dark streaks along the veins on the leaf underside. It arrives on infected seed and spreads in rain splash, so one wet week can take the whole bed.",
+          "prevention": [
+            "Seed from a healthy crop — the fungus is seed-borne.",
+            "A rotation of at least three years without legumes.",
+            "Grow up supports so the pods do not lie on the soil.",
+            "Never work in the crop while the plants are wet."
+          ],
+          "response": [
+            "Pull and destroy affected plants away from the garden.",
+            "Stop all work in a wet crop.",
+            "Treat with an approved copper preparation.",
+            "Pick sound pods in dry weather — and never save them for seed."
+          ],
+          "caution": "Copper does not break down — it accumulates permanently in the soil and harms earthworms and soil life. Organic production allows at most 4 kg of copper per hectare per year. Treat it as a last resort, never as a scheduled preventive.",
+          "rules": [
+            {
+              "id": "boranija.antraknoza.uslovi-za-infekciju",
+              "threatId": "antraknoza",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 13,
+                    "max": 26
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 65
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "boranija.antraknoza.padavine",
+              "threatId": "antraknoza",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "crna-vas",
+          "type": "pest",
+          "name": "Black bean aphid",
+          "scientificName": "Aphis fabae",
+          "description": "Dense black colonies on the growing tips and flower trusses. Their feeding stops the tip growing and prevents pods setting, and the honeydew they excrete draws ants and grows sooty mould.",
+          "prevention": [
+            "Interplant with aromatics and flower strips that bring in ladybirds.",
+            "Avoid excess nitrogen, which gives soft sappy shoots.",
+            "Check the shoot tips regularly from the start of flowering.",
+            "Tolerate ants where you can, but not beside the colonies — they defend them."
+          ],
+          "response": [
+            "Pinch out the worst tips with the whole colony on them.",
+            "Hose the colonies off the shoots with a hard jet of water.",
+            "Potassium-soap preparations, in the evening.",
+            "Leave ladybirds and hoverflies alone — they clear a colony in days."
+          ],
+          "caution": "Oil and soap preparations work by blocking the insects' breathing pores, but they scorch leaves in sun. Spray in the evening, and test on a few leaves first — varieties differ in how they react.",
+          "rules": [
+            {
+              "id": "boranija.crna-vas.toplo",
+              "threatId": "crna-vas",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 5,
+                    "toMonth": 8
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 18,
+                    "max": 28
+                  }
+                ]
+              }
+            },
+            {
+              "id": "boranija.crna-vas.suvo",
+              "threatId": "crna-vas",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 4,
+                "comparator": "atMost",
+                "value": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "opadanje-cvetova",
+          "type": "other",
+          "name": "Flower drop",
+          "description": "Above roughly 30 °C bean pollen stops working, so the flower is never fertilised and drops. The plant stays green and healthy but sets no pods. It is not a disease, and there is nothing to see beyond an empty flower truss.",
+          "prevention": [
+            "Time sowings so flowering misses the hottest part of summer.",
+            "Mulch to cool the soil and hold moisture.",
+            "Sow in the half-shade of taller crops on hot sites."
+          ],
+          "response": [
+            "Water in the evening to cool the plants before nightfall.",
+            "Shade with netting through the heatwave.",
+            "Be patient — the plant goes on flowering and will set once the heat breaks."
+          ],
+          "rules": [
+            {
+              "id": "boranija.opadanje-cvetova.vrucina",
+              "threatId": "opadanje-cvetova",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 30
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "averageHumidity",
+                    "comparator": "lessThan",
+                    "value": 65
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tikvica",
+      "name": "Courgette",
+      "season": {
+        "fromMonth": 5,
+        "toMonth": 9
+      },
+      "threats": [
+        {
+          "id": "pepelnica",
+          "type": "fungalDisease",
+          "name": "Powdery mildew",
+          "scientificName": "Podosphaera xanthii",
+          "description": "A white, flour-like coating on the upper leaf surface, spreading until the leaf yellows and dies. It wants warmth and humid air but a dry leaf, so it appears even without rain — and a stripped plant stops setting fruit.",
+          "prevention": [
+            "Space plants — courgette closes the row fast and the air stops moving.",
+            "Take off the oldest lower leaves through the season.",
+            "Avoid excess nitrogen.",
+            "Choose tolerant varieties."
+          ],
+          "response": [
+            "Spray a baking soda solution with a few drops of vegetable oil.",
+            "Apply an approved sulphur preparation on a cloudy day.",
+            "Strip the worst leaves, leaving the young ones at the centre.",
+            "Feed the plant so it can push out new leaves."
+          ],
+          "caution": "Sulphur scorches foliage above roughly 28 °C and must never be mixed with oil preparations, nor applied within a fortnight of one. Spray on a cloudy day.",
+          "rules": [
+            {
+              "id": "tikvica.pepelnica.toplo-uz-suv-list",
+              "threatId": "pepelnica",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 20,
+                    "max": 30
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 3,
+                    "comparator": "atMost",
+                    "value": 1
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "paucinar",
+          "type": "pest",
+          "name": "Two-spotted spider mite",
+          "scientificName": "Tetranychus urticae",
+          "description": "A tiny mite on the leaf underside; in hot dry weather it multiplies explosively, leaving the leaf stippled, grey and finally dead. On courgette's large leaves an attack goes unnoticed for a long time.",
+          "prevention": [
+            "Check leaf undersides regularly — an attack is usually noticed late.",
+            "Keep humidity up around the plants during the hottest spells.",
+            "Clear weeds that host the mite."
+          ],
+          "response": [
+            "Hose the leaf undersides hard with water to break up the population.",
+            "Use plant-oil or potassium-soap preparations.",
+            "Remove and destroy the worst-affected leaves.",
+            "Repeat every five to seven days — the eggs survive the first spray."
+          ],
+          "caution": "Oil and soap preparations work by blocking the insects' breathing pores, but they scorch leaves in sun. Spray in the evening, and test on a few leaves first — varieties differ in how they react.",
+          "rules": [
+            {
+              "id": "tikvica.paucinar.vrucina-i-suv-vazduh",
+              "threatId": "paucinar",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 27
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "lessThan",
+                    "value": 40
+                  }
+                ]
+              }
+            },
+            {
+              "id": "tikvica.paucinar.susa",
+              "threatId": "paucinar",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 5,
+                "comparator": "atMost",
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "neoplodjeni-plodovi",
+          "type": "other",
+          "name": "Failed fruit set",
+          "description": "The fruit starts to grow, then yellows from the tip and rots while still small. The cause is failed pollination: above roughly 32 °C courgette pollen dies, and in rain and wind the bees do not fly. It is not a disease, though the rot at the tip looks like one.",
+          "prevention": [
+            "Flower strips and aromatics nearby, which keep pollinators in the garden.",
+            "Never spray anything while the flowers are open.",
+            "Shade with netting on the hottest days, which protects the pollen."
+          ],
+          "response": [
+            "Hand-pollinate at first light, brushing a male flower onto the female's stigma.",
+            "Pick off the failed fruit so the plant stops spending on it.",
+            "Water in the evening to cool the plant before the next day."
+          ],
+          "rules": [
+            {
+              "id": "tikvica.neoplodjeni-plodovi.vrucina-u-cvetanju",
+              "threatId": "neoplodjeni-plodovi",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 6,
+                    "toMonth": 8
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 32
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "praziluk",
+      "name": "Leek",
+      "season": {
+        "fromMonth": 3,
+        "toMonth": 11
+      },
+      "threats": [
+        {
+          "id": "rdja",
+          "type": "fungalDisease",
+          "name": "Leek rust",
+          "scientificName": "Puccinia allii",
+          "description": "Raised orange pustules in rows along the leaf, leaving a dust on your fingers when touched. A heavy attack dries the foliage and the stem stays thin. It wants mild damp weather, so it is worst in autumn and in a crowded, over-fed crop.",
+          "prevention": [
+            "Space plants so air moves down the row.",
+            "Avoid excess nitrogen, which gives soft susceptible leaves.",
+            "A rotation of at least three years without alliums.",
+            "Clear and destroy debris after lifting — the rust overwinters on it."
+          ],
+          "response": [
+            "Strip the worst leaves and take them out of the garden.",
+            "Stop watering over the foliage.",
+            "Feed potassium, which toughens the leaf.",
+            "Lift the leeks as soon as they are usable if the attack is heavy."
+          ],
+          "rules": [
+            {
+              "id": "praziluk.rdja.uslovi-za-infekciju",
+              "threatId": "rdja",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 10,
+                    "max": 20
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 65
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "praziluk.rdja.padavine",
+              "threatId": "rdja",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 3,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "lukov-moljac",
+          "type": "pest",
+          "name": "Leek moth",
+          "scientificName": "Acrolepiopsis assectella",
+          "description": "The larvae bore into the heart of the plant and tunnel downward through the packed leaves, so a cut stem shows a chewed core full of frass. Rot follows through the damage. There are two generations: the first in May, the second in July and August.",
+          "prevention": [
+            "Insect netting over the bed through both flights.",
+            "Rotate, keeping distance from last year's alliums.",
+            "Check the heart of the plant and remove larvae at the first tunnels.",
+            "Clear debris after lifting, where the pupae overwinter."
+          ],
+          "response": [
+            "Pull and destroy attacked plants together with the larvae.",
+            "Strip the affected outer leaves if the heart is still sound.",
+            "Bacillus thuringiensis while the larvae are still on the leaf.",
+            "Feed the crop — a damaged plant struggles to carry on growing."
+          ],
+          "rules": [
+            {
+              "id": "praziluk.lukov-moljac.prvi-let",
+              "threatId": "lukov-moljac",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 5,
+                    "toMonth": 6
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 15,
+                    "max": 25
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "praziluk.lukov-moljac.drugi-let",
+              "threatId": "lukov-moljac",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 7,
+                    "toMonth": 8
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 18,
+                    "max": 28
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "trulez-od-prevlazenosti",
+          "type": "other",
+          "name": "Waterlogging rot",
+          "description": "Leeks are earthed up to blanch the stem, and earthed-up soil holds water easily. On heavy ground after long rain the base of the stem softens and rots. The problem is drainage, not a pathogen.",
+          "prevention": [
+            "Plant on raised beds on heavy soils.",
+            "Earth up with dry, loose soil rather than packed ground.",
+            "Stop watering through wet spells."
+          ],
+          "response": [
+            "Drain the excess away through shallow channels at once.",
+            "Pull the soil back from the base of the stem so it can dry.",
+            "Lift affected plants — the rot carries on in store."
+          ],
+          "rules": [
+            {
+              "id": "praziluk.trulez-od-prevlazenosti.dugotrajne-padavine",
+              "threatId": "trulez-od-prevlazenosti",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 5,
+                "comparator": "atLeast",
+                "value": 40
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "prokelj-kelj",
+      "name": "Brussels sprouts and kale",
+      "season": {
+        "fromMonth": 4,
+        "toMonth": 11
+      },
+      "threats": [
+        {
+          "id": "crna-pegavost-krstasica",
+          "type": "fungalDisease",
+          "name": "Brassica ring spot",
+          "scientificName": "Alternaria brassicae",
+          "description": "Round spots with concentric rings and a yellow margin, showing first on the older leaves. On Brussels sprouts they carry onto the sprouts themselves, which are then unusable. It spreads in rain splash and on infected seed.",
+          "prevention": [
+            "A rotation of at least three years without brassicas.",
+            "Space plants so the leaves dry after rain.",
+            "Take off the lower, older leaves through the season.",
+            "Never work in the crop while the plants are wet."
+          ],
+          "response": [
+            "Remove affected leaves and take them out of the garden.",
+            "Treat with an approved copper preparation.",
+            "Stop watering over the leaves.",
+            "Pick sound sprouts before the spotting reaches them."
+          ],
+          "caution": "Copper does not break down — it accumulates permanently in the soil and harms earthworms and soil life. Organic production allows at most 4 kg of copper per hectare per year. Treat it as a last resort, never as a scheduled preventive.",
+          "rules": [
+            {
+              "id": "prokelj-kelj.crna-pegavost-krstasica.uslovi-za-infekciju",
+              "threatId": "crna-pegavost-krstasica",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 18,
+                    "max": 26
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 60
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "prokelj-kelj.crna-pegavost-krstasica.padavine",
+              "threatId": "crna-pegavost-krstasica",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "kupusni-buvaci",
+          "type": "pest",
+          "name": "Cabbage flea beetles",
+          "scientificName": "Phyllotreta spp.",
+          "description": "Small shiny jumping beetles that shot-hole the leaves until they look like a sieve. They come out of the soil once it warms past roughly 18 °C and are worst in hot dry weather. They matter little to a grown plant, but can stop a young transplant outright.",
+          "prevention": [
+            "Insect netting over the bed from planting, while the transplants are young.",
+            "Keep the soil surface damp — dry conditions suit them.",
+            "Mulch, which makes it harder for them to emerge.",
+            "Time sowings so the transplants grow quickly past the vulnerable stage."
+          ],
+          "response": [
+            "Mist the crop regularly — they stop feeding in damp conditions.",
+            "Dust wood ash thinly over the leaves while it is dry.",
+            "Feed the transplants so they outgrow the damage.",
+            "Put netting on even late — the attack lasts as long as the drought."
+          ],
+          "rules": [
+            {
+              "id": "prokelj-kelj.kupusni-buvaci.prolecni-izlazak",
+              "threatId": "kupusni-buvaci",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 4,
+                    "toMonth": 6
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 18,
+                    "max": 28
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 3,
+                    "comparator": "atMost",
+                    "value": 2
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "prokelj-kelj.kupusni-buvaci.letnja-susa",
+              "threatId": "kupusni-buvaci",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 7,
+                    "toMonth": 8
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 20,
+                    "max": 30
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 3,
+                    "comparator": "atMost",
+                    "value": 2
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "rastresite-ruzice",
+          "type": "other",
+          "name": "Loose sprouts",
+          "description": "The sprouts never firm up, staying open like small loose rosettes. The cause is warm autumn weather, when the plant carries on growing instead of settling towards dormancy. They are edible, but they spoil fast and will not keep.",
+          "prevention": [
+            "Time planting so the sprouts firm up in the cooler part of autumn.",
+            "Go easy on nitrogen in the second half of the season.",
+            "Firm the soil hard around the roots when planting — a wobbly plant gives loose sprouts."
+          ],
+          "response": [
+            "Pinch out the growing tip, which sends the plant's effort into the sprouts.",
+            "Pick from the bottom up as soon as the sprouts are usable.",
+            "Stop feeding nitrogen.",
+            "Pick and use straight away — loose sprouts do not store."
+          ],
+          "rules": [
+            {
+              "id": "prokelj-kelj.rastresite-ruzice.topla-jesen",
+              "threatId": "rastresite-ruzice",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 9,
+                    "toMonth": 11
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 16,
+                    "max": 26
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cvekla",
+      "name": "Beetroot",
+      "season": {
+        "fromMonth": 4,
+        "toMonth": 10
+      },
+      "threats": [
+        {
+          "id": "pegavost-lista",
+          "type": "fungalDisease",
+          "name": "Leaf spot",
+          "scientificName": "Cercospora beticola",
+          "description": "Small round spots with a pale centre and a dark red rim. Once defoliated, beetroot pushes a new rosette from the crown and spends what the root has already stored, so the root stays small and woody.",
+          "prevention": [
+            "Rotate — the fungus overwinters on beet and chard debris.",
+            "Sow at a spacing that lets the leaves dry quickly.",
+            "Water at the root, in the morning.",
+            "Clear and remove the leafy debris after lifting."
+          ],
+          "response": [
+            "Remove affected leaves and take them out of the garden.",
+            "Stop watering over the leaves.",
+            "Treat with horsetail tea.",
+            "Lift the roots if the tops have died off entirely — they will not grow on."
+          ],
+          "rules": [
+            {
+              "id": "cvekla.pegavost-lista.uslovi-za-infekciju",
+              "threatId": "pegavost-lista",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 25,
+                    "max": 30
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 60
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "cvekla.pegavost-lista.padavine",
+              "threatId": "pegavost-lista",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "lisni-mineri",
+          "type": "pest",
+          "name": "Beet leaf miner",
+          "scientificName": "Pegomya hyoscyami",
+          "description": "The larvae tunnel inside the leaf, leaving translucent blistered mines that later brown. On beetroot the damage is indirect: lost leaf area means a smaller root, because the root fills with what the leaves make.",
+          "prevention": [
+            "Insect netting over the bed from emergence.",
+            "Check leaf undersides regularly and rub off egg clusters.",
+            "Rotate — the pupae overwinter in the soil under the crop.",
+            "Clear fat hen and pigweed nearby, which host it."
+          ],
+          "response": [
+            "Pick off and destroy mined leaves with the larva inside.",
+            "Pinch the mine between your fingers, killing the larva without losing the leaf.",
+            "Feed the crop so it can replace the lost leaf area."
+          ],
+          "rules": [
+            {
+              "id": "cvekla.lisni-mineri.prva-generacija",
+              "threatId": "lisni-mineri",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 5,
+                    "toMonth": 6
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 15,
+                    "max": 25
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "cvekla.lisni-mineri.kasnije-generacije",
+              "threatId": "lisni-mineri",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "monthRange",
+                    "fromMonth": 7,
+                    "toMonth": 8
+                  },
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 18,
+                    "max": 28
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "trulez-srca",
+          "type": "other",
+          "name": "Heart rot",
+          "description": "The heart of the rosette blackens and rots, and a cut root shows dark rings and cavities. The cause is boron shortage, which a long drought makes impossible to take up even when the soil holds enough. It is not infectious.",
+          "prevention": [
+            "Water evenly — boron is only taken up from moist soil.",
+            "Mulch to keep moisture steadier.",
+            "Avoid over-liming; a high pH locks boron up.",
+            "Work in compost regularly, which returns trace elements to the soil."
+          ],
+          "response": [
+            "Restore regular watering at once, which brings boron uptake back.",
+            "Mulch to cut evaporation.",
+            "Lift and discard affected roots — the rot carries on in store.",
+            "Apply a dilute boron drench only if a soil test has confirmed the shortage."
+          ],
+          "rules": [
+            {
+              "id": "cvekla.trulez-srca.dugotrajna-susa",
+              "threatId": "trulez-srca",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 6,
+                "comparator": "atMost",
+                "value": 3
               },
               "weight": 2
             }

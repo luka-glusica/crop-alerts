@@ -283,7 +283,22 @@ class _ThreatDetail extends ConsumerWidget {
             children: [
               Icon(threat.threat.type.icon, size: 18, color: colors.foreground),
               const SizedBox(width: AppSpacing.s2),
-              Expanded(child: Text(threat.threat.name, style: text.titleSmall)),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(threat.threat.name, style: text.titleSmall),
+                    if (threat.threat.scientificName != null)
+                      Text(
+                        threat.threat.scientificName!,
+                        style: text.bodySmall?.copyWith(
+                          fontStyle: FontStyle.italic,
+                          color: palette.textMuted,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
               RiskBadge(level: threat.level),
             ],
           ),
@@ -312,6 +327,19 @@ class _ThreatDetail extends ConsumerWidget {
             const SizedBox(height: AppSpacing.s1),
             for (final step in threat.threat.response)
               _Bullet(icon: AppIcons.response, text: step),
+          ],
+
+          // Sits directly under the advice it qualifies, because a warning
+          // filed anywhere else is a warning read after the damage.
+          if (threat.threat.caution != null) ...[
+            const SizedBox(height: AppSpacing.s3),
+            Text(l10n.caution.toUpperCase(), style: text.labelSmall),
+            const SizedBox(height: AppSpacing.s1),
+            _Bullet(
+              icon: AppIcons.caution,
+              text: threat.threat.caution!,
+              color: palette.riskModerate.accent,
+            ),
           ],
 
           // Rating whether the advice worked is a later release; the code path
@@ -376,6 +404,14 @@ class _ThreatGroup extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(threat.name, style: text.titleSmall),
+                    if (threat.scientificName != null)
+                      Text(
+                        threat.scientificName!,
+                        style: text.bodySmall?.copyWith(
+                          fontStyle: FontStyle.italic,
+                          color: palette.textMuted,
+                        ),
+                      ),
                     if (threat.description != null) ...[
                       const SizedBox(height: AppSpacing.s1),
                       Text(threat.description!, style: text.bodySmall),
@@ -386,6 +422,16 @@ class _ThreatGroup extends StatelessWidget {
                       const SizedBox(height: AppSpacing.s1),
                       for (final step in threat.prevention)
                         _Bullet(icon: AppIcons.prevention, text: step),
+                    ],
+                    if (threat.caution != null) ...[
+                      const SizedBox(height: AppSpacing.s3),
+                      Text(l10n.caution.toUpperCase(), style: text.labelSmall),
+                      const SizedBox(height: AppSpacing.s1),
+                      _Bullet(
+                        icon: AppIcons.caution,
+                        text: threat.caution!,
+                        color: palette.riskModerate.accent,
+                      ),
                     ],
                   ],
                 ),

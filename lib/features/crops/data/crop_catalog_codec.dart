@@ -140,9 +140,11 @@ abstract final class CropCatalogCodec {
       id: id,
       type: type,
       name: _nonEmptyString(json, 'name'),
-      description: json['description'] as String?,
+      scientificName: _optionalString(json, 'scientificName'),
+      description: _optionalString(json, 'description'),
       prevention: _stringList(json, 'prevention'),
       response: _stringList(json, 'response'),
+      caution: _optionalString(json, 'caution'),
       rules: rules,
     );
   }
@@ -183,6 +185,20 @@ abstract final class CropCatalogCodec {
 
   static String _nonEmptyString(Map<String, dynamic> json, String key) {
     final value = json[key];
+    if (value is! String || value.trim().isEmpty) {
+      throw CropCatalogException('Expected a non-empty string at "$key".');
+    }
+    return value;
+  }
+
+  /// Reads an optional string, rejecting one that is present but blank.
+  ///
+  /// An absent field means "this threat has no caution"; an empty one almost
+  /// always means someone left a placeholder behind, and the field is optional
+  /// precisely so that it can be omitted instead.
+  static String? _optionalString(Map<String, dynamic> json, String key) {
+    final value = json[key];
+    if (value == null) return null;
     if (value is! String || value.trim().isEmpty) {
       throw CropCatalogException('Expected a non-empty string at "$key".');
     }

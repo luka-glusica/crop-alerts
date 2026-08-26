@@ -141,11 +141,35 @@ weight, and a condition:
 | `rangeOverlap` | the day's own range overlaps a range |
 | `sumOverDays` | a metric totalled over N days compares against a number |
 | `consecutiveDays` | an inner condition holds N days running |
+| `monthRange` | the day falls in a range of months |
 | `allOf`, `anyOf`, `not` | combine other conditions |
 
 Metrics: `minTemperature`, `maxTemperature`, `averageTemperature`,
 `minHumidity`, `maxHumidity`, `averageHumidity`, `precipitation`.
 Comparators: `lessThan`, `atMost`, `greaterThan`, `atLeast`.
+
+### `monthRange` is never used alone
+
+Every other condition asks about the weather. `monthRange` asks about the
+calendar, because an insect's flight period is a fact about the year: carrot fly's
+first generation flies in May and June, and a warm March does not bring it
+forward. Ranges wrap, so `{ "fromMonth": 10, "toMonth": 3 }` covers October
+through March.
+
+A match reports **no observation**, deliberately — "it is May" is not evidence a
+grower can weigh, and `RuleObservation` describes a measurement against a
+requirement, which a month is not. So a rule whose only condition is a
+`monthRange` would flag a crop with nothing to show for it. Always compose it
+inside an `allOf` next to the weather that matters:
+
+```json
+{ "type": "allOf", "conditions": [
+  { "type": "monthRange", "fromMonth": 5, "toMonth": 6 },
+  { "type": "metricBand", "metric": "averageTemperature", "min": 15, "max": 25 } ] }
+```
+
+A test in `crop_catalog_content_test.dart` enforces this: every rule must have at
+least one non-`monthRange` leaf.
 
 ### Choosing between `rangeOverlap` and `metricBand`
 

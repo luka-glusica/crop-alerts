@@ -63,8 +63,14 @@ class _StubForecastRepository implements ForecastRepository {
 
 void main() {
   late Forecast forecast;
+  late List<Crop> catalogue;
 
-  setUpAll(() {
+  /// Crops in season on the fixture's first day, derived rather than written
+  /// down: the catalogue grows, and a hardcoded count would have to be chased
+  /// every time it does.
+  late int growingCrops;
+
+  setUpAll(() async {
     forecast = ForecastParser(
       localize: (utc) => utc.add(const Duration(hours: 2)).toUtc(),
     ).parse(
@@ -74,15 +80,22 @@ void main() {
       coordinates: Coordinates.belgrade,
       fetchedAt: DateTime.utc(2026, 8, 25, 14, 43),
     );
+
+    catalogue = await _DiskCropRepository().load(LocaleController.serbianLatin);
+    growingCrops = catalogue
+        .where((c) => c.season.containsDate(forecast.days.first.date))
+        .length;
   });
 
-  /// Pumps the dashboard on a tall viewport.
+  /// Pumps the dashboard on a viewport tall enough to hold the whole page.
   ///
   /// The default 800x600 test surface only builds the visible part of a lazy
   /// ListView, so counting cards or looking for the footer on it would quietly
-  /// measure the viewport rather than the screen.
+  /// measure the viewport rather than the screen. The height scales with the
+  /// catalogue: a fixed one silently stops covering the footer as soon as
+  /// enough crops are added to push it past the bottom.
   Future<void> pumpDashboard(WidgetTester tester, Widget widget) async {
-    tester.view.physicalSize = const Size(900, 2600);
+    tester.view.physicalSize = Size(900, 1200 + 400.0 * catalogue.length);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
 
@@ -144,8 +157,7 @@ void main() {
     testWidgets('renders a card per growing crop', (tester) async {
       await pumpDashboard(tester, harness());
 
-      // All five seed crops are in season in late August.
-      expect(find.byType(CropRiskCard), findsNWidgets(5));
+      expect(find.byType(CropRiskCard), findsNWidgets(growingCrops));
       expect(find.text('Paradajz'), findsOneWidget);
       expect(find.text('Krompir'), findsOneWidget);
     });
@@ -206,7 +218,7 @@ void main() {
 
       expect(find.textContaining('nema veze sa mrežom'), findsOneWidget);
       // The forecast is still shown; old numbers beat an error screen.
-      expect(find.byType(CropRiskCard), findsNWidgets(5));
+      expect(find.byType(CropRiskCard), findsNWidgets(growingCrops));
     });
   });
 
@@ -370,7 +382,8 @@ void main() {
       await tester.tap(find.textContaining('van sezone'));
       await tester.pumpAndSettle();
 
-      expect(find.byType(CropRiskCard), findsNWidgets(5));
+      // In January nothing is growing, so the whole catalogue is dormant.
+      expect(find.byType(CropRiskCard), findsNWidgets(catalogue.length));
     });
   });
 }

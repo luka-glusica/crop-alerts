@@ -25,6 +25,7 @@ abstract final class AppIcons {
   static const PhosphorIconData otherProblem = PhosphorIconsRegular.warning;
   static const PhosphorIconData prevention = PhosphorIconsRegular.shieldCheck;
   static const PhosphorIconData response = PhosphorIconsRegular.sprayBottle;
+  static const PhosphorIconData caution = PhosphorIconsRegular.warningOctagon;
   static const PhosphorIconData season = PhosphorIconsRegular.calendarBlank;
   static const PhosphorIconData dormant = PhosphorIconsRegular.moon;
 
