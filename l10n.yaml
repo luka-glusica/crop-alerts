@@ -1,0 +1,10 @@
+# Serbian is the app's primary language and therefore the template: new strings
+# are authored in app_sr_Latn.arb first, and English follows.
+arb-dir: lib/l10n
+template-arb-file: app_sr.arb
+output-dir: lib/l10n/generated
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false
+# Fails the build listing anything the template has that a locale does not.
+untranslated-messages-file: l10n_untranslated.json

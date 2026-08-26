@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>App</string>
+	<string>Crop Alerts</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>app</string>
+	<string>crop_alerts</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -47,6 +47,21 @@
 			</array>
 		</dict>
 	</dict>
+	<!-- Background refresh for the six-hourly forecast check. iOS treats the
+	     interval as a hint and decides when, or whether, to run it. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>processing</string>
+	</array>
+	<!-- iOS registers the BGTaskScheduler task under the uniqueName the Dart
+	     side passes to registerPeriodicTask, so this must match
+	     BackgroundRefresh.uniqueName exactly. An identifier that is not listed
+	     here is rejected at registration and the task simply never runs. -->
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>crop-alerts.refresh-forecast.periodic</string>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

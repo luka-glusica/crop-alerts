@@ -1,6 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Android 13+ requires an explicit grant before any notification is shown. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- WorkManager drops scheduled work when the device restarts; this lets it
+         be restored, so a reboot does not silently stop the six-hourly job. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="app"
+        android:label="Crop Alerts"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

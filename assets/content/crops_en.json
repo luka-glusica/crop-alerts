@@ -1,0 +1,902 @@
+{
+  "version": 1,
+  "locale": "en",
+  "crops": [
+    {
+      "id": "paradajz",
+      "name": "Tomato",
+      "season": {
+        "fromMonth": 5,
+        "toMonth": 10
+      },
+      "threats": [
+        {
+          "id": "plamenjaca",
+          "type": "fungalDisease",
+          "name": "Late blight",
+          "description": "A fungal disease that spreads at mild temperatures when the leaf stays wet, leaving dark spots with a pale edge and a firm brown rot on the fruit.",
+          "prevention": [
+            "Water at the root only, never over the leaves.",
+            "Pinch out side shoots and lower leaves so air can move through.",
+            "Space plants far enough apart that leaves dry quickly after rain.",
+            "Rotate with at least a three-year gap."
+          ],
+          "response": [
+            "Remove diseased leaves and take them out of the garden.",
+            "Spray with an approved copper preparation or horsetail tea.",
+            "Stop overhead watering and improve ventilation.",
+            "Pick healthy fruit before the infection advances."
+          ],
+          "rules": [
+            {
+              "id": "paradajz.plamenjaca.uslovi-za-infekciju",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 15,
+                    "max": 25
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 60
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "paradajz.plamenjaca.padavine",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "crna-pegavost",
+          "type": "fungalDisease",
+          "name": "Early blight",
+          "description": "Dark concentric spots on older leaves that spread upward, favoured by warm weather where the leaf repeatedly wets and dries.",
+          "prevention": [
+            "Mulch the soil so rain cannot splash it onto the lower leaves.",
+            "Keep nitrogen feeding balanced.",
+            "Clear and destroy plant debris after harvest."
+          ],
+          "response": [
+            "Strip the oldest infected leaves.",
+            "Treat with an approved copper preparation.",
+            "Water in the morning so leaves go into the night dry."
+          ],
+          "rules": [
+            {
+              "id": "paradajz.crna-pegavost.uslovi-za-infekciju",
+              "threatId": "crna-pegavost",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 24,
+                    "max": 29
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 55
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "paradajzov-moljac",
+          "type": "pest",
+          "name": "Tomato leafminer",
+          "description": "Larvae mine the leaves and bore into the fruit, with generations following each other faster as it gets warmer.",
+          "prevention": [
+            "Pheromone traps to track the flight.",
+            "Remove and destroy attacked fruit and leaves.",
+            "Insect netting over greenhouse openings."
+          ],
+          "response": [
+            "Set pheromone traps densely for mass trapping.",
+            "Use Bacillus thuringiensis preparations while larvae are young.",
+            "Strip mined leaves before the larvae move into the fruit."
+          ],
+          "rules": [
+            {
+              "id": "paradajz.paradajzov-moljac.toplo",
+              "threatId": "paradajzov-moljac",
+              "condition": {
+                "type": "metricBand",
+                "metric": "averageTemperature",
+                "min": 20,
+                "max": 32
+              }
+            },
+            {
+              "id": "paradajz.paradajzov-moljac.toplotni-talas",
+              "threatId": "paradajzov-moljac",
+              "condition": {
+                "type": "consecutiveDays",
+                "days": 3,
+                "condition": {
+                  "type": "metricThreshold",
+                  "metric": "maxTemperature",
+                  "comparator": "greaterThan",
+                  "value": 30
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "trulez-vrha-ploda",
+          "type": "other",
+          "name": "Blossom-end rot",
+          "description": "A physiological disorder rather than a disease: in heat with uneven watering the plant cannot move calcium to the fruit, so its tip darkens and collapses. It does not spread from plant to plant.",
+          "prevention": [
+            "Water evenly, without sudden dry spells.",
+            "Mulch to hold moisture in the soil.",
+            "Avoid overdoing nitrogen fertiliser."
+          ],
+          "response": [
+            "Return to a steady rhythm of smaller, regular waterings.",
+            "Mulch straight away to cut evaporation.",
+            "Pick off affected fruit so the plant stops spending on it."
+          ],
+          "rules": [
+            {
+              "id": "paradajz.trulez-vrha-ploda.vrucina-i-susa",
+              "threatId": "trulez-vrha-ploda",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 30
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 5,
+                    "comparator": "atMost",
+                    "value": 5
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "krompir",
+      "name": "Potato",
+      "season": {
+        "fromMonth": 3,
+        "toMonth": 9
+      },
+      "threats": [
+        {
+          "id": "plamenjaca",
+          "type": "fungalDisease",
+          "name": "Potato late blight",
+          "description": "The most damaging potato disease: in wet weather it can destroy the whole haulm within days, and spores wash from the leaves down to the tubers.",
+          "prevention": [
+            "Certified, healthy seed potatoes.",
+            "Earth up high so spores cannot reach the tubers.",
+            "Rotate crops and destroy volunteer plants.",
+            "Apply preventive copper ahead of a forecast wet spell."
+          ],
+          "response": [
+            "Spray with approved copper preparations.",
+            "Treat with horsetail tea.",
+            "Cut and remove the haulm in a heavy infection, two weeks before lifting.",
+            "Lift the tubers in dry weather."
+          ],
+          "rules": [
+            {
+              "id": "krompir.plamenjaca.uslovi-za-infekciju",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 15,
+                    "max": 21
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 65
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "krompir.plamenjaca.padavine",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 3,
+                "comparator": "atLeast",
+                "value": 15
+              }
+            }
+          ]
+        },
+        {
+          "id": "crna-pegavost",
+          "type": "fungalDisease",
+          "name": "Early blight",
+          "description": "Dry leaf spotting with concentric rings, appearing in warmer weather and on plants weakening towards the end of the season.",
+          "prevention": [
+            "Balanced feeding, since weakened plants go down first.",
+            "Mulch the soil under the plants.",
+            "Clear plant debris after lifting."
+          ],
+          "response": [
+            "Remove the oldest infected leaves.",
+            "Treat with an approved copper preparation.",
+            "Feed the crop to strengthen it."
+          ],
+          "rules": [
+            {
+              "id": "krompir.crna-pegavost.uslovi-za-infekciju",
+              "threatId": "crna-pegavost",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 24,
+                    "max": 29
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 55
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "zlatica",
+          "type": "pest",
+          "name": "Colorado potato beetle",
+          "description": "Adults and larvae strip the leaves to the veins; in warm dry weather development speeds up and generations overlap.",
+          "prevention": [
+            "Rotate, putting the plot as far as possible from last year's.",
+            "Plant early to dodge the heaviest attack.",
+            "Check leaf undersides regularly and crush egg clusters."
+          ],
+          "response": [
+            "Hand-pick adults and egg clusters.",
+            "Use Bacillus thuringiensis var. tenebrionis while larvae are young.",
+            "Remove badly stripped haulm."
+          ],
+          "rules": [
+            {
+              "id": "krompir.zlatica.toplo-i-suvo",
+              "threatId": "zlatica",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 25
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 3,
+                    "comparator": "atMost",
+                    "value": 3
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "pucanje-krtola",
+          "type": "other",
+          "name": "Tuber cracking",
+          "description": "A heavy downpour after a dry spell forces the tuber into sudden growth, so it splits or throws out knobs. Cracked tubers do not store.",
+          "prevention": [
+            "Water evenly while the tubers are forming.",
+            "Mulch and earth up to keep soil moisture steadier."
+          ],
+          "response": [
+            "Bring watering back gradually rather than in one large dose.",
+            "Lift in dry weather and sort cracked tubers out before storing."
+          ],
+          "rules": [
+            {
+              "id": "krompir.pucanje-krtola.pljusak-posle-suse",
+              "threatId": "pucanje-krtola",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 30
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "krastavac",
+      "name": "Cucumber",
+      "season": {
+        "fromMonth": 5,
+        "toMonth": 9
+      },
+      "threats": [
+        {
+          "id": "plamenjaca",
+          "type": "fungalDisease",
+          "name": "Cucumber downy mildew",
+          "description": "Angular yellow patches bounded by the leaf veins, with a grey bloom underneath; in wet weather a crop can be lost within a week.",
+          "prevention": [
+            "Grow on a trellis so leaves dry faster.",
+            "Avoid wetting the foliage when watering.",
+            "Leave enough space between plants."
+          ],
+          "response": [
+            "Stop overhead watering and switch to the root.",
+            "Treat with an approved copper preparation.",
+            "Remove the first infected leaves and take them out of the garden."
+          ],
+          "rules": [
+            {
+              "id": "krastavac.plamenjaca.uslovi-za-infekciju",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 20,
+                    "max": 27
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 65
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "krastavac.plamenjaca.padavine",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "pepelnica",
+          "type": "fungalDisease",
+          "name": "Powdery mildew",
+          "description": "A white, flour-like coating on the upper leaf surface. Unlike downy mildew it wants warmth and humid air but a dry leaf, so it appears even without rain.",
+          "prevention": [
+            "Space plants and strip lower leaves so air can flow.",
+            "Avoid excess nitrogen.",
+            "Choose tolerant varieties."
+          ],
+          "response": [
+            "Spray a baking soda solution with a few drops of vegetable oil.",
+            "Apply an approved sulphur preparation on a cloudy day, never in heat.",
+            "Pull off the worst-affected lower leaves."
+          ],
+          "rules": [
+            {
+              "id": "krastavac.pepelnica.toplo-uz-suv-list",
+              "threatId": "pepelnica",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 20,
+                    "max": 27
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 3,
+                    "comparator": "atMost",
+                    "value": 1
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "paucinar",
+          "type": "pest",
+          "name": "Two-spotted spider mite",
+          "description": "A tiny mite on the leaf underside; in hot dry weather it multiplies explosively, leaving the leaf stippled, grey and finally dead.",
+          "prevention": [
+            "Check leaf undersides regularly — an attack is usually noticed late.",
+            "Keep humidity up around the plants during the hottest spells.",
+            "Clear weeds that host the mite."
+          ],
+          "response": [
+            "Hose the leaf undersides hard with water to break up the population.",
+            "Use plant-oil or potassium-soap preparations.",
+            "Remove and destroy the worst-affected leaves."
+          ],
+          "rules": [
+            {
+              "id": "krastavac.paucinar.vrucina-i-suv-vazduh",
+              "threatId": "paucinar",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 27
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "lessThan",
+                    "value": 40
+                  }
+                ]
+              }
+            },
+            {
+              "id": "krastavac.paucinar.susa",
+              "threatId": "paucinar",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 5,
+                "comparator": "atMost",
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "id": "gorcina-ploda",
+          "type": "other",
+          "name": "Fruit bitterness",
+          "description": "In heat and water shortage the plant produces cucurbitacins and the fruit turns bitter. It is not a disease, does not spread, and no spray will fix it.",
+          "prevention": [
+            "Water regularly with no dry gaps.",
+            "Mulch and shade through the hottest days."
+          ],
+          "response": [
+            "Get back to regular watering.",
+            "Pick more often, while the fruit is younger and smaller."
+          ],
+          "rules": [
+            {
+              "id": "krastavac.gorcina-ploda.vrucina-i-susa",
+              "threatId": "gorcina-ploda",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxTemperature",
+                    "comparator": "greaterThan",
+                    "value": 30
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 4,
+                    "comparator": "atMost",
+                    "value": 2
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kupus",
+      "name": "Cabbage",
+      "season": {
+        "fromMonth": 4,
+        "toMonth": 11
+      },
+      "threats": [
+        {
+          "id": "plamenjaca",
+          "type": "fungalDisease",
+          "name": "Cabbage downy mildew",
+          "description": "Yellowish patches on the upper leaf with a white bloom beneath; most dangerous on seedlings and young plants in cool wet weather.",
+          "prevention": [
+            "Do not plant where other brassicas grew last year.",
+            "Space plants so air can move through.",
+            "Water in the morning so leaves go into the night dry."
+          ],
+          "response": [
+            "Treat with chamomile or horsetail tea.",
+            "Dust wood ash around the plants.",
+            "Collect infected leaves and destroy them away from the garden."
+          ],
+          "rules": [
+            {
+              "id": "kupus.plamenjaca.uslovi-za-infekciju",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 15,
+                    "max": 20
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 60
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "kupus.plamenjaca.padavine",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "crna-trulez",
+          "type": "other",
+          "name": "Black rot",
+          "description": "A bacterial disease, not a fungal one, which is why copper does little against it. It shows as yellow V-shaped patches with blackened veins, in warm rainy weather.",
+          "prevention": [
+            "Healthy certified transplants from a trusted source.",
+            "A rotation of at least four years without brassicas.",
+            "Never work in the crop while the plants are wet."
+          ],
+          "response": [
+            "Pull and destroy diseased plants away from the garden.",
+            "Stop all work in a wet crop — hands and tools carry the bacterium.",
+            "Improve drainage and stop watering over the leaves."
+          ],
+          "rules": [
+            {
+              "id": "kupus.crna-trulez.toplo-i-kisovito",
+              "threatId": "crna-trulez",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 25,
+                    "max": 30
+                  },
+                  {
+                    "type": "sumOverDays",
+                    "metric": "precipitation",
+                    "days": 3,
+                    "comparator": "atLeast",
+                    "value": 15
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "kupusar",
+          "type": "pest",
+          "name": "Large white butterfly",
+          "description": "The caterpillars chew leaves down to the veins and bore into the head. The butterfly flies most in warm dry weather.",
+          "prevention": [
+            "Insect netting over the crop from planting.",
+            "Check leaf undersides regularly and remove egg clusters.",
+            "Plant aromatic companions that put the butterfly off."
+          ],
+          "response": [
+            "Hand-pick caterpillars and egg clusters.",
+            "Use Bacillus thuringiensis while the caterpillars are young.",
+            "Remove the worst-chewed leaves."
+          ],
+          "rules": [
+            {
+              "id": "kupus.kupusar.toplo",
+              "threatId": "kupusar",
+              "condition": {
+                "type": "metricBand",
+                "metric": "averageTemperature",
+                "min": 18,
+                "max": 28
+              }
+            },
+            {
+              "id": "kupus.kupusar.suvo",
+              "threatId": "kupusar",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 3,
+                "comparator": "atMost",
+                "value": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "pucanje-glavica",
+          "type": "other",
+          "name": "Head splitting",
+          "description": "Heavy rain after a dry spell fills the head with water and it splits; rot enters through the crack immediately.",
+          "prevention": [
+            "Water evenly as the heads approach maturity.",
+            "Cut mature heads promptly."
+          ],
+          "response": [
+            "Cut mature heads before forecast rain arrives.",
+            "Give over-mature heads a slight root twist to slow water uptake."
+          ],
+          "rules": [
+            {
+              "id": "kupus.pucanje-glavica.pljusak-posle-suse",
+              "threatId": "pucanje-glavica",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 2,
+                "comparator": "atLeast",
+                "value": 25
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "luk",
+      "name": "Onion",
+      "season": {
+        "fromMonth": 3,
+        "toMonth": 8
+      },
+      "threats": [
+        {
+          "id": "plamenjaca",
+          "type": "fungalDisease",
+          "name": "Onion downy mildew",
+          "description": "Pale elongated patches with a violet bloom on a damp morning; the leaf folds over and the bulb stays small.",
+          "prevention": [
+            "Preventive copper in wet periods.",
+            "Avoid excess nitrogen, which gives soft susceptible leaves.",
+            "Rotate and remove volunteer onions."
+          ],
+          "response": [
+            "Apply approved copper preparations without delay.",
+            "Spray with horsetail tea.",
+            "Break the soil crust shallowly so the ground dries faster."
+          ],
+          "rules": [
+            {
+              "id": "luk.plamenjaca.uslovi-za-infekciju",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "rangeOverlap",
+                    "lower": "minTemperature",
+                    "upper": "maxTemperature",
+                    "min": 15,
+                    "max": 20
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 60
+                  }
+                ]
+              },
+              "weight": 2
+            },
+            {
+              "id": "luk.plamenjaca.padavine",
+              "threatId": "plamenjaca",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 3,
+                "comparator": "atLeast",
+                "value": 10
+              }
+            }
+          ]
+        },
+        {
+          "id": "purpurna-pegavost",
+          "type": "fungalDisease",
+          "name": "Purple blotch",
+          "description": "Oval spots with a purple centre on older leaves, appearing in the warmer part of the season, often after damage from mildew or thrips.",
+          "prevention": [
+            "Remove older damaged leaves.",
+            "Rotate and plough residues in deeply.",
+            "Control thrips, whose wounds let the fungus in."
+          ],
+          "response": [
+            "Treat with an approved copper preparation.",
+            "Strip badly affected leaves.",
+            "Stop watering over the foliage."
+          ],
+          "rules": [
+            {
+              "id": "luk.purpurna-pegavost.uslovi-za-infekciju",
+              "threatId": "purpurna-pegavost",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 22,
+                    "max": 30
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "minHumidity",
+                    "comparator": "greaterThan",
+                    "value": 55
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "lukova-muva",
+          "type": "pest",
+          "name": "Onion fly",
+          "description": "Larvae bore into the bulb, the plant yellows and wilts, and the bulb rots. The first flight is in spring, at mild temperatures with damp soil.",
+          "prevention": [
+            "Insect netting immediately after sowing.",
+            "Rotate and keep distance from last year's plot.",
+            "Avoid fresh manure, which attracts the fly."
+          ],
+          "response": [
+            "Pull and destroy attacked plants together with the larvae.",
+            "Dust wood ash or rock flour around the plants.",
+            "Drench with entomopathogenic nematodes."
+          ],
+          "rules": [
+            {
+              "id": "luk.lukova-muva.uslovi-za-let",
+              "threatId": "lukova-muva",
+              "condition": {
+                "type": "allOf",
+                "conditions": [
+                  {
+                    "type": "metricBand",
+                    "metric": "averageTemperature",
+                    "min": 12,
+                    "max": 22
+                  },
+                  {
+                    "type": "metricThreshold",
+                    "metric": "maxHumidity",
+                    "comparator": "greaterThan",
+                    "value": 80
+                  }
+                ]
+              },
+              "weight": 2
+            }
+          ]
+        },
+        {
+          "id": "trulez-od-prevlazenosti",
+          "type": "other",
+          "name": "Waterlogging rot",
+          "description": "Water standing around the bulb for long causes rot and stops it ripening. The problem is the soil and its drainage, not a pathogen.",
+          "prevention": [
+            "Plant on raised beds on heavy soils.",
+            "Stop watering towards the end of the season."
+          ],
+          "response": [
+            "Drain the excess away through shallow channels at once.",
+            "Stop watering entirely.",
+            "Lift the onions as soon as weather allows and dry them thinly, in a draught."
+          ],
+          "rules": [
+            {
+              "id": "luk.trulez-od-prevlazenosti.dugotrajne-padavine",
+              "threatId": "trulez-od-prevlazenosti",
+              "condition": {
+                "type": "sumOverDays",
+                "metric": "precipitation",
+                "days": 5,
+                "comparator": "atLeast",
+                "value": 40
+              },
+              "weight": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
