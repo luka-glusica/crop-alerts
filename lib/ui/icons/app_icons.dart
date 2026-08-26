@@ -36,6 +36,7 @@ abstract final class AppIcons {
   // Places and navigation.
   static const PhosphorIconData location = PhosphorIconsRegular.mapPin;
   static const PhosphorIconData addLocation = PhosphorIconsRegular.mapPinPlus;
+  static const PhosphorIconData myLocation = PhosphorIconsRegular.crosshair;
   static const PhosphorIconData chevron = PhosphorIconsRegular.caretRight;
   static const PhosphorIconData reorder = PhosphorIconsRegular.dotsSixVertical;
 

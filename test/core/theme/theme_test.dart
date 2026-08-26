@@ -1,5 +1,6 @@
 import 'package:crop_alerts/core/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -213,6 +214,60 @@ void main() {
       );
 
       expect(resolved, AppPalette.light);
+    });
+  });
+
+  group('ThemeModeController', () {
+    ProviderContainer containerWith(ThemeModeStore store) {
+      final container = ProviderContainer(
+        overrides: [themeModeStoreProvider.overrideWithValue(store)],
+      );
+      addTearDown(container.dispose);
+      return container;
+    }
+
+    test('defaults to the device setting', () {
+      final container = containerWith(InMemoryThemeModeStore());
+
+      expect(container.read(themeModeProvider), ThemeMode.system);
+    });
+
+    test('restores a saved choice', () {
+      final container = containerWith(InMemoryThemeModeStore(ThemeMode.light));
+
+      expect(container.read(themeModeProvider), ThemeMode.light);
+    });
+
+    test('setThemeMode updates state and persists', () async {
+      final store = InMemoryThemeModeStore();
+      final container = containerWith(store);
+
+      await container
+          .read(themeModeProvider.notifier)
+          .setThemeMode(ThemeMode.dark);
+
+      expect(container.read(themeModeProvider), ThemeMode.dark);
+      expect(store.read(), ThemeMode.dark);
+    });
+
+    test('every selectable mode is a real ThemeMode', () {
+      expect(ThemeModeController.selectable, ThemeMode.values.toSet());
+    });
+  });
+
+  group('PrefsThemeModeStore parsing', () {
+    test('round-trips every mode', () {
+      for (final mode in ThemeMode.values) {
+        expect(PrefsThemeModeStore.parseName(mode.name), mode);
+      }
+    });
+
+    test('returns null for anything unreadable', () {
+      // A preference written by a build that offered a mode this one does not
+      // must cost the choice, not the launch.
+      expect(PrefsThemeModeStore.parseName(null), isNull);
+      expect(PrefsThemeModeStore.parseName(''), isNull);
+      expect(PrefsThemeModeStore.parseName('sepia'), isNull);
     });
   });
 }

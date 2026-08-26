@@ -101,24 +101,15 @@ class _Language extends ConsumerWidget {
       children: [
         SegmentedButton<String>(
           segments: [
-            ButtonSegment(value: 'system', label: Text(l10n.languageSystem)),
             ButtonSegment(value: 'sr', label: Text(l10n.languageSerbian)),
             ButtonSegment(value: 'en', label: Text(l10n.languageEnglish)),
           ],
-          selected: {
-            switch (selected?.languageCode) {
-              'sr' => 'sr',
-              'en' => 'en',
-              _ => 'system',
-            },
-          },
+          selected: {selected.languageCode == 'sr' ? 'sr' : 'en'},
           onSelectionChanged: (values) {
             ref.read(localeProvider.notifier).setLocale(
-                  switch (values.first) {
-                    'sr' => LocaleController.serbianLatin,
-                    'en' => LocaleController.english,
-                    _ => null,
-                  },
+                  values.first == 'sr'
+                      ? LocaleController.serbianLatin
+                      : LocaleController.english,
                 );
           },
         ),
@@ -547,7 +538,7 @@ class _Controls extends StatelessWidget {
           runSpacing: AppSpacing.s2,
           children: [
             FilledButton(onPressed: () {}, child: const Text('Osveži prognozu')),
-            OutlinedButton(onPressed: () {}, child: const Text('Dodaj parcelu')),
+            OutlinedButton(onPressed: () {}, child: const Text('Dodaj lokaciju')),
             TextButton(onPressed: () {}, child: const Text('Detaljnije')),
           ],
         ),

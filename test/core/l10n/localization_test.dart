@@ -149,11 +149,11 @@ void main() {
       expect(resolved.languageCode, 'en');
     });
 
-    testWidgets('an untranslated language falls back to Serbian, not English',
+    testWidgets('an untranslated language falls back to English',
         (tester) async {
       final resolved = await resolvedLocaleFor(tester, [const Locale('de', 'DE')]);
 
-      expect(resolved.languageCode, 'sr');
+      expect(resolved.languageCode, 'en');
     });
   });
 
@@ -190,23 +190,71 @@ void main() {
   });
 
   group('LocaleController', () {
-    ProviderContainer containerWith(LocaleStore store) {
+    ProviderContainer containerWith(
+      LocaleStore store, {
+      List<Locale> deviceLocales = const [Locale('en', 'US')],
+    }) {
       final container = ProviderContainer(
-        overrides: [localeStoreProvider.overrideWithValue(store)],
+        overrides: [
+          localeStoreProvider.overrideWithValue(store),
+          deviceLocalesProvider.overrideWithValue(deviceLocales),
+        ],
       );
       addTearDown(container.dispose);
       return container;
     }
 
-    test('defaults to following the device', () {
-      final container = containerWith(InMemoryLocaleStore());
+    test('with nothing saved, a Serbian device gets Serbian', () {
+      final container = containerWith(
+        InMemoryLocaleStore(),
+        deviceLocales: const [Locale('sr', 'RS')],
+      );
 
-      expect(container.read(localeProvider), isNull);
+      expect(container.read(localeProvider), LocaleController.serbianLatin);
     });
 
-    test('restores a saved language', () {
+    test('with nothing saved, an English device gets English', () {
+      final container = containerWith(
+        InMemoryLocaleStore(),
+        deviceLocales: const [Locale('en', 'GB')],
+      );
+
+      expect(container.read(localeProvider), LocaleController.english);
+    });
+
+    test('a device language the app does not ship falls back to English', () {
+      final container = containerWith(
+        InMemoryLocaleStore(),
+        deviceLocales: const [Locale('de', 'DE')],
+      );
+
+      expect(container.read(localeProvider), LocaleController.english);
+    });
+
+    test('a later preferred language still counts', () {
+      // Device set to German first, Serbian second: German is not shipped, so
+      // Serbian wins rather than the English fallback.
+      final container = containerWith(
+        InMemoryLocaleStore(),
+        deviceLocales: const [Locale('de', 'DE'), Locale('sr', 'RS')],
+      );
+
+      expect(container.read(localeProvider), LocaleController.serbianLatin);
+    });
+
+    test('an empty device list falls back to English', () {
+      final container = containerWith(
+        InMemoryLocaleStore(),
+        deviceLocales: const [],
+      );
+
+      expect(container.read(localeProvider), LocaleController.english);
+    });
+
+    test('restores a saved language over the device', () {
       final container = containerWith(
         InMemoryLocaleStore(LocaleController.english),
+        deviceLocales: const [Locale('sr', 'RS')],
       );
 
       expect(container.read(localeProvider), LocaleController.english);
@@ -215,9 +263,20 @@ void main() {
     test('ignores a saved language the app no longer ships', () {
       final container = containerWith(
         InMemoryLocaleStore(const Locale('fr')),
+        deviceLocales: const [Locale('sr', 'RS')],
       );
 
-      expect(container.read(localeProvider), isNull);
+      expect(container.read(localeProvider), LocaleController.serbianLatin);
+    });
+
+    test('narrows a saved Cyrillic Serbian to the Latin script shipped', () {
+      final container = containerWith(
+        InMemoryLocaleStore(
+          const Locale.fromSubtags(languageCode: 'sr', scriptCode: 'Cyrl'),
+        ),
+      );
+
+      expect(container.read(localeProvider), LocaleController.serbianLatin);
     });
 
     test('setLocale updates state and persists', () async {
@@ -232,21 +291,15 @@ void main() {
       expect(store.read(), LocaleController.serbianLatin);
     });
 
-    test('clearing the choice goes back to the device language', () async {
-      final store = InMemoryLocaleStore(LocaleController.english);
-      final container = containerWith(store);
-
-      await container.read(localeProvider.notifier).setLocale(null);
-
-      expect(container.read(localeProvider), isNull);
-      expect(store.read(), isNull);
-    });
-
-    test('both selectable languages are supported', () {
+    test('matching narrows to a shipped locale, or says there is none', () {
       for (final locale in LocaleController.selectable) {
-        expect(LocaleController.isSupported(locale), isTrue);
+        expect(LocaleController.matching(locale), locale);
       }
-      expect(LocaleController.isSupported(const Locale('fr')), isFalse);
+      expect(
+        LocaleController.matching(const Locale('sr', 'RS')),
+        LocaleController.serbianLatin,
+      );
+      expect(LocaleController.matching(const Locale('fr')), isNull);
     });
   });
 }

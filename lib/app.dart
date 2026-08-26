@@ -13,15 +13,16 @@ class CropAlertsApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider);
+    final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp(
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
-      // `null` follows the device, which then resolves against
-      // supportedLocales; Serbian is listed first so it wins for any device
-      // language the app does not translate.
+      themeMode: themeMode,
+      // Always explicit: the controller has already resolved the device
+      // language to one the app ships, or to English.
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: LocaleController.supportedLocales,

@@ -127,19 +127,15 @@
   },
   "noRiskToday": "Nema povećanog rizika za ovaj dan.",
   "@noRiskToday": {},
-  "locations": "Parcele",
+  "locations": "Lokacije",
   "@locations": {},
-  "addLocation": "Dodaj parcelu",
+  "addLocation": "Dodaj lokaciju",
   "@addLocation": {},
-  "editLocation": "Izmeni parcelu",
+  "editLocation": "Izmeni lokaciju",
   "@editLocation": {},
   "locationName": "Naziv",
   "@locationName": {},
-  "latitude": "Geografska širina",
-  "@latitude": {},
-  "longitude": "Geografska dužina",
-  "@longitude": {},
-  "deleteLocationConfirm": "Obrisati parcelu „{name}“?",
+  "deleteLocationConfirm": "Obrisati lokaciju „{name}“?",
   "@deleteLocationConfirm": {
     "placeholders": {
       "name": {
@@ -147,22 +143,62 @@
       }
     }
   },
-  "nameRequired": "Unesite naziv parcele.",
+  "nameRequired": "Unesite naziv lokacije.",
   "@nameRequired": {},
-  "invalidLatitude": "Geografska širina mora biti između -90 i 90.",
-  "@invalidLatitude": {},
-  "invalidLongitude": "Geografska dužina mora biti između -180 i 180.",
-  "@invalidLongitude": {},
+  "pickLocation": "Izaberite lokaciju",
+  "@pickLocation": {},
+  "pickLocationHint": "Dodirnite mapu da izaberete tačku.",
+  "@pickLocationHint": {},
+  "myLocation": "Moja lokacija",
+  "@myLocation": {},
+  "locationAdded": "Lokacija „{name}“ je dodata.",
+  "@locationAdded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "locationUpdated": "Lokacija „{name}“ je izmenjena.",
+  "@locationUpdated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "locationServicesOff": "Lokacija je isključena na uređaju.",
+  "@locationServicesOff": {},
+  "locationPermissionDenied": "Dozvola za pristup lokaciji nije data.",
+  "@locationPermissionDenied": {},
+  "locationPermissionBlocked": "Dozvola za pristup lokaciji je trajno odbijena. Omogućite je u podešavanjima uređaja.",
+  "@locationPermissionBlocked": {},
+  "locationUnavailable": "Nije moguće utvrditi trenutnu lokaciju.",
+  "@locationUnavailable": {},
+  "openSettings": "Otvori podešavanja",
+  "@openSettings": {},
+  "attributionEsri": "Snimci: Esri, Maxar, Earthstar Geographics",
+  "@attributionEsri": {
+    "description": "Attribution required by the Esri World Imagery basemap's terms of use"
+  },
   "settings": "Podešavanja",
   "@settings": {},
   "language": "Jezik",
   "@language": {},
-  "languageSystem": "Kao na uređaju",
-  "@languageSystem": {},
   "languageSerbian": "Srpski",
   "@languageSerbian": {},
   "languageEnglish": "Engleski",
   "@languageEnglish": {},
+  "theme": "Tema",
+  "@theme": {},
+  "themeSystem": "Kao na uređaju",
+  "@themeSystem": {
+    "description": "Theme option that follows the device's light/dark setting"
+  },
+  "themeLight": "Svetla",
+  "@themeLight": {},
+  "themeDark": "Tamna",
+  "@themeDark": {},
   "notifications": "Obaveštenja",
   "@notifications": {},
   "notifyHighRisk": "Obavesti me o visokom riziku",
@@ -171,10 +207,6 @@
   "@notifyModerateRisk": {},
   "developerOptions": "Razvojne opcije",
   "@developerOptions": {},
-  "featureFlags": "Funkcionalnosti",
-  "@featureFlags": {},
-  "resetFeatureFlags": "Vrati podrazumevano",
-  "@resetFeatureFlags": {},
   "refresh": "Osveži prognozu",
   "@refresh": {},
   "retry": "Pokušaj ponovo",
@@ -195,16 +227,16 @@
   "@attributionMet": {
     "description": "Attribution required by the MET Norway API terms of service"
   },
-  "activePlot": "Aktivna parcela",
-  "@activePlot": {},
+  "activeLocation": "Aktivna lokacija",
+  "@activeLocation": {},
   "coordinates": "Koordinate",
   "@coordinates": {},
-  "noPlots": "Nemate nijednu parcelu.",
-  "@noPlots": {},
-  "noPlotsHint": "Dodajte parcelu da biste videli prognozu rizika za nju.",
-  "@noPlotsHint": {},
-  "plotDeleted": "Parcela „{name}“ je obrisana.",
-  "@plotDeleted": {
+  "noLocations": "Nemate nijednu lokaciju.",
+  "@noLocations": {},
+  "noLocationsHint": "Dodajte lokaciju da biste videli prognozu rizika za nju.",
+  "@noLocationsHint": {},
+  "locationDeleted": "Lokacija „{name}“ je obrisana.",
+  "@locationDeleted": {
     "placeholders": {
       "name": {
         "type": "String"
@@ -328,7 +360,5 @@
   "notificationsDenied": "Obaveštenja su isključena u podešavanjima uređaja.",
   "@notificationsDenied": {},
   "notificationsExplainer": "Provera se pokreće na svakih šest sati i javlja samo kada nešto pređe izabrani nivo.",
-  "@notificationsExplainer": {},
-  "featureFlagsExplainer": "Funkcionalnosti u pripremi. Menjajte samo ako znate šta radite.",
-  "@featureFlagsExplainer": {}
+  "@notificationsExplainer": {}
 }

@@ -4,13 +4,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Persistence for the user's chosen language.
 ///
-/// A `null` locale means "follow the device", which is the default.
+/// Nothing saved means the user has not chosen yet, and the device language
+/// decides.
 abstract class LocaleStore {
-  /// The locale the user picked, or `null` to follow the device.
+  /// The locale the user picked, or `null` if they never picked one.
   Locale? read();
 
-  /// Persists [locale], or clears the choice when `null`.
-  Future<void> write(Locale? locale);
+  /// Persists [locale].
+  Future<void> write(Locale locale);
 }
 
 /// [LocaleStore] backed by [SharedPreferences].
@@ -25,13 +26,8 @@ class PrefsLocaleStore implements LocaleStore {
   Locale? read() => parseTag(_prefs.getString(storageKey));
 
   @override
-  Future<void> write(Locale? locale) async {
-    if (locale == null) {
-      await _prefs.remove(storageKey);
-    } else {
-      await _prefs.setString(storageKey, toTag(locale));
-    }
-  }
+  Future<void> write(Locale locale) async =>
+      _prefs.setString(storageKey, toTag(locale));
 
   /// Renders [locale] as a BCP-47 tag, e.g. `sr-Latn` or `en`.
   static String toTag(Locale locale) => locale.toLanguageTag();
@@ -74,5 +70,5 @@ class InMemoryLocaleStore implements LocaleStore {
   Locale? read() => _locale;
 
   @override
-  Future<void> write(Locale? locale) async => _locale = locale;
+  Future<void> write(Locale locale) async => _locale = locale;
 }

@@ -1,6 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Android 13+ requires an explicit grant before any notification is shown. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Lets the grower drop a pin on their current position when adding or
+         editing a location. Coarse is requested too, since it is granted
+         together with fine on some OEM skins and geolocator falls back to it. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <!-- WorkManager drops scheduled work when the device restarts; this lets it
          be restored, so a reboot does not silently stop the six-hourly job. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>

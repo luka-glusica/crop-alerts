@@ -11,7 +11,6 @@ void main() {
       expect(FeatureFlag.communityCrops.defaultValue, isFalse);
       expect(FeatureFlag.remoteRules.defaultValue, isFalse);
       expect(FeatureFlag.mitigationRatings.defaultValue, isFalse);
-      expect(FeatureFlag.deviceLocation.defaultValue, isFalse);
     });
 
     test('storage keys are namespaced and unique', () {

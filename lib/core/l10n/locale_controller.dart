@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../l10n/generated/app_localizations.dart';
 import 'locale_store.dart';
 
 /// The store backing [localeProvider]. Overridden in `main()`.
@@ -13,13 +12,22 @@ final localeStoreProvider = Provider<LocaleStore>((ref) {
   );
 });
 
-/// The user's chosen locale, or `null` to follow the device language.
-final localeProvider = NotifierProvider<LocaleController, Locale?>(
+/// The device's preferred languages, most preferred first.
+///
+/// A provider rather than a direct [PlatformDispatcher] read so that tests can
+/// pin the device language without touching global state.
+final deviceLocalesProvider = Provider<List<Locale>>(
+  (ref) => PlatformDispatcher.instance.locales,
+);
+
+/// The language the app is running in. Never `null`: a device language the app
+/// does not translate is resolved to English at startup.
+final localeProvider = NotifierProvider<LocaleController, Locale>(
   LocaleController.new,
 );
 
 /// Reads the saved language at startup and writes changes back.
-class LocaleController extends Notifier<Locale?> {
+class LocaleController extends Notifier<Locale> {
   /// Serbian in Latin script — the app's primary language, matching the web
   /// version's `lang="sr-Latn"`.
   static const Locale serbianLatin = Locale.fromSubtags(
@@ -29,36 +37,55 @@ class LocaleController extends Notifier<Locale?> {
 
   static const Locale english = Locale('en');
 
-  /// The languages the user can pick explicitly, in menu order.
+  /// The languages the user can pick, in menu order.
   static const List<Locale> selectable = [serbianLatin, english];
 
-  /// The locales the app resolves the device language against.
+  /// The locales the app ships translations for.
   ///
-  /// Serbian is deliberately first: it is the app's primary language, so a
-  /// device set to something the app does not translate should land on Serbian
-  /// rather than English. The generated `AppLocalizations.supportedLocales`
-  /// lists English first purely because it sorts alphabetically.
-  static const List<Locale> supportedLocales = [serbianLatin, english];
+  /// The app always hands `MaterialApp` a locale from this list, so the order
+  /// only matters as a safety net; English is first because it is what an
+  /// untranslated device language falls back to.
+  static const List<Locale> supportedLocales = [english, serbianLatin];
 
   @override
-  Locale? build() {
+  Locale build() {
     final saved = ref.read(localeStoreProvider).read();
-    // A locale we no longer ship would leave the app in an unresolvable state,
-    // so treat it as "follow the device".
-    if (saved != null && !isSupported(saved)) return null;
-    return saved;
+    // A saved locale is narrowed the same way a device one is, so a value
+    // written by an older build — or one the app no longer ships — cannot leave
+    // the app in an unresolvable state.
+    final chosen = saved == null ? null : matching(saved);
+    return chosen ?? resolveDevice(ref.read(deviceLocalesProvider));
   }
 
-  /// Whether [locale] is one the app ships translations for.
-  static bool isSupported(Locale locale) {
-    return AppLocalizations.supportedLocales.any(
-      (supported) => supported.languageCode == locale.languageCode,
-    );
+  /// The shipped locale [locale] should be shown in, or `null` if the app has
+  /// no translation for it.
+  ///
+  /// Matching is by language alone: a Serbian device set to Cyrillic still gets
+  /// Latin, the only script the app ships.
+  static Locale? matching(Locale locale) {
+    for (final supported in selectable) {
+      if (supported.languageCode == locale.languageCode) return supported;
+    }
+    return null;
   }
 
-  /// Sets the language, or passes `null` to follow the device again.
-  Future<void> setLocale(Locale? locale) async {
-    state = locale;
-    await ref.read(localeStoreProvider).write(locale);
+  /// The language to run in for a device that prefers [deviceLocales].
+  ///
+  /// Falls back to English when the device asks for nothing the app ships,
+  /// rather than to the app's own primary language.
+  static Locale resolveDevice(List<Locale> deviceLocales) {
+    for (final device in deviceLocales) {
+      final match = matching(device);
+      if (match != null) return match;
+    }
+    return english;
+  }
+
+  /// Sets the language and remembers it, so it survives a device language
+  /// change from here on.
+  Future<void> setLocale(Locale locale) async {
+    final chosen = matching(locale) ?? english;
+    state = chosen;
+    await ref.read(localeStoreProvider).write(chosen);
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/flags/flags.dart';
 import '../../core/l10n/locale_controller.dart';
 import '../../core/theme/theme.dart';
 import '../../features/alerts/alert_providers.dart';
@@ -11,7 +10,11 @@ import '../../l10n/generated/app_localizations.dart';
 import '../icons/app_icons.dart';
 import '../widgets/app_card.dart';
 
-/// Language, notifications, and the toggles for what is not finished yet.
+/// Language, theme and notifications.
+///
+/// Feature flags are deliberately absent: they are flipped in
+/// `lib/core/flags/feature_flag.dart` by the team as features become ready,
+/// not by the grower.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -31,9 +34,9 @@ class SettingsScreen extends ConsumerWidget {
         children: const [
           _LanguageSection(),
           SizedBox(height: AppSpacing.s6),
-          _NotificationsSection(),
+          _ThemeSection(),
           SizedBox(height: AppSpacing.s6),
-          _FeatureFlagsSection(),
+          _NotificationsSection(),
           SizedBox(height: AppSpacing.s6),
           _AboutSection(),
         ],
@@ -88,19 +91,21 @@ class _LanguageSection extends ConsumerWidget {
       title: l10n.language,
       child: RadioGroup<String>(
         // Compared by language code rather than by Locale object, so a saved
-        // sr-Latn still matches the Serbian option.
-        groupValue: selected?.languageCode ?? 'system',
-        onChanged: (value) => ref.read(localeProvider.notifier).setLocale(
-              switch (value) {
-                'sr' => LocaleController.serbianLatin,
-                'en' => LocaleController.english,
-                _ => null,
-              },
-            ),
+        // sr-Latn still matches the Serbian option. There is no "match device"
+        // option: the device language is what an unset preference resolves to
+        // anyway, so it is already one of these two.
+        groupValue: selected.languageCode,
+        onChanged: (value) {
+          if (value == null) return;
+          ref.read(localeProvider.notifier).setLocale(
+                value == 'sr'
+                    ? LocaleController.serbianLatin
+                    : LocaleController.english,
+              );
+        },
         child: Column(
           children: [
             for (final option in <(String, String)>[
-              (l10n.languageSystem, 'system'),
               (l10n.languageSerbian, 'sr'),
               (l10n.languageEnglish, 'en'),
             ])
@@ -108,6 +113,43 @@ class _LanguageSection extends ConsumerWidget {
                 contentPadding: EdgeInsets.zero,
                 value: option.$2,
                 title: Text(option.$1),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ThemeSection extends ConsumerWidget {
+  const _ThemeSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final selected = ref.watch(themeModeProvider);
+
+    return _Section(
+      title: l10n.theme,
+      child: RadioGroup<ThemeMode>(
+        groupValue: selected,
+        onChanged: (mode) {
+          if (mode == null) return;
+          ref.read(themeModeProvider.notifier).setThemeMode(mode);
+        },
+        child: Column(
+          children: [
+            for (final mode in ThemeModeController.selectable)
+              RadioListTile<ThemeMode>(
+                contentPadding: EdgeInsets.zero,
+                value: mode,
+                title: Text(
+                  switch (mode) {
+                    ThemeMode.system => l10n.themeSystem,
+                    ThemeMode.light => l10n.themeLight,
+                    ThemeMode.dark => l10n.themeDark,
+                  },
+                ),
               ),
           ],
         ),
@@ -188,52 +230,6 @@ class _NotificationsSectionState extends ConsumerState<_NotificationsSection> {
                 ],
               ),
             ),
-        ],
-      ),
-    );
-  }
-}
-
-class _FeatureFlagsSection extends ConsumerWidget {
-  const _FeatureFlagsSection();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context);
-    final flags = ref.watch(featureFlagsProvider);
-    final controller = ref.read(featureFlagsProvider.notifier);
-
-    return _Section(
-      title: l10n.featureFlags,
-      subtitle: l10n.featureFlagsExplainer,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (final flag in FeatureFlag.values)
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              value: flags[flag],
-              title: Text(flag.name),
-              subtitle: Text(flag.description),
-              isThreeLine: true,
-              onChanged: (enabled) async {
-                await controller.setOverride(flag, enabled);
-                // The background job follows this flag, so it has to be told.
-                await ref
-                    .read(notificationPreferencesProvider.notifier)
-                    .syncBackgroundJob();
-              },
-            ),
-          const SizedBox(height: AppSpacing.s2),
-          OutlinedButton(
-            onPressed: () async {
-              await controller.resetAll();
-              await ref
-                  .read(notificationPreferencesProvider.notifier)
-                  .syncBackgroundJob();
-            },
-            child: Text(l10n.resetFeatureFlags),
-          ),
         ],
       ),
     );

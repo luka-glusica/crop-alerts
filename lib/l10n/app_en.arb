@@ -92,13 +92,11 @@
   "response": "What to do",
   "whyThisRisk": "Why",
   "noRiskToday": "No raised risk for this day.",
-  "locations": "Plots",
-  "addLocation": "Add plot",
-  "editLocation": "Edit plot",
+  "locations": "Locations",
+  "addLocation": "Add location",
+  "editLocation": "Edit location",
   "locationName": "Name",
-  "latitude": "Latitude",
-  "longitude": "Longitude",
-  "deleteLocationConfirm": "Delete the plot “{name}”?",
+  "deleteLocationConfirm": "Delete the location “{name}”?",
   "@deleteLocationConfirm": {
     "placeholders": {
       "name": {
@@ -106,20 +104,44 @@
       }
     }
   },
-  "nameRequired": "Enter a name for the plot.",
-  "invalidLatitude": "Latitude must be between -90 and 90.",
-  "invalidLongitude": "Longitude must be between -180 and 180.",
+  "nameRequired": "Enter a name for the location.",
+  "pickLocation": "Choose a location",
+  "pickLocationHint": "Tap the map to choose a point.",
+  "myLocation": "My location",
+  "locationAdded": "Location “{name}” added.",
+  "@locationAdded": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "locationUpdated": "Location “{name}” updated.",
+  "@locationUpdated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "locationServicesOff": "Location is switched off on this device.",
+  "locationPermissionDenied": "Location permission was not granted.",
+  "locationPermissionBlocked": "Location permission was permanently denied. Enable it in the device settings.",
+  "locationUnavailable": "Could not determine the current location.",
+  "openSettings": "Open settings",
+  "attributionEsri": "Imagery: Esri, Maxar, Earthstar Geographics",
   "settings": "Settings",
   "language": "Language",
-  "languageSystem": "Match device",
   "languageSerbian": "Serbian",
   "languageEnglish": "English",
+  "theme": "Theme",
+  "themeSystem": "Match device",
+  "themeLight": "Light",
+  "themeDark": "Dark",
   "notifications": "Notifications",
   "notifyHighRisk": "Notify me about high risk",
   "notifyModerateRisk": "Notify me about moderate risk",
   "developerOptions": "Developer options",
-  "featureFlags": "Features",
-  "resetFeatureFlags": "Restore defaults",
   "refresh": "Refresh forecast",
   "retry": "Try again",
   "save": "Save",
@@ -129,12 +151,12 @@
   "offline": "Showing saved data — no network connection.",
   "errorForecastUnavailable": "Could not fetch the weather forecast.",
   "attributionMet": "Data: Norwegian Meteorological Institute (MET Norway)",
-  "activePlot": "Active plot",
+  "activeLocation": "Active Location",
   "coordinates": "Coordinates",
-  "noPlots": "You have no plots yet.",
-  "noPlotsHint": "Add a plot to see its risk forecast.",
-  "plotDeleted": "Plot “{name}” deleted.",
-  "@plotDeleted": {
+  "noLocations": "You have no locations yet.",
+  "noLocationsHint": "Add a location to see its risk forecast.",
+  "locationDeleted": "Location “{name}” deleted.",
+  "@locationDeleted": {
     "placeholders": {
       "name": {
         "type": "String"
@@ -238,6 +260,5 @@
   "refreshNow": "Refresh now",
   "about": "About",
   "notificationsDenied": "Notifications are switched off in the device settings.",
-  "notificationsExplainer": "The check runs every six hours and only speaks up when something crosses the level you pick.",
-  "featureFlagsExplainer": "Work in progress. Change these only if you know what they do."
+  "notificationsExplainer": "The check runs every six hours and only speaks up when something crosses the level you pick."
 }

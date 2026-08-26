@@ -125,12 +125,12 @@ void main() {
   }
 
   group('with a forecast', () {
-    testWidgets('shows the active plot', (tester) async {
+    testWidgets('shows the active location', (tester) async {
       await pumpDashboard(tester, harness());
 
       expect(find.text('Beograd'), findsOneWidget);
       expect(find.text('44.8078, 20.5656'), findsOneWidget);
-      expect(find.text('AKTIVNA PARCELA'), findsOneWidget);
+      expect(find.text('AKTIVNA LOKACIJA'), findsOneWidget);
     });
 
     testWidgets('shows the current conditions', (tester) async {
@@ -235,7 +235,7 @@ void main() {
           .remove(book.locations.single.id);
       await tester.pumpAndSettle();
 
-      expect(find.text('Nemate nijednu parcelu.'), findsOneWidget);
+      expect(find.text('Nemate nijednu lokaciju.'), findsOneWidget);
     });
   });
 
@@ -258,10 +258,10 @@ void main() {
       expect(repository.forcedRefreshes, 1);
     });
 
-    testWidgets('opens the plots screen', (tester) async {
+    testWidgets('opens the locations screen', (tester) async {
       await pumpDashboard(tester, harness());
 
-      await tester.tap(find.byTooltip('Parcele'));
+      await tester.tap(find.byTooltip('Lokacije'));
       await tester.pumpAndSettle();
 
       expect(find.byType(LocationsScreen), findsOneWidget);

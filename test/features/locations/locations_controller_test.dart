@@ -1,6 +1,6 @@
 import 'package:crop_alerts/features/locations/data/prefs_location_store.dart';
 import 'package:crop_alerts/features/locations/domain/location_book.dart';
-import 'package:crop_alerts/features/locations/domain/location_input.dart';
+import 'package:crop_alerts/features/locations/domain/location_draft.dart';
 import 'package:crop_alerts/features/locations/domain/saved_location.dart';
 import 'package:crop_alerts/features/locations/locations_controller.dart';
 import 'package:crop_alerts/features/weather/domain/coordinates.dart';
@@ -322,62 +322,16 @@ void main() {
     });
   });
 
-  group('LocationInput', () {
-    LocationInput input(String name, String lat, String lon) =>
-        LocationInput(name: name, latitude: lat, longitude: lon);
-
-    test('accepts a well-formed plot', () {
-      final valid = input('Njiva', '45.2671', '19.8335');
-
-      expect(valid.isValid, isTrue);
-      expect(valid.coordinates, noviSad);
+  group('LocationDraft', () {
+    // A point from a map tap or GPS is valid by construction, so the draft has
+    // nothing left to reject beyond a name that is blank once trimmed.
+    test('a name with content is named', () {
+      expect(LocationDraft(name: 'Njiva', coordinates: noviSad).isNamed, isTrue);
     });
 
-    test('accepts a comma as the decimal separator', () {
-      // A Serbian numeric keyboard offers a comma.
-      expect(input('Njiva', '45,2671', '19,8335').coordinates, noviSad);
-    });
-
-    test('requires a name', () {
-      expect(
-        input('', '45', '19').errors,
-        contains(LocationInputError.nameRequired),
-      );
-      expect(
-        input('   ', '45', '19').errors,
-        contains(LocationInputError.nameRequired),
-      );
-    });
-
-    test('rejects an out-of-range latitude rather than clamping it', () {
-      // Coordinates clamps, which is right for values from code and wrong for
-      // a typo: 448.078 should be reported, not moved to the north pole.
-      expect(
-        input('Njiva', '448.078', '20').errors,
-        contains(LocationInputError.latitudeInvalid),
-      );
-      expect(input('Njiva', '448.078', '20').coordinates, isNull);
-    });
-
-    test('rejects an out-of-range longitude', () {
-      expect(
-        input('Njiva', '45', '200').errors,
-        contains(LocationInputError.longitudeInvalid),
-      );
-    });
-
-    test('accepts the extremes of both ranges', () {
-      expect(input('Njiva', '90', '180').isValid, isTrue);
-      expect(input('Njiva', '-90', '-180').isValid, isTrue);
-    });
-
-    test('rejects text and blanks', () {
-      expect(input('Njiva', 'sever', '20').isValid, isFalse);
-      expect(input('Njiva', '', '20').isValid, isFalse);
-    });
-
-    test('reports every problem at once', () {
-      expect(input('', 'x', 'y').errors, hasLength(3));
+    test('a blank or whitespace-only name is not named', () {
+      expect(LocationDraft(name: '', coordinates: noviSad).isNamed, isFalse);
+      expect(LocationDraft(name: '   ', coordinates: noviSad).isNamed, isFalse);
     });
   });
 }

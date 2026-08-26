@@ -19,8 +19,8 @@ flutter run
 
 Requires Flutter 3.47 or newer.
 
-The app opens on a seeded plot in Belgrade. Add your own from the plots screen
-(the pin icon), or edit that one.
+The app opens on a seeded location in Belgrade. Add your own from the locations
+screen (the pin icon), or edit that one.
 
 ## How it works
 
@@ -32,7 +32,7 @@ crop catalogue    ─┘                                         └─→ notif
 
 **Forecast.** `YrNoWeatherApi` fetches MET Norway's `locationforecast/2.0/compact`
 and reduces it to daily minima and maxima for temperature and humidity, plus a
-rainfall total. `CachedForecastRepository` keeps one file per plot and refreshes
+rainfall total. `CachedForecastRepository` keeps one file per location and refreshes
 no more often than every six hours.
 
 **Rules.** A rule is a composable condition tree evaluated against a window of
@@ -55,7 +55,7 @@ lib/
     weather/      yr.no client, parsing, six-hour cache
     rules/        conditions, the engine, scoring, JSON codec
     crops/        crop and threat model, growing seasons, catalogue
-    locations/    saved plots
+    locations/    saved locations
     alerts/       background refresh and notifications
     dashboard/    the pipeline assembled for one screen
   ui/             screens and widgets
@@ -64,6 +64,21 @@ assets/
   content/        the crop catalogue, one file per language
   crops/          crop artwork
 ```
+
+## Picking a location
+
+Adding or editing a location opens `LocationMapScreen`: a satellite map
+(`flutter_map`, Esri World Imagery tiles) the grower taps to drop a pin, or a
+locate button that reads the device's GPS through `geolocator`. There is no
+typed lat/lon entry — a tapped or located point is valid by construction, so
+the naming drawer that rises from the bottom only asks for a name.
+
+The screen picks and names but does not save: it pops a `LocationDraft`, and
+`LocationsScreen` commits it through `LocationsController.add`/`edit` and shows
+a confirmation toast. `DeviceLocationService` (`GeolocatorDeviceLocation` in
+production) wraps the permission dance — service disabled, denied, permanently
+blocked, or no fix — behind one result type, the same shape as the weather and
+location-store interfaces elsewhere in the app.
 
 ## Adding a crop
 
@@ -187,10 +202,30 @@ Crop and advice text is deliberately *not* in the ARB files. Flutter's generated
 localizations are typed getters, so a dynamic key like `crop_paradajz_name`
 cannot be looked up at runtime — hence the content assets.
 
+### Which language the app runs in
+
+`LocaleController` resolves this once at startup, and never leaves it unset:
+
+1. the language saved in Settings, if there is one;
+2. otherwise the first device language the app ships — Serbian for any `sr`
+   device, whatever its script, English for any `en` one;
+3. otherwise English.
+
+Settings therefore offers Serbian and English only. There is no "match device"
+option: an untouched install is already showing the device language, and picking
+one of the two pins it from then on.
+
+## Theme
+
+Light and dark themes are built from the same tokens by `AppTheme`.
+`ThemeModeController` decides which one runs — `ThemeMode.system` until the
+grower picks light or dark in Settings, saved under `settings.themeMode`.
+
 ## Feature flags
 
-Toggles for work in progress live in `lib/core/flags/feature_flag.dart` and can
-be flipped at runtime from Settings.
+Toggles for work in progress live in `lib/core/flags/feature_flag.dart`. They are
+not exposed in the UI: the team changes a flag's default there once the feature
+behind it is ready to ship.
 
 | Flag | Default | Gates |
 | --- | --- | --- |
@@ -199,7 +234,6 @@ be flipped at runtime from Settings.
 | `communityCrops` | off | crops contributed by other growers |
 | `remoteRules` | off | rules fetched without shipping a build |
 | `mitigationRatings` | off | rating whether advice worked |
-| `deviceLocation` | off | GPS instead of typed coordinates |
 
 The flags that are off gate work that has not been built yet. What makes them
 cheap is the shape of the code around them, not the boolean: every repository

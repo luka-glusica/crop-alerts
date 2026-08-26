@@ -6,6 +6,7 @@ import 'app.dart';
 import 'core/flags/flags.dart';
 import 'core/l10n/locale_controller.dart';
 import 'core/l10n/locale_store.dart';
+import 'core/theme/theme.dart';
 import 'features/alerts/alert_providers.dart';
 import 'features/alerts/background_refresh.dart';
 import 'features/alerts/notification_preferences.dart';
@@ -15,7 +16,8 @@ import 'features/locations/locations_controller.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Flags, the chosen language and the saved plots are all read synchronously
+  // Flags, the chosen language and theme, and the saved locations are all read
+  // synchronously
   // once the app is running, so their storage has to be ready before the first
   // frame.
   final prefs = await SharedPreferences.getInstance();
@@ -30,6 +32,7 @@ Future<void> main() async {
     overrides: [
       featureFlagStoreProvider.overrideWithValue(PrefsFeatureFlagStore(prefs)),
       localeStoreProvider.overrideWithValue(PrefsLocaleStore(prefs)),
+      themeModeStoreProvider.overrideWithValue(PrefsThemeModeStore(prefs)),
       locationStoreProvider.overrideWithValue(PrefsLocationStore(prefs)),
       notificationPreferencesStoreProvider.overrideWithValue(
         PrefsNotificationPreferencesStore(prefs),

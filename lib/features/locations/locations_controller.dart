@@ -1,6 +1,9 @@
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../weather/domain/coordinates.dart';
+import 'data/geolocator_device_location.dart';
+import 'domain/device_location_service.dart';
 import 'domain/location_book.dart';
 import 'domain/location_store.dart';
 import 'domain/saved_location.dart';
@@ -28,6 +31,20 @@ final locationsProvider = NotifierProvider<LocationsController, LocationBook>(
 final activeLocationProvider = Provider<SavedLocation?>((ref) {
   return ref.watch(locationsProvider.select((book) => book.active));
 });
+
+/// Reads the device's GPS position for the map screen's locate button.
+final deviceLocationServiceProvider = Provider<DeviceLocationService>(
+  (ref) => GeolocatorDeviceLocation(),
+);
+
+/// Fetches the map screen's satellite tiles.
+///
+/// Unlike the store providers above, this has a working default: there is
+/// nothing to prepare in `main()`, only a stub to swap in for widget tests,
+/// which have no network.
+final mapTileProviderProvider = Provider<TileProvider>(
+  (ref) => NetworkTileProvider(),
+);
 
 /// Adds, edits, reorders and deletes plots, persisting every change.
 class LocationsController extends Notifier<LocationBook> {

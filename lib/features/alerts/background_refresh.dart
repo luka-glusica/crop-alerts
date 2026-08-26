@@ -86,7 +86,7 @@ abstract final class BackgroundRefresh {
       return AlertOutcome.notificationsDisabled;
     }
 
-    final locale = PrefsLocaleStore(prefs).read() ?? _deviceLocale();
+    final locale = _localeFor(prefs);
     final l10n = await AppLocalizations.delegate.load(locale);
 
     final run = AlertRun(
@@ -107,11 +107,15 @@ abstract final class BackgroundRefresh {
     return run.execute();
   }
 
-  /// The device language, narrowed to one the app ships.
-  static Locale _deviceLocale() {
-    final device = PlatformDispatcher.instance.locale;
-    return LocaleController.isSupported(device)
-        ? device
-        : LocaleController.serbianLatin;
+  /// The language a notification should be written in.
+  ///
+  /// The isolate has no ProviderScope, so it repeats what [LocaleController]
+  /// does at startup: the saved choice, otherwise the device language narrowed
+  /// to one the app ships, otherwise English.
+  static Locale _localeFor(SharedPreferences prefs) {
+    final saved = PrefsLocaleStore(prefs).read();
+    final chosen = saved == null ? null : LocaleController.matching(saved);
+    return chosen ??
+        LocaleController.resolveDevice(PlatformDispatcher.instance.locales);
   }
 }

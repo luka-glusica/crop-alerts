@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/theme.dart';
-import '../../features/locations/domain/location_input.dart';
+import '../../features/locations/domain/location_draft.dart';
 import '../../features/locations/domain/saved_location.dart';
 import '../../features/locations/locations_controller.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../icons/app_icons.dart';
+import 'location_map_screen.dart';
 
-/// Manages the grower's plots: add, rename, move, reorder and select.
+/// Manages the grower's locations: add, rename, move, reorder and select.
 class LocationsScreen extends ConsumerWidget {
   const LocationsScreen({super.key});
 
@@ -64,24 +65,30 @@ class LocationsScreen extends ConsumerWidget {
     WidgetRef ref, {
     SavedLocation? existing,
   }) async {
-    final result = await showModalBottomSheet<LocationInput>(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => _LocationEditor(existing: existing),
+    final draft = await Navigator.of(context).push<LocationDraft>(
+      MaterialPageRoute<LocationDraft>(
+        builder: (context) => LocationMapScreen(existing: existing),
+      ),
     );
-    if (result == null) return;
+    if (draft == null || !context.mounted) return;
 
     final controller = ref.read(locationsProvider.notifier);
-    final coordinates = result.coordinates!;
+    final name = draft.name.trim();
     if (existing == null) {
-      await controller.add(name: result.name, coordinates: coordinates);
+      await controller.add(name: name, coordinates: draft.coordinates);
     } else {
-      await controller.edit(
-        existing.id,
-        name: result.name,
-        coordinates: coordinates,
-      );
+      await controller.edit(existing.id, name: name, coordinates: draft.coordinates);
     }
+
+    if (!context.mounted) return;
+    final l10n = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          existing == null ? l10n.locationAdded(name) : l10n.locationUpdated(name),
+        ),
+      ),
+    );
   }
 
   Future<void> _confirmDelete(
@@ -130,10 +137,10 @@ class _EmptyState extends StatelessWidget {
           children: [
             Icon(AppIcons.location, size: 48, color: palette.textMuted),
             const SizedBox(height: AppSpacing.s4),
-            Text(l10n.noPlots, style: Theme.of(context).textTheme.titleMedium),
+            Text(l10n.noLocations, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: AppSpacing.s2),
             Text(
-              l10n.noPlotsHint,
+              l10n.noLocationsHint,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
@@ -198,7 +205,7 @@ class _LocationTile extends StatelessWidget {
                     children: [
                       if (isActive)
                         Text(
-                          l10n.activePlot.toUpperCase(),
+                          l10n.activeLocation.toUpperCase(),
                           style: text.labelSmall,
                         ),
                       Text(location.name, style: text.titleSmall),
@@ -236,145 +243,3 @@ class _LocationTile extends StatelessWidget {
   }
 }
 
-/// The add/edit form, shown as a bottom sheet.
-class _LocationEditor extends StatefulWidget {
-  const _LocationEditor({this.existing});
-
-  final SavedLocation? existing;
-
-  @override
-  State<_LocationEditor> createState() => _LocationEditorState();
-}
-
-class _LocationEditorState extends State<_LocationEditor> {
-  late final TextEditingController _name;
-  late final TextEditingController _latitude;
-  late final TextEditingController _longitude;
-
-  /// Errors are only shown once the grower has tried to save, so the form does
-  /// not scold them for a field they have not reached yet.
-  bool _submitted = false;
-
-  @override
-  void initState() {
-    super.initState();
-    final existing = widget.existing;
-    _name = TextEditingController(text: existing?.name ?? '');
-    _latitude = TextEditingController(
-      text: existing?.coordinates.latitudeParam ?? '',
-    );
-    _longitude = TextEditingController(
-      text: existing?.coordinates.longitudeParam ?? '',
-    );
-  }
-
-  @override
-  void dispose() {
-    _name.dispose();
-    _latitude.dispose();
-    _longitude.dispose();
-    super.dispose();
-  }
-
-  LocationInput get _input => LocationInput(
-        name: _name.text,
-        latitude: _latitude.text,
-        longitude: _longitude.text,
-      );
-
-  void _submit() {
-    setState(() => _submitted = true);
-    final input = _input;
-    if (!input.isValid) return;
-    Navigator.of(context).pop(input);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final errors = _submitted ? _input.errors : const <LocationInputError>{};
-
-    return Padding(
-      padding: EdgeInsets.only(
-        left: AppSpacing.s4,
-        right: AppSpacing.s4,
-        top: AppSpacing.s6,
-        bottom: MediaQuery.viewInsetsOf(context).bottom + AppSpacing.s6,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            widget.existing == null ? l10n.addLocation : l10n.editLocation,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: AppSpacing.s4),
-          TextField(
-            controller: _name,
-            autofocus: true,
-            textInputAction: TextInputAction.next,
-            onChanged: (_) => _submitted ? setState(() {}) : null,
-            decoration: InputDecoration(
-              labelText: l10n.locationName,
-              errorText: errors.contains(LocationInputError.nameRequired)
-                  ? l10n.nameRequired
-                  : null,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.s3),
-          TextField(
-            controller: _latitude,
-            keyboardType: const TextInputType.numberWithOptions(
-              signed: true,
-              decimal: true,
-            ),
-            textInputAction: TextInputAction.next,
-            onChanged: (_) => _submitted ? setState(() {}) : null,
-            decoration: InputDecoration(
-              labelText: l10n.latitude,
-              errorText: errors.contains(LocationInputError.latitudeInvalid)
-                  ? l10n.invalidLatitude
-                  : null,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.s3),
-          TextField(
-            controller: _longitude,
-            keyboardType: const TextInputType.numberWithOptions(
-              signed: true,
-              decimal: true,
-            ),
-            textInputAction: TextInputAction.done,
-            onChanged: (_) => _submitted ? setState(() {}) : null,
-            onSubmitted: (_) => _submit(),
-            decoration: InputDecoration(
-              labelText: l10n.longitude,
-              errorText: errors.contains(LocationInputError.longitudeInvalid)
-                  ? l10n.invalidLongitude
-                  : null,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.s6),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(l10n.cancel),
-                ),
-              ),
-              const SizedBox(width: AppSpacing.s3),
-              Expanded(
-                child: FilledButton(
-                  onPressed: _submit,
-                  child: Text(l10n.save),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}

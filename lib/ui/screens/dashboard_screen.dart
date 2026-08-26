@@ -19,7 +19,8 @@ import 'crop_detail_screen.dart';
 import 'locations_screen.dart';
 import 'settings_screen.dart';
 
-/// The app's home: what the weather is about to do to the active plot's crops.
+/// The app's home: what the weather is about to do to the active location's
+/// crops.
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
@@ -85,7 +86,7 @@ class DashboardScreen extends ConsumerWidget {
             onRetry: () => ref.invalidate(dashboardProvider(locale)),
           ),
           data: (data) => data == null
-              ? _Message(icon: AppIcons.location, text: l10n.noPlots)
+              ? _Message(icon: AppIcons.location, text: l10n.noLocations)
               : _DashboardBody(dashboard: data),
         ),
       ),
@@ -116,7 +117,7 @@ class _DashboardBody extends StatelessWidget {
         AppSpacing.s12,
       ),
       children: [
-        _PlotHeader(dashboard: dashboard),
+        _LocationHeader(dashboard: dashboard),
         if (dashboard.isStale) ...[
           const SizedBox(height: AppSpacing.s3),
           _StaleBanner(failure: dashboard.failure),
@@ -239,8 +240,8 @@ class _MetricRow extends StatelessWidget {
   }
 }
 
-class _PlotHeader extends StatelessWidget {
-  const _PlotHeader({required this.dashboard});
+class _LocationHeader extends StatelessWidget {
+  const _LocationHeader({required this.dashboard});
 
   final Dashboard dashboard;
 
@@ -261,7 +262,7 @@ class _PlotHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.activePlot.toUpperCase(), style: text.labelSmall),
+                Text(l10n.activeLocation.toUpperCase(), style: text.labelSmall),
                 Text(dashboard.location.name, style: text.titleSmall),
                 Text(
                   '${coordinates.latitudeParam}, ${coordinates.longitudeParam}',

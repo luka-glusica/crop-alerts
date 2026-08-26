@@ -6,4 +6,6 @@ library;
 export 'app_palette.dart';
 export 'app_theme.dart';
 export 'color_scale.dart';
+export 'theme_controller.dart';
+export 'theme_mode_store.dart';
 export 'tokens.dart';

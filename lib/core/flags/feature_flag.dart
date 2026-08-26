@@ -1,8 +1,10 @@
-/// Toggles that gate functionality which is either not finished yet, or that a
-/// user may want to switch off.
+/// Toggles that gate functionality which is not finished yet.
 ///
 /// The enum deliberately carries its own default and storage key so that adding
 /// a flag is a one-line change and nothing has to be kept in sync elsewhere.
+/// The flags are not exposed in the UI: the team flips a default here once the
+/// feature behind it is ready to ship.
+///
 /// Flags whose default is `false` describe work planned for future releases —
 /// the code paths they guard exist as interfaces and stubs so that switching
 /// them on later does not require reshaping the architecture.
@@ -16,7 +18,7 @@ enum FeatureFlag {
   /// Signed-in accounts. Planned; `authorId` already exists on crops and rules.
   authentication(
     defaultValue: false,
-    description: 'Sign in to sync plots and contribute content',
+    description: 'Sign in to sync locations and contribute content',
   ),
 
   /// Crowd-sourced crops fetched from a server instead of bundled assets.
@@ -35,12 +37,6 @@ enum FeatureFlag {
   mitigationRatings(
     defaultValue: false,
     description: 'Rate how well a piece of advice worked',
-  ),
-
-  /// Device GPS instead of manually entered coordinates.
-  deviceLocation(
-    defaultValue: false,
-    description: 'Use the device location for the active plot',
   );
 
   const FeatureFlag({
@@ -51,7 +47,7 @@ enum FeatureFlag {
   /// Value used when the user has not overridden the flag.
   final bool defaultValue;
 
-  /// Developer-facing explanation, shown in the debug settings screen.
+  /// Developer-facing explanation of what the flag gates.
   final String description;
 
   /// Key under which an override for this flag is persisted.

@@ -26,6 +26,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<!-- Lets the grower drop a pin on their current position when adding or
+	     editing a location. -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Used to place a pin at your current position when adding or editing a location.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
